@@ -1,2 +1,2 @@
 # yellowmonky-web
-a chat application that uses
+a chat application that uses next.js
