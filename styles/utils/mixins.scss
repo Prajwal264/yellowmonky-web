@@ -1,0 +1,32 @@
+@mixin respond($breakpoint) {
+  @if $breakpoint==laptop {
+    @media (min-width: 769px) and (max-width: 1200px) {
+      @content;
+    }
+  }
+
+  @if $breakpoint==tablet {
+    @media (min-width: 576px) and (max-width: 768px) {
+      @content;
+    }
+  }
+
+  @if $breakpoint==mobile {
+    @media screen and (max-width: 575px) {
+      @content;
+    }
+  }
+
+}
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

@@ -1,0 +1,17 @@
+.header {
+  padding: 48px 0 40px;
+  width: 100%;
+  display: grid;
+  align-items: center;
+  grid-template-columns: repeat(3, 1fr);
+  .leftCol {
+  }
+  .centerCol {
+    text-align: center;
+    cursor: pointer;
+  }
+  .rightCol {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
