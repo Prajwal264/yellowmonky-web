@@ -27,22 +27,5 @@
   form {
     max-width: 400px;
     width: 100%;
-    button {
-      color: #fff;
-      background-color: #3079ed;
-      border: none;
-      margin-bottom: 20px;
-      width: 100%;
-      font-size: 18px;
-      font-weight: 900;
-      height: 44px;
-      min-width: 96px;
-      padding: 0 16px 3px;
-      transition: all 80ms linear;
-      &:hover {
-        background-color: rgba(49, 121, 237, 0.7);
-        border: none;
-      }
-    }
   }
 }

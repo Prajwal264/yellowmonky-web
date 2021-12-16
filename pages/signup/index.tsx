@@ -7,6 +7,11 @@ interface Props {
 
 }
 
+/**
+ *
+ *
+ * @return {*} 
+ */
 const SignupPage: React.FC<Props> = () => {
   return (
     <div className={styles.signupPage}>
