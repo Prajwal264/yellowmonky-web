@@ -1,0 +1,48 @@
+.signupForm {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 100%;
+  align-items: center;
+  max-width: 800px;
+  .heading {
+    font-family: Roboto;
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 46px;
+    max-width: 700px;
+    text-align: center;
+    letter-spacing: -0.75px;
+    margin-bottom: 10px;
+  }
+  .subHeading {
+    font-size: 18px;
+    line-height: 27px;
+    margin-bottom: 32px;
+    color: #454245;
+    max-width: 700px;
+    text-align: center;
+  }
+  form {
+    max-width: 400px;
+    width: 100%;
+    button {
+      color: #fff;
+      background-color: #3079ed;
+      border: none;
+      margin-bottom: 20px;
+      width: 100%;
+      font-size: 18px;
+      font-weight: 900;
+      height: 44px;
+      min-width: 96px;
+      padding: 0 16px 3px;
+      transition: all 80ms linear;
+      &:hover {
+        background-color: rgba(49, 121, 237, 0.7);
+        border: none;
+      }
+    }
+  }
+}

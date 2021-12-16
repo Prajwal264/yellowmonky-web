@@ -1,0 +1,26 @@
+.formInput {
+  padding: 11px 40px 13px 12px;
+  height: 44px;
+  font-size: 18px;
+  line-height: 1.33333333;
+  border-radius: 4px;
+  border: 1px solid rgba(29, 28, 29, 0.3);
+  transition: border 80ms ease-out, box-shadow 80ms ease-out;
+  box-sizing: border-box;
+  margin: 0 0 20px;
+  padding: 3px 12px 5px;
+  height: 36px;
+  width: 100%;
+  font-size: 15px;
+  line-height: 1.86666667;
+  line-height: normal;
+  color: rgb(29, 28, 29);
+  background-color: rgb(255, 255, 255);
+  &:focus {
+    outline: 0;
+    box-shadow: 0 0 0 1px #3079ed, 0 0 0 5px rgba(48, 121, 237, 0.3);
+    border-radius: 4px;
+    border-color: transparent;
+    -webkit-appearance: none;
+  }
+}
