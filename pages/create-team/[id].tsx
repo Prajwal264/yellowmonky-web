@@ -135,9 +135,35 @@ const CreateTeamPage: React.FC<Props> = () => {
         nextStepMetadata.heading = replacePlacholdersWithValues(nextStepMetadata.heading, replacementRecord);
         skipToNextStep();
         break;
+      case 2:
+        const emails = formData.members.filter(member => member);
+        if (!emails.length) {
+          toast.error('Please add a team mate');
+          return;
+        }
+        const invalidEmailExists = emails.filter(member => member).some((member) => {
+          if (!handleEmailValidation(member)) {
+            toast.error(`${member} is an invalid email`)
+            return true;
+          }
+          return false;
+        });
+        if ((new Set(emails)).size !== emails.length) {
+          toast.error('Duplicate emails exist')
+          return;
+        }
+        if (invalidEmailExists) {
+          return;
+        };
+        sumbitTeamData();
+        break;
       default:
         break;
     }
+  }
+
+  const sumbitTeamData = () => {
+    console.log('submitable', formData)
   }
 
   const renderFormInput = (step: ArrayElement<typeof STEP_DATA>) => {
@@ -201,9 +227,9 @@ const CreateTeamPage: React.FC<Props> = () => {
                   </h5>
                   {formData.members.filter((member) => (member && handleEmailValidation(member))).map((member) => {
                     const name = member.split("@")[0];
-                    return (<p className={styles.listItem}>
+                    return (<div className={styles.listItem}>
                       <Avatar name={name} size="20" />{name}
-                    </p>)
+                    </div>)
                   })}
                 </div>
               </div>
