@@ -113,6 +113,50 @@
           }
         }
       }
+      .channelSidebarNav {
+        height: auto;
+        min-height: 0;
+        width: 100%;
+        font-size: 15px;
+        flex: 1;
+        position: relative;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        color: #cfcfcf;
+        .sidebarList {
+          position: relative;
+          flex: 1;
+          padding: 32px 16px 0;
+          .scrollContainer {
+            .heading {
+              font-weight: 500;
+              display: block;
+              opacity: 1;
+              text-align: left;
+              white-space: nowrap;
+              overflow: hidden;
+              flex: 1 1 0;
+              padding-right: 8px;
+              line-height: 28px;
+              transition: padding-right 0s ease-in-out 0.3s, color 0.1s ease-out 0s;
+              cursor: pointer;
+            }
+            .listItem {
+              padding-left: 29px;
+              line-height: 28px;
+              cursor: pointer;
+              :global(.sb-avatar) {
+                margin-right: 8px;
+                border-radius: 4px;
+                :global(.sb-avatar__text) {
+                  border-radius: 4px;
+                }
+              }
+            }
+          }
+        }
+      }
     }
     main {
       grid-template-areas: "p-workspace__primary_view_contents";
@@ -159,10 +203,50 @@
               p {
                 margin-bottom: 24px;
               }
-              .buttonWrapper {
+              .ctaSection {
+                display: flex;
+                align-items: center;
                 margin-top: 48px;
-                min-width: 200px;
-                max-width: 300px;
+                .buttonWrapper {
+                  margin-bottom: -20px;
+                  min-width: 200px;
+                  max-width: 300px;
+                  margin-right: 24px;
+                }
+                .skipStepCta {
+                  background: none;
+                  border: 0;
+                  font: inherit;
+                  margin: 0;
+                  line-height: inherit;
+                  overflow: initial;
+                  padding: 0;
+                  text-align: initial;
+                  vertical-align: initial;
+                  cursor: pointer;
+                  text-decoration: none;
+                  vertical-align: baseline;
+                  color: rgb(29, 155, 209);
+                }
+              }
+              .addMemberCta {
+                background: none;
+                border: 0;
+                color: inherit;
+                font: inherit;
+                margin: 0;
+                line-height: inherit;
+                overflow: initial;
+                padding: 0;
+                text-align: initial;
+                vertical-align: initial;
+                cursor: pointer;
+                color: rgba(29, 155, 209, 1);
+                text-decoration: none;
+                vertical-align: baseline;
+                &:hover {
+                  text-decoration: underline;
+                }
               }
             }
           }

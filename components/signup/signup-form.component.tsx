@@ -1,4 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
+import toast from 'react-hot-toast';
+import { handleEmailValidation } from '../../helpers/validation.helper';
 import FormInput from '../shared/form-input/form-input.component';
 import PrimaryButton from '../shared/primary-button/primary-button.component';
 import styles from './signup-form.module.scss';
@@ -32,11 +34,31 @@ const SignupForm: React.FC<Props> = () => {
   /**
    *
    *
+   * @return {*} 
+   */
+  const validateFields = () => {
+    if (!formData.email) {
+      toast.error('Please enter email')
+      return false;
+    }
+    if (!handleEmailValidation(formData.email)) {
+      toast.error('Enter a valid email')
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   *
+   *
    * @param {*} e
    */
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     console.log(formData);
+    if (validateFields()) {
+
+    }
   }
 
   return (
@@ -47,7 +69,7 @@ const SignupForm: React.FC<Props> = () => {
       <h6 className={styles.subHeading}>
         We suggest using the email address you use at work.
       </h6>
-      <form onSubmit={handleSubmit}>
+      <form noValidate onSubmit={handleSubmit}>
         <FormInput
           name="email"
           type="email"

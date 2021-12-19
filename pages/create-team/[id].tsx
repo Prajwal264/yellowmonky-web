@@ -3,9 +3,10 @@ import toast from 'react-hot-toast';
 import FormInput from '../../components/shared/form-input/form-input.component';
 import PrimaryButton from '../../components/shared/primary-button/primary-button.component';
 import { replacePlacholdersWithValues } from '../../helpers/manipulation.helper';
+import { handleEmailValidation } from '../../helpers/validation.helper';
 import styles from '../../styles/pages/create-team.module.scss';
 import { ArrayElement } from '../../types/generics.type';
-
+import Avatar from 'react-avatar';
 interface Props {
 
 }
@@ -35,7 +36,7 @@ const STEP_DATA = [{
 }, {
   id: Steps.ADD_MEMBERS,
   heading: 'Who do you email most about {purpose}?',
-  subheading: 'To give YellowMonky a spin, add a few coworkers you talk with regularly.',
+  subheading: 'To give YellowMonky a spin, add a few friends you talk with regularly.',
   placeholder: 'Ex. ellis@gmail.com',
   fieldName: 'member',
   type: 'email',
@@ -72,7 +73,9 @@ const CreateTeamPage: React.FC<Props> = () => {
 
   const updateMemberEmail = (e: React.ChangeEvent<HTMLInputElement>, memberIndex: number) => {
     const { value } = e.target;
-    const alteredMembers = formData.members.splice(memberIndex, 0, value)
+    const alteredMembers = [...formData.members];
+    alteredMembers[memberIndex] = value;
+    console.log(alteredMembers);
     setFormData((prevState) => ({
       ...prevState,
       members: alteredMembers,
@@ -153,6 +156,7 @@ const CreateTeamPage: React.FC<Props> = () => {
               />
             )
           })}
+          <button className={styles.addMemberCta} onClick={addMemberField}>Add another</button>
         </React.Fragment>
       )
     }
@@ -166,7 +170,7 @@ const CreateTeamPage: React.FC<Props> = () => {
   }
   return (
     <div className={styles.createTeamPage}>
-      <div className={styles.topNav}></div>
+      <div className={styles.topNav}> </div>
       <div className={styles.workspace}>
         <div className={styles.sidebar}>
           <div className={styles.channelSidebar}>
@@ -181,6 +185,29 @@ const CreateTeamPage: React.FC<Props> = () => {
               </div>
             </div>
           </div>
+          {STEP_DATA[currentStepIndex].id === Steps.ADD_MEMBERS &&
+            formData.purpose && <nav className={styles.channelSidebarNav}>
+              <div className={styles.sidebarList}>
+                <div className={styles.scrollContainer}>
+                  <h5 className={styles.heading}>
+                    Channels
+                  </h5>
+                  <p className={styles.listItem}>
+                    # {formData.purpose}
+                  </p>
+                  <br />
+                  <h5 className={styles.heading}>
+                    Direct messages
+                  </h5>
+                  {formData.members.filter((member) => (member && handleEmailValidation(member))).map((member) => {
+                    const name = member.split("@")[0];
+                    return (<p className={styles.listItem}>
+                      <Avatar name={name} size="20" />{name}
+                    </p>)
+                  })}
+                </div>
+              </div>
+            </nav>}
         </div>
         <main>
           <div className={styles.viewContents}>
@@ -198,8 +225,11 @@ const CreateTeamPage: React.FC<Props> = () => {
                       <h2>{step.heading}</h2>
                       <p>{step.subheading}</p>
                       {renderFormInput(step)}
-                      <div className={styles.buttonWrapper}>
-                        <PrimaryButton content="Next" onClick={handleSubmit} />
+                      <div className={styles.ctaSection}>
+                        <div className={styles.buttonWrapper}>
+                          <PrimaryButton content={step.submitText} onClick={handleSubmit} />
+                        </div>
+                        {step.id === Steps.ADD_MEMBERS && <button className={styles.skipStepCta}>Skip this step</button>}
                       </div>
                     </div>
                   </div>
