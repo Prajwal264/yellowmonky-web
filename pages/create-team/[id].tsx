@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import FormInput from '../../components/shared/form-input/form-input.component';
 import PrimaryButton from '../../components/shared/primary-button/primary-button.component';
+import { replacePlacholdersWithValues } from '../../helpers/manipulation.helper';
 import styles from '../../styles/pages/create-team.module.scss';
 import { ArrayElement } from '../../types/generics.type';
 
@@ -32,7 +34,7 @@ const STEP_DATA = [{
   submitText: 'Next',
 }, {
   id: Steps.ADD_MEMBERS,
-  heading: 'Who do you email most about communication?',
+  heading: 'Who do you email most about {purpose}?',
   subheading: 'To give YellowMonky a spin, add a few coworkers you talk with regularly.',
   placeholder: 'Ex. ellis@gmail.com',
   fieldName: 'member',
@@ -68,26 +70,33 @@ const CreateTeamPage: React.FC<Props> = () => {
     setCurrentStepIndex((prevStepIndex) => (prevStepIndex + 1))
   }
 
+  const updateMemberEmail = (e: React.ChangeEvent<HTMLInputElement>, memberIndex: number) => {
+    const { value } = e.target;
+    const alteredMembers = formData.members.splice(memberIndex, 0, value)
+    setFormData((prevState) => ({
+      ...prevState,
+      members: alteredMembers,
+    }))
+    return;
+  }
+
   /**
    *
    *
    * @param {*} e
    */
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, memberIndex?: number) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === 'members' && memberIndex) {
-      setFormData((prevState) => ({
-        ...prevState,
-        name: prevState.members.splice(memberIndex, 0, value),
-      }))
-      return;
-    }
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
     }))
   }
 
+  /**
+   *
+   *
+   */
   const addMemberField = () => {
     const alteredMembers = [...formData.members];
     alteredMembers.push('');
@@ -102,10 +111,30 @@ const CreateTeamPage: React.FC<Props> = () => {
    *
    * @param {*} e
    */
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    // const { } = e
-    // TODO: set validation for each step
+  const handleSubmit: React.MouseEventHandler<HTMLButtonElement> = () => {
+    switch (currentStepIndex) {
+      case 0:
+        if (!formData.teamName) {
+          toast.error('Please enter a team name');
+          return;
+        }
+        skipToNextStep();
+        break;
+      case 1:
+        if (!formData.purpose) {
+          toast.error('Please enter a name for your default channel');
+          return;
+        }
+        const nextStepMetadata = STEP_DATA[currentStepIndex + 1];
+        const replacementRecord = {
+          purpose: formData.purpose,
+        }
+        nextStepMetadata.heading = replacePlacholdersWithValues(nextStepMetadata.heading, replacementRecord);
+        skipToNextStep();
+        break;
+      default:
+        break;
+    }
   }
 
   const renderFormInput = (step: ArrayElement<typeof STEP_DATA>) => {
@@ -117,7 +146,7 @@ const CreateTeamPage: React.FC<Props> = () => {
               <FormInput
                 name={step.fieldName}
                 type={step.type}
-                onChange={(e) => handleChange(e, index)}
+                onChange={(e) => updateMemberEmail(e, index)}
                 inputAttributes={{
                   placeholder: step.placeholder,
                 }}
@@ -160,7 +189,7 @@ const CreateTeamPage: React.FC<Props> = () => {
                 return null;
               }
               return (
-                <div className={styles.setupPage}>
+                <div className={styles.setupPage} key={step.id}>
                   <div className={styles.setupPageContent}>
                     <div className={styles.teamSetupStepCounter}>
                       Step {index + 1} of {STEP_DATA.length}
@@ -170,7 +199,7 @@ const CreateTeamPage: React.FC<Props> = () => {
                       <p>{step.subheading}</p>
                       {renderFormInput(step)}
                       <div className={styles.buttonWrapper}>
-                        <PrimaryButton content="Next" />
+                        <PrimaryButton content="Next" onClick={handleSubmit} />
                       </div>
                     </div>
                   </div>

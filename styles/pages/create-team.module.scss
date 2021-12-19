@@ -50,8 +50,7 @@
         min-width: 0;
         grid-area: "p-workspace__channel_sidebar";
         .sidebarHeader {
-          background: #d1d2d3;
-          opacity: 0.3;
+          background: rgba(209, 210, 211, 0.3);
           color: #d1d2d3;
           min-height: 50px;
           font-size: 18px;
@@ -96,8 +95,8 @@
                   width: 65%;
                   height: 15px;
                   border-radius: 8px;
-                  margin: 0 16px;
-                  background-color: hsl(0, 0%, 100%);
+                  margin: 0 16px 0 0;
+                  background-color: hsla(0, 0%, 100%, 0.3);
                 }
                 .teamNameSpacer {
                   min-width: 0;
@@ -107,6 +106,7 @@
                   white-space: nowrap;
                   display: block;
                   border-color: rgba(0, 0, 0, 0.15);
+                  color: #fff;
                 }
               }
             }
