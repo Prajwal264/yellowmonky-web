@@ -7,6 +7,7 @@ import { handleEmailValidation } from '../../helpers/validation.helper';
 import styles from '../../styles/pages/create-team.module.scss';
 import { ArrayElement } from '../../types/generics.type';
 import Avatar from 'react-avatar';
+import { useRouter } from 'next/router';
 interface Props {
 
 }
@@ -63,6 +64,7 @@ const defaultFormData: FormData = {
 const CreateTeamPage: React.FC<Props> = () => {
   const [formData, setFormData] = useState(defaultFormData);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const router = useRouter();
   /**
    *
    *
@@ -162,8 +164,9 @@ const CreateTeamPage: React.FC<Props> = () => {
     }
   }
 
-  const sumbitTeamData = () => {
-    console.log('submitable', formData)
+  const sumbitTeamData = (ignoreEmails = false) => {
+    console.log('submitable', formData);
+    router.push('/app');
   }
 
   const renderFormInput = (step: ArrayElement<typeof STEP_DATA>) => {
@@ -255,7 +258,7 @@ const CreateTeamPage: React.FC<Props> = () => {
                         <div className={styles.buttonWrapper}>
                           <PrimaryButton content={step.submitText} onClick={handleSubmit} />
                         </div>
-                        {step.id === Steps.ADD_MEMBERS && <button className={styles.skipStepCta}>Skip this step</button>}
+                        {step.id === Steps.ADD_MEMBERS && <button className={styles.skipStepCta} onClick={() => sumbitTeamData(true)}>Skip this step</button>}
                       </div>
                     </div>
                   </div>

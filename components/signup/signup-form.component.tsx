@@ -9,7 +9,8 @@ interface Props {
 
 }
 const defaultState = {
-  email: ''
+  email: '',
+  password: '',
 }
 
 /**
@@ -45,6 +46,10 @@ const SignupForm: React.FC<Props> = () => {
       toast.error('Enter a valid email')
       return false;
     }
+    if (!formData.password) {
+      toast.error('Password cannot be empty')
+      return false;
+    }
     return true;
   }
 
@@ -64,18 +69,28 @@ const SignupForm: React.FC<Props> = () => {
   return (
     <div className={styles.signupForm}>
       <h4 className={styles.heading}>
-        First, enter your email
+        Create an Account
       </h4>
       <h6 className={styles.subHeading}>
         We suggest using the email address you use at work.
       </h6>
       <form noValidate onSubmit={handleSubmit}>
+        <label>Email</label>
         <FormInput
           name="email"
           type="email"
           onChange={handleChange}
           inputAttributes={{
             placeholder: "name@work-email.com"
+          }}
+        />
+        <label>Password</label>
+        <FormInput
+          name="password"
+          type="password"
+          onChange={handleChange}
+          inputAttributes={{
+            placeholder: "********"
           }}
         />
         <PrimaryButton content="continue" type='submit' />
