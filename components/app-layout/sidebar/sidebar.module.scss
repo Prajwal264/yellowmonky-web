@@ -1,0 +1,17 @@
+.sidebar {
+  width: 260px;
+  grid-template-areas: "p-workspace__channel_sidebar";
+  grid-template-rows: auto;
+  overflow: hidden;
+  grid-area: p-workspace__sidebar;
+  display: grid;
+  grid-template-columns: auto;
+  position: relative;
+  .channelSidebar {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    grid-area: p-workspace__channel_sidebar;
+  }
+}

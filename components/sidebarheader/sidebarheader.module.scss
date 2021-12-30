@@ -1,0 +1,87 @@
+.sidebarHeader {
+  height: 50px;
+  font-size: 18px;
+  line-height: 1.33334;
+  font-weight: 900;
+  color: #ffffff;
+  background: #3079ed;
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  &:hover {
+    background-color: #3079edbf;
+  }
+  .sidebarHeaderButton {
+    background-color: initial;
+    border-color: rgb(69, 134, 239);
+    cursor: pointer;
+    padding-right: 54px;
+    outline: none;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 19px 0 16px;
+    transition-property: background-color, border-color;
+    transition-duration: 80ms;
+    transition-timing-function: cubic-bezier(0.36, 0.19, 0.29, 1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+    border-color: rgba(0, 0, 0, 0.15);
+    flex: 1;
+    min-width: 0;
+    order: 1;
+    display: flex;
+    align-items: center;
+    max-width: 100%;
+    background: none;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    margin: 0;
+    line-height: inherit;
+    overflow: initial;
+    text-align: initial;
+    vertical-align: initial;
+    cursor: pointer;
+    span {
+      min-width: 0;
+      font-weight: 900;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      display: block;
+    }
+  }
+  .composeButton {
+    border-radius: 18px;
+    transition: none;
+    background: #ffffff;
+    height: 34px;
+    width: 34px;
+    top: 8px;
+    right: 16px;
+    bottom: 24px;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    color: #3079ed;
+    transition-property: box-shadow, transform, background-color;
+    transition-duration: 80ms;
+    transition-timing-function: cubic-bezier(0.175, 0.875, 0.5, 1.5);
+    font: inherit;
+    margin: 0;
+    line-height: inherit;
+    overflow: initial;
+    padding: 0;
+    text-align: initial;
+    vertical-align: initial;
+    cursor: pointer;
+    &:hover {
+      box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
+    }
+  }
+}

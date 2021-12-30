@@ -10,4 +10,12 @@
     "p-client--iap1__top_nav"
     "p-client__workspace"
     "p-client__banners";
+  main {
+    grid-template-columns: 260px auto;
+    grid-template-areas: "p-workspace__sidebar p-workspace__primary_view";
+    display: grid;
+    grid-template-rows: auto;
+    overflow: hidden;
+    position: relative;
+  }
 }
