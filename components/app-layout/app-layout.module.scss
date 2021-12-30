@@ -17,5 +17,23 @@
     grid-template-rows: auto;
     overflow: hidden;
     position: relative;
+    .primaryView {
+      grid-template-areas: "p-workspace__primary_view_contents";
+      grid-template-rows: auto;
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      grid-area: p-workspace__primary_view;
+      display: grid;
+      grid-template-columns: auto;
+      .primaryViewContent {
+        display: flex;
+        flex-direction: column;
+        grid-area: p-workspace__primary_view_contents;
+        position: relative;
+        min-width: 0;
+        min-height: 0;
+      }
+    }
   }
 }

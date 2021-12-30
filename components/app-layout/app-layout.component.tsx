@@ -13,7 +13,9 @@ const AppLayout: React.FC<Props> = ({ children }) => {
       <Header />
       <main>
         <Sidebar />
-        {children}
+        <div className={styles.primaryView}>
+          {children}
+        </div>
       </main>
     </div>
   )

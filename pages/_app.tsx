@@ -4,6 +4,7 @@ import React from 'react';
 import { Toaster } from 'react-hot-toast';
 import AppLayout from '../components/app-layout/app-layout.component';
 import '../styles/utils/_global.scss';
+import 'emoji-mart/css/emoji-mart.css'
 
 const appRoute = `/app/`;
 

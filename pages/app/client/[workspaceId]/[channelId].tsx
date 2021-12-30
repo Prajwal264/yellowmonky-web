@@ -9,7 +9,7 @@ const ChannelIdPage: React.FC<Props> = ({
 }) => {
   return (
     <React.Fragment>
-
+      Channel Id Page
     </React.Fragment>
   )
 }
