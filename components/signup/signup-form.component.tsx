@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import React, { useCallback, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { handleEmailValidation } from '../../helpers/validation.helper';
@@ -20,6 +21,7 @@ const defaultState = {
  */
 const SignupForm: React.FC<Props> = () => {
   const [formData, setFormData] = useState(defaultState)
+  const router = useRouter();
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = useCallback(
     (e) => {
@@ -60,9 +62,11 @@ const SignupForm: React.FC<Props> = () => {
    */
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    console.log(formData);
     if (validateFields()) {
+      console.log(formData);
 
+      // make api call to store the user credentials
+      router.push('/create-team/id');
     }
   }
 

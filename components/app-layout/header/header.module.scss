@@ -1,0 +1,79 @@
+.header {
+  background: #3079ed;
+  box-shadow: 0 1px 0 0 rgb(255 255 255 / 10%);
+  grid-area: p-client--iap1__top_nav;
+  min-width: 0;
+  background: rgb(48, 121, 237);
+  -webkit-app-region: drag;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 203;
+  color: #ffffff;
+  .sidebar {
+    flex-grow: 0;
+    min-width: 260px;
+    display: flex;
+    align-items: center;
+    padding-left: 16px;
+    padding-right: 20px;
+    flex: 1;
+    min-width: 128px;
+    justify-content: flex-end;
+  }
+  .searchContainer {
+    position: relative;
+    flex: 2;
+    min-width: 0;
+    max-width: 732px;
+    display: flex;
+    button {
+      box-shadow: rgba(29, 28, 29, 0.3) 0px 0px 0px 1px, rgba(0, 0, 0, 0.08) 0px 1px 3px 0px;
+      flex-direction: row;
+      justify-content: center;
+      display: flex;
+      align-items: center;
+      flex: 5;
+      height: 24px;
+      min-width: 0;
+      max-width: 732px;
+      padding: 0 8px;
+      border-radius: 6px;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.2);
+      border: 0;
+      color: inherit;
+      font: inherit;
+      margin: 0;
+      line-height: inherit;
+      overflow: initial;
+      padding: 0;
+      text-align: initial;
+      vertical-align: initial;
+      cursor: pointer;
+    }
+  }
+  .rightSection {
+    margin-left: auto;
+    flex-grow: 0;
+    min-width: 260px;
+    flex: 1;
+    min-width: 128px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 16px;
+    padding-left: 32px;
+    position: relative;
+    .helpButton {
+      margin-right: 12px;
+      position: relative;
+    }
+    .userbutton {
+      width: 28px;
+      height: 28px;
+      // TODO
+    }
+  }
+}

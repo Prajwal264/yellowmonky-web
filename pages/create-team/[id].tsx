@@ -77,7 +77,6 @@ const CreateTeamPage: React.FC<Props> = () => {
     const { value } = e.target;
     const alteredMembers = [...formData.members];
     alteredMembers[memberIndex] = value;
-    console.log(alteredMembers);
     setFormData((prevState) => ({
       ...prevState,
       members: alteredMembers,
@@ -150,13 +149,13 @@ const CreateTeamPage: React.FC<Props> = () => {
           }
           return false;
         });
+        if (invalidEmailExists) {
+          return;
+        };
         if ((new Set(emails)).size !== emails.length) {
           toast.error('Duplicate emails exist')
           return;
         }
-        if (invalidEmailExists) {
-          return;
-        };
         sumbitTeamData();
         break;
       default:
@@ -166,6 +165,10 @@ const CreateTeamPage: React.FC<Props> = () => {
 
   const sumbitTeamData = (ignoreEmails = false) => {
     console.log('submitable', formData);
+
+    // TODO: create team 
+    // associate team with current user
+    // send mails to invite users to team, if any
     router.push('/app');
   }
 
