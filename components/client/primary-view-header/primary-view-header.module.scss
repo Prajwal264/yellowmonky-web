@@ -1,0 +1,112 @@
+.primaryViewHeader {
+  z-index: 202;
+  height: 49px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px 0 20px;
+  box-shadow: rgba(29, 28, 29, 0.13) 0px 1px 0px 0px;
+  background-color: rgb(255, 255, 255);
+  flex-shrink: 0;
+  .text {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+    align-items: baseline;
+    .coachmarkAnchor {
+      flex: 0 1 auto;
+      min-width: 0;
+      .channelButton {
+        font-weight: 900;
+        width: 100%;
+        padding: 3px 8px;
+        margin-left: -8px;
+        margin-right: 8px;
+        border-radius: 6px;
+        background: none;
+        border: 0;
+        color: inherit;
+        font: inherit;
+        margin: 0;
+        line-height: inherit;
+        overflow: initial;
+        text-align: initial;
+        vertical-align: initial;
+        cursor: pointer;
+        &:hover {
+          background-color: rgba(29, 28, 29, 0.04);
+        }
+        .headerTitle {
+          display: flex;
+          align-items: baseline;
+          font-size: 18px;
+          line-height: 1.33334;
+          font-weight: 900;
+          span {
+            display: block;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 18px;
+            line-height: 1.33334;
+            font-weight: 900;
+          }
+        }
+      }
+    }
+  }
+  .actions {
+    display: flex;
+    flex: 0 0 auto;
+    margin-left: auto;
+    align-items: center;
+    z-index: 0;
+    .channelUserDetails {
+      background: none;
+      border: 0;
+      color: inherit;
+      font: inherit;
+      margin: 0;
+      line-height: inherit;
+      overflow: initial;
+      padding: 0;
+      text-align: initial;
+      vertical-align: initial;
+      cursor: pointer;
+      padding: 3px 0 3px 3px;
+      border-radius: 4px;
+      height: 28px;
+      margin-left: 8px;
+      color: rgba(29, 28, 29, 0.7);
+      box-shadow: rgba(29, 28, 29, 0.13) 0px 0px 0px 1px;
+      .slackAvatars {
+        margin-right: 0;
+        align-items: center;
+        display: flex;
+        .avatar {
+          cursor: pointer;
+          height: 22px;
+          width: 22px;
+          z-index: 2;
+          border-radius: 3px;
+          margin-right: -4px;
+          box-shadow: rgb(255, 255, 255) 0px 0px 0px 2px;
+          img {
+            height: 22px;
+            width: 22px;
+            border-radius: 3px;
+            background-size: 100%;
+            background-repeat: no-repeat;
+            display: inline-block;
+          }
+        }
+        .count {
+          color: inherit;
+          background-color: transparent;
+          font-size: 13px;
+          line-height: 22px;
+          padding: 0 8px 0 12px;
+        }
+      }
+    }
+  }
+}
