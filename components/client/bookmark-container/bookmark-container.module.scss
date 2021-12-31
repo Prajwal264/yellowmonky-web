@@ -1,0 +1,56 @@
+.bookmarkComponent {
+  position: relative;
+  .bookmarkBar {
+    height: 36px;
+    transform: translateY(0);
+    transition: transform 0.2s linear;
+    will-change: transform;
+    top: 0;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    padding-left: 13px;
+    padding-right: 16px;
+    width: 100%;
+    contain: strict;
+    overflow: hidden;
+    background-color: rgb(255, 255, 255);
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 2px 3px 0px, rgba(29, 28, 29, 0.13) 0px 1px 0px 0px;
+    z-index: 201;
+    .contents {
+      .flexWrapper {
+        display: flex;
+        flex: 1;
+        .addNew {
+          font-size: 13px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 4px;
+          border-left: 2px solid transparent;
+          border-right: 2px solid transparent;
+          padding: 3px;
+          height: 26px;
+          border-radius: 6px;
+          font-weight: 400;
+          color: rgb(97, 96, 97);
+          user-select: none;
+          width: 100%;
+          padding-left: 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          background-color: unset;
+          cursor: pointer;
+          &:hover {
+            background-color: rgba(29, 28, 29, 0.04);
+          }
+        }
+        .contextMenuContainer {
+          display: flex;
+          flex: 2;
+        }
+      }
+    }
+  }
+}
