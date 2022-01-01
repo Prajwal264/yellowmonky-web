@@ -8,13 +8,15 @@ interface Props {
 
 }
 
+const ImageForwardRef = React.forwardRef(() => <Image src={logo} title="Yellow Monky" />)
+
 const Header: React.FC<Props> = () => {
   return (
     <header className={styles.header}>
       <div className={styles.leftCol}></div>
       <div className={styles.centerCol}>
         <Link href="/">
-          <Image src={logo} title="Yellow Monky" />
+          <ImageForwardRef />
         </Link>
       </div>
       <div className={styles.rightCol}></div>

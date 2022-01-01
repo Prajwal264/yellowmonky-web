@@ -43,6 +43,10 @@ const fields: FormField[] = [{
   }
 }]
 
+const signup = (formData: Record<string, string>) => {
+
+}
+
 /**
  *
  *
@@ -52,7 +56,7 @@ const SignupPage: React.FC<Props> = () => {
   return (
     <div className={styles.signupPage}>
       <Header />
-      <SignupForm fields={fields} />
+      <SignupForm fields={fields} onSubmit={signup} />
     </div>
   )
 }

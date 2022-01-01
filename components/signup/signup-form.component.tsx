@@ -19,7 +19,8 @@ export interface FormField {
 }
 
 interface Props {
-  fields?: FormField[]
+  fields?: FormField[],
+  onSubmit: (data: Record<string, string>) => void | Promise<void>,
 }
 /**
  *
@@ -28,6 +29,7 @@ interface Props {
  */
 const SignupForm: React.FC<Props> = ({
   fields = [],
+  onSubmit,
 }) => {
 
   const defaultValues = useMemo(() => fields.reduce((acc: Record<string, string>, cur) => {
@@ -93,7 +95,7 @@ const SignupForm: React.FC<Props> = ({
     e.preventDefault();
     if (validateFields()) {
       console.log(formData);
-
+      onSubmit(formData);
       // make api call to store the user credentials
       router.push('/create-team/id');
     }
