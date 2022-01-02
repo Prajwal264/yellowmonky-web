@@ -9,3 +9,10 @@ mutation RegisterAdmin($username: String!, $email: String!, $password: String!) 
     updatedAt
   }
 }
+
+mutation EditTeam($name: String, $id: String!, $ownerId: String!, $channels: [String], $members: [String]) {
+  editTeam(name: $name, id: $id, ownerId: $ownerId, channels: $channels, members: $members) {
+    teamId,
+    channels
+  }
+}

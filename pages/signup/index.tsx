@@ -5,6 +5,7 @@ import SignupForm, { FormField } from '../../components/signup/signup-form.compo
 import { useRouter } from 'next/router';
 import { useRegisterAdminMutation } from '../../apollo/generated/graphql';
 import toast from 'react-hot-toast';
+import cookie from 'react-cookies';
 
 interface Props {
 
@@ -69,10 +70,12 @@ const SignupPage: React.FC<Props> = () => {
           username: formData.username,
         }
       })
+      cookie.save('userId', response.data?.registerAdmin.id!, {});
+      const teamId = response.data?.registerAdmin.teamId;
       router.push({
         pathname: '/create-team/[id]',
         query: {
-          id: response.data?.registerAdmin.id
+          id: teamId,
         },
       });
     } catch (err: any) {

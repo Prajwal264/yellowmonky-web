@@ -28,6 +28,23 @@ export type AdminUser = EntityWrapper & {
   username: Scalars['String'];
 };
 
+export type Channel = EntityWrapper & {
+  __typename?: 'Channel';
+  adminId: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  teamId: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type EditTeamResponse = {
+  __typename?: 'EditTeamResponse';
+  channels: Array<Scalars['String']>;
+  teamId: Scalars['String'];
+};
+
 /** parent entity type. This consists the shared logic and fields for all entities. */
 export type EntityWrapper = {
   createdAt: Scalars['DateTime'];
@@ -44,8 +61,19 @@ export type Error = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  editTeam: EditTeamResponse;
   login: UserResponse;
   registerAdmin: RegisterAdminResponse;
+};
+
+
+export type MutationEditTeamArgs = {
+  channels?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  displayPicture?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+  members?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  name?: InputMaybe<Scalars['String']>;
+  ownerId: Scalars['String'];
 };
 
 
@@ -92,9 +120,20 @@ export type TeamMember = EntityWrapper & {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   role: Scalars['String'];
+  status: Scalars['String'];
   teamId: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   userId: Scalars['String'];
+};
+
+export type TeamResponse = EntityWrapper & {
+  __typename?: 'TeamResponse';
+  createdAt: Scalars['DateTime'];
+  displayPicture?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  ownerId: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type User = EntityWrapper & {
@@ -125,6 +164,17 @@ export type RegisterAdminMutationVariables = Exact<{
 
 
 export type RegisterAdminMutation = { __typename?: 'Mutation', registerAdmin: { __typename?: 'RegisterAdminResponse', id: string, email: string, username: string, profileImage?: string | null | undefined, teamId: string, createdAt: any, updatedAt: any } };
+
+export type EditTeamMutationVariables = Exact<{
+  name?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+  ownerId: Scalars['String'];
+  channels?: InputMaybe<Array<InputMaybe<Scalars['String']>> | InputMaybe<Scalars['String']>>;
+  members?: InputMaybe<Array<InputMaybe<Scalars['String']>> | InputMaybe<Scalars['String']>>;
+}>;
+
+
+export type EditTeamMutation = { __typename?: 'Mutation', editTeam: { __typename?: 'EditTeamResponse', teamId: string, channels: Array<string> } };
 
 
 export const RegisterAdminDocument = gql`
@@ -168,3 +218,47 @@ export function useRegisterAdminMutation(baseOptions?: Apollo.MutationHookOption
 export type RegisterAdminMutationHookResult = ReturnType<typeof useRegisterAdminMutation>;
 export type RegisterAdminMutationResult = Apollo.MutationResult<RegisterAdminMutation>;
 export type RegisterAdminMutationOptions = Apollo.BaseMutationOptions<RegisterAdminMutation, RegisterAdminMutationVariables>;
+export const EditTeamDocument = gql`
+    mutation EditTeam($name: String, $id: String!, $ownerId: String!, $channels: [String], $members: [String]) {
+  editTeam(
+    name: $name
+    id: $id
+    ownerId: $ownerId
+    channels: $channels
+    members: $members
+  ) {
+    teamId
+    channels
+  }
+}
+    `;
+export type EditTeamMutationFn = Apollo.MutationFunction<EditTeamMutation, EditTeamMutationVariables>;
+
+/**
+ * __useEditTeamMutation__
+ *
+ * To run a mutation, you first call `useEditTeamMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditTeamMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editTeamMutation, { data, loading, error }] = useEditTeamMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      id: // value for 'id'
+ *      ownerId: // value for 'ownerId'
+ *      channels: // value for 'channels'
+ *      members: // value for 'members'
+ *   },
+ * });
+ */
+export function useEditTeamMutation(baseOptions?: Apollo.MutationHookOptions<EditTeamMutation, EditTeamMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditTeamMutation, EditTeamMutationVariables>(EditTeamDocument, options);
+      }
+export type EditTeamMutationHookResult = ReturnType<typeof useEditTeamMutation>;
+export type EditTeamMutationResult = Apollo.MutationResult<EditTeamMutation>;
+export type EditTeamMutationOptions = Apollo.BaseMutationOptions<EditTeamMutation, EditTeamMutationVariables>;

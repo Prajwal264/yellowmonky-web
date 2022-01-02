@@ -8,8 +8,14 @@ import styles from '../../styles/pages/create-team.module.scss';
 import { ArrayElement } from '../../types/generics.type';
 import Avatar from 'react-avatar';
 import { useRouter } from 'next/router';
+import { GetServerSidePropsContext, PreviewData } from 'next';
+import { NextParsedUrlQuery } from 'next/dist/server/request-meta';
+import { useEditTeamMutation } from '../../apollo/generated/graphql';
+import cookie from 'react-cookies';
 interface Props {
-
+  data: {
+    teamId: string,
+  }
 }
 
 enum Steps {
@@ -61,10 +67,11 @@ const defaultFormData: FormData = {
  *
  * @return {*} 
  */
-const CreateTeamPage: React.FC<Props> = () => {
+const CreateTeamPage: React.FC<Props> = ({ data: { teamId } }) => {
   const [formData, setFormData] = useState(defaultFormData);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const router = useRouter();
+  const [editTeam] = useEditTeamMutation();
   /**
    *
    *
@@ -163,13 +170,38 @@ const CreateTeamPage: React.FC<Props> = () => {
     }
   }
 
-  const sumbitTeamData = (ignoreEmails = false) => {
-    console.log('submitable', formData);
+  const sumbitTeamData = async (ignoreEmails = false) => {
+    const payload: any = { ...formData };
+    if (ignoreEmails) {
+      delete payload.members;
+    }
+    if (formData.purpose) {
+      payload.channels = [formData.purpose]
+    }
+    console.log('submitable', payload);
 
-    // TODO: create team 
-    // associate team with current user
-    // send mails to invite users to team, if any
-    router.push('/app');
+    try {
+      const editTeamResponse = await editTeam({
+        variables: {
+          id: teamId,
+          ownerId: cookie.load('userId'),
+          ...payload,
+        }
+      })
+      const createdChannels = editTeamResponse.data?.editTeam.channels;
+
+      router.push({
+        pathname: '/app/client/[teamId]/[channelId]',
+
+        query: {
+          teamId,
+          channelId: createdChannels![createdChannels?.length! - 1], // TODO: update channelId from api
+        }
+      });
+    } catch (error: any) {
+      toast.error(error.message)
+      return;
+    }
   }
 
   const renderFormInput = (step: ArrayElement<typeof STEP_DATA>) => {
@@ -182,6 +214,7 @@ const CreateTeamPage: React.FC<Props> = () => {
                 key={`create-team-form-data-member-${index}`}
                 name={step.fieldName}
                 type={step.type}
+                value={formData.members[index]}
                 onChange={(e) => updateMemberEmail(e, index)}
                 inputAttributes={{
                   placeholder: step.placeholder,
@@ -196,6 +229,7 @@ const CreateTeamPage: React.FC<Props> = () => {
     return (<FormInput
       name={step.fieldName}
       type={step.type}
+      value={formData[step.fieldName as keyof FormData] as string}
       onChange={handleChange}
       inputAttributes={{
         placeholder: step.placeholder,
@@ -232,9 +266,9 @@ const CreateTeamPage: React.FC<Props> = () => {
                   <h5 className={styles.heading}>
                     Direct messages
                   </h5>
-                  {formData.members.filter((member) => (member && handleEmailValidation(member))).map((member) => {
+                  {formData.members.filter((member) => (member && handleEmailValidation(member))).map((member, index) => {
                     const name = member.split("@")[0];
-                    return (<div className={styles.listItem}>
+                    return (<div className={styles.listItem} key={`form-data-member-${name}-${index}`}>
                       <Avatar name={name} size="20" />{name}
                     </div>)
                   })}
@@ -274,6 +308,16 @@ const CreateTeamPage: React.FC<Props> = () => {
       </div>
     </div >
   )
+}
+
+export const getServerSideProps = (context: GetServerSidePropsContext<NextParsedUrlQuery, PreviewData>) => {
+  return {
+    props: {
+      data: {
+        teamId: context.query.id,
+      }
+    }
+  }
 }
 
 export default CreateTeamPage
