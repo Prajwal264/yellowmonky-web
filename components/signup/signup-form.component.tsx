@@ -1,11 +1,9 @@
-import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { handleEmailValidation } from '../../helpers/validation.helper';
 import FormInput from '../shared/form-input/form-input.component';
 import PrimaryButton from '../shared/primary-button/primary-button.component';
 import styles from './signup-form.module.scss';
-import { v4 as uuidV4 } from 'uuid'
 
 export interface FormField {
   name: string,
@@ -38,7 +36,6 @@ const SignupForm: React.FC<Props> = ({
   }, {}), [fields])
 
   const [formData, setFormData] = useState(defaultValues)
-  const router = useRouter();
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = useCallback(
     (e) => {
@@ -96,8 +93,6 @@ const SignupForm: React.FC<Props> = ({
     if (validateFields()) {
       console.log(formData);
       onSubmit(formData);
-      // make api call to store the user credentials
-      router.push('/create-team/id');
     }
   }
 

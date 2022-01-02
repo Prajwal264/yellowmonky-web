@@ -6,7 +6,7 @@ import styles from './form-input.module.scss';
 interface Props {
   type?: HTMLInputTypeAttribute,
   name: string,
-  value: string,
+  value?: string,
   onChange: React.ChangeEventHandler<HTMLInputElement>,
   inputAttributes?: React.InputHTMLAttributes<HTMLInputElement>,
 }
@@ -20,7 +20,7 @@ interface Props {
 const FormInput: React.FC<Props> = ({
   type = 'text',
   name,
-  value = '',
+  value,
   onChange,
   inputAttributes = {},
 }) => {
@@ -53,7 +53,7 @@ const FormInput: React.FC<Props> = ({
       name={name}
       {...inputAttributes}
       type={type}
-      value={value}
+      {...(value && { value: value })}
       onChange={handleChange}
     />
   );

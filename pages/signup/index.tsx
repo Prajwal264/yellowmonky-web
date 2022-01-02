@@ -2,6 +2,7 @@ import React from 'react';
 import styles from '../../styles/pages/signup.module.scss';
 import Header from '../../components/shared/header/header.component';
 import SignupForm, { FormField } from '../../components/signup/signup-form.component';
+import { useRouter } from 'next/router';
 
 interface Props {
 
@@ -43,16 +44,28 @@ const fields: FormField[] = [{
   }
 }]
 
-const signup = (formData: Record<string, string>) => {
-
-}
-
 /**
  *
  *
  * @return {*} 
  */
 const SignupPage: React.FC<Props> = () => {
+  const router = useRouter();
+
+  /**
+   *
+   *
+   * @param {Record<string, string>} formData
+   */
+  const signup = (formData: Record<string, string>) => {
+    router.push({
+      pathname: '/create-team/[id]',
+      query: {
+        id: 1
+      }, // TODO: don't hardcode id
+    });
+  }
+
   return (
     <div className={styles.signupPage}>
       <Header />

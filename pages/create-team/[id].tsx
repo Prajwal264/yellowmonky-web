@@ -179,6 +179,7 @@ const CreateTeamPage: React.FC<Props> = () => {
           {formData.members.map((_, index) => {
             return (
               <FormInput
+                key={`create-team-form-data-member-${index}`}
                 name={step.fieldName}
                 type={step.type}
                 onChange={(e) => updateMemberEmail(e, index)}
