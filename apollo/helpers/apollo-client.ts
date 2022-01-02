@@ -1,4 +1,5 @@
 import { ApolloClient, ApolloLink, createHttpLink, InMemoryCache } from "@apollo/client";
+import { onError } from 'apollo-link-error';
 // import { createUploadLink } from "apollo-upload-client";
 // import { GenerateNewAccessTokenDocument } from "apollo/generated/graphql";
 // import { Cookies } from "types/cookie.types";
@@ -48,39 +49,38 @@ import { ApolloClient, ApolloLink, createHttpLink, InMemoryCache } from "@apollo
 //     });
 // };
 
-// const errorLink = onError(({ graphQLErrors, operation, forward }) => {
-//   if (graphQLErrors) {
-//     // eslint-disable-next-line no-restricted-syntax
-//     for (let err of graphQLErrors) {
-//       switch (err.message) {
-//         case "UNAUTHORIZED":
-//           return fromPromise(
-//             getNewToken().catch(() => {
-//               // Handle token refresh errors e.g clear stored tokens, redirect to login
-//               Router.push(getPathToNavigate(PAGE_KIND.LOGIN));
-//               cookie.remove(Cookies.ACCESSTOKEN);
-//             })
-//           )
-//             .filter((value) => Boolean(value))
-//             .flatMap((accessToken) => {
-//               const oldHeaders = operation.getContext().headers;
-//               // modify the operation context with a new token
-//               operation.setContext({
-//                 headers: {
-//                   ...oldHeaders,
-//                   authorization: `Bearer ${accessToken}`,
-//                 },
-//               });
-//               // retry the request, returning the new observable
-//               return forward(operation);
-//             });
-//         default:
-//           console.log("");
-//       }
-//     }
-//   }
-//   return null;
-// });
+const errorLink = onError(({ graphQLErrors, operation, forward }) => {
+  if (graphQLErrors) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (let err of graphQLErrors) {
+      switch (err.message) {
+        // case "UNAUTHORIZED":
+        //   return fromPromise(
+        //     getNewToken().catch(() => {
+        //       // Handle token refresh errors e.g clear stored tokens, redirect to login
+        //       Router.push(getPathToNavigate(PAGE_KIND.LOGIN));
+        //       cookie.remove(Cookies.ACCESSTOKEN);
+        //     })
+        //   )
+        //     .filter((value) => Boolean(value))
+        //     .flatMap((accessToken) => {
+        //       const oldHeaders = operation.getContext().headers;
+        //       // modify the operation context with a new token
+        //       operation.setContext({
+        //         headers: {
+        //           ...oldHeaders,
+        //           authorization: `Bearer ${accessToken}`,
+        //         },
+        //       });
+        //       // retry the request, returning the new observable
+        //       return forward(operation);
+        //     });
+        default:
+          forward(operation);
+      }
+    }
+  }
+});
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:4000/graphql/',
@@ -90,7 +90,8 @@ const link = ApolloLink.from([httpLink]);
 
 const client = new ApolloClient({
   // link: ApolloLink.from([errorLink as any, authLink, uploadLink]),
-  link: link,
+  link: ApolloLink.from([errorLink as any, link]),
+  // link: link,
   cache: new InMemoryCache(),
 });
 

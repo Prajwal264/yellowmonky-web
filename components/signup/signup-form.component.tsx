@@ -91,7 +91,6 @@ const SignupForm: React.FC<Props> = ({
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     if (validateFields()) {
-      console.log(formData);
       onSubmit(formData);
     }
   }

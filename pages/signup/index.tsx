@@ -3,6 +3,8 @@ import styles from '../../styles/pages/signup.module.scss';
 import Header from '../../components/shared/header/header.component';
 import SignupForm, { FormField } from '../../components/signup/signup-form.component';
 import { useRouter } from 'next/router';
+import { useRegisterAdminMutation } from '../../apollo/generated/graphql';
+import toast from 'react-hot-toast';
 
 interface Props {
 
@@ -51,19 +53,31 @@ const fields: FormField[] = [{
  */
 const SignupPage: React.FC<Props> = () => {
   const router = useRouter();
+  const [registerAdmin] = useRegisterAdminMutation()
 
   /**
    *
    *
    * @param {Record<string, string>} formData
    */
-  const signup = (formData: Record<string, string>) => {
-    router.push({
-      pathname: '/create-team/[id]',
-      query: {
-        id: 1
-      }, // TODO: don't hardcode id
-    });
+  const signup = async (formData: Record<string, string>) => {
+    try {
+      const response = await registerAdmin({
+        variables: {
+          email: formData.email,
+          password: formData.password,
+          username: formData.username,
+        }
+      })
+      router.push({
+        pathname: '/create-team/[id]',
+        query: {
+          id: response.data?.registerAdmin.id
+        },
+      });
+    } catch (err: any) {
+      toast.error(err.message)
+    }
   }
 
   return (
