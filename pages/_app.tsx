@@ -5,6 +5,8 @@ import { Toaster } from 'react-hot-toast';
 import AppLayout from '../components/app-layout/app-layout.component';
 import '../styles/utils/_global.scss';
 import 'emoji-mart/css/emoji-mart.css'
+import client from "../apollo/helpers/apollo-client";
+import { ApolloProvider } from '@apollo/client';
 
 const appRoute = `/app/`;
 
@@ -21,10 +23,12 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
 
   return (
     <React.Fragment>
-      {component}
-      <Toaster
-        position="bottom-left"
-      />
+      <ApolloProvider client={client}>
+        {component}
+        <Toaster
+          position="bottom-left"
+        />
+      </ApolloProvider>
     </React.Fragment>
   );
 };

@@ -1,0 +1,11 @@
+mutation RegisterAdmin($username: String!, $email: String!, $password: String!) {
+  registerAdmin(username: $username, email: $email, password: $password) {
+    id
+    email
+    username
+    profileImage
+    teamId
+    createdAt
+    updatedAt
+  }
+}

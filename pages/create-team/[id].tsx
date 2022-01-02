@@ -4,7 +4,7 @@ import FormInput from '../../components/shared/form-input/form-input.component';
 import PrimaryButton from '../../components/shared/primary-button/primary-button.component';
 import { replacePlacholdersWithValues } from '../../helpers/manipulation.helper';
 import { handleEmailValidation } from '../../helpers/validation.helper';
-import styles from '../../styles/pages/create-team.module.scss';
+import styles from 'styles/pages/create-team.module.scss';
 import { ArrayElement } from '../../types/generics.type';
 import Avatar from 'react-avatar';
 import { useRouter } from 'next/router';
