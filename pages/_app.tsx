@@ -8,6 +8,7 @@ import { ApolloProvider } from '@apollo/client';
 import '../styles/utils/_global.scss';
 import 'emoji-mart/css/emoji-mart.css'
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
+import AppContextProvider from '../context/AppContextProvider';
 
 const appRoute = `/app/`;
 
@@ -17,9 +18,12 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
   let component = <Component {...pageProps} />;
 
   if (router.pathname.startsWith(appRoute)) {
-    component = <AppLayout>
-      {component}
-    </AppLayout>
+    component =
+      <AppContextProvider>
+        <AppLayout>
+          {component}
+        </AppLayout>
+      </AppContextProvider>
   }
 
   return (

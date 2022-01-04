@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Children, useContext, useEffect, useMemo, useState } from 'react';
 import ChannelSidebarItem from '../channelsidebaritem/channelsidebaritem.component';
 import styles from './channelsidebar.module.scss';
 import { GrChannel } from 'react-icons/gr'
@@ -8,28 +8,76 @@ import { IoMdAddCircle } from 'react-icons/io'
 import { Tree } from 'antd';
 import { DataNode } from 'antd/lib/tree';
 import Avatar from 'react-avatar';
+import { FetchAllChannelsQuery, useFetchAllChannelsLazyQuery } from '../../../apollo/generated/graphql';
+import { AppContext } from '../../../context/AppContextProvider';
+import toast from 'react-hot-toast';
 
 interface Props {
 
 }
+const contructTree = (config: {
+  parentNode: DataNode,
+  children: FetchAllChannelsQuery['allChannels'],
+  lastChild: DataNode,
+}, treeType: 'channels' | 'members') => {
+  const { parentNode, children, lastChild } = config;
+  const tree = [parentNode];
+  const childNodes = children.map((child) => ({
+    title: <ChannelSidebarItem icon={<BiHash />} name={child?.name!} />,
+    key: child?.id!,
+  }))
+  parentNode.children?.push(...childNodes);
+  parentNode.children!.push(lastChild);
+  return tree;
+}
 
 const ChannelSidebar: React.FC<Props> = ({
-
 }) => {
-  const channelTree: DataNode[] = [{
-    title: 'Channel',
-    key: 'channel',
-    children: [{
-      title: <ChannelSidebarItem icon={<BiHash />} name='general' />,
-      key: 'general',
-    }, {
-      title: <ChannelSidebarItem icon={<BiHash />} name='communication' />,
-      key: 'communication',
-    }, {
-      title: <ChannelSidebarItem icon={<IoMdAddCircle />} name='Add Channel' />,
-      key: 'add-channels',
-    }]
-  }]
+  const { teamId } = useContext(AppContext);
+  const [fetchAllChannels] = useFetchAllChannelsLazyQuery();
+  const [channels, setChannels] = useState<FetchAllChannelsQuery['allChannels']>([]);
+  useEffect(() => {
+    if (teamId) {
+      loadDependencies();
+    }
+  }, [teamId]);
+
+  const loadDependencies = async () => {
+    const response = await fetchAllChannels({
+      variables: {
+        teamId: teamId!
+      }
+    })
+    if (response.error) {
+      toast.error(response.error.message);
+      return;
+    }
+    const allChannels = response.data?.allChannels;
+    if (allChannels?.length) {
+      setChannels(allChannels);
+    }
+  }
+  const channelTree: DataNode[] = useMemo(() => {
+    const parentNode: DataNode = {
+      title: 'Channel',
+      key: 'channel',
+      children: [],
+    };
+    if (channels.length) {
+      const lastChild = {
+        title: <ChannelSidebarItem icon={<IoMdAddCircle />} name='Add Channel' />,
+        key: 'add-channels',
+        children: []
+      }
+      const tree = contructTree({
+        parentNode,
+        children: channels,
+        lastChild
+      }, 'channels');
+      return tree;
+    }
+    return [parentNode];
+  }, [channels])
   const memberTree: DataNode[] = [{
     title: 'Direct messages',
     key: 'direct-messages',
@@ -61,5 +109,5 @@ const ChannelSidebar: React.FC<Props> = ({
     </div>
   )
 }
+export default ChannelSidebar;
 
-export default ChannelSidebar
