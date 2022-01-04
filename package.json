@@ -2,6 +2,7 @@
   "name": "yellowmonky-web",
   "dependencies": {
     "@apollo/client": "^3.5.6",
+    "antd": "^4.18.2",
     "apollo-link-error": "^1.1.13",
     "apollo-upload-client": "^17.0.0",
     "core-js-pure": "^3.20.0",
@@ -14,6 +15,7 @@
     "react-dom": "^17.0.2",
     "react-dropzone": "^11.4.2",
     "react-hot-toast": "^2.1.1",
+    "react-icons": "^4.3.1",
     "sass": "^1.45.0",
     "uuid": "^8.3.2"
   },
@@ -27,16 +29,16 @@
   },
   "devDependencies": {
     "@graphql-codegen/cli": "2.3.1",
+    "@graphql-codegen/typescript": "2.4.2",
+    "@graphql-codegen/typescript-document-nodes": "2.2.2",
+    "@graphql-codegen/typescript-graphql-files-modules": "2.1.1",
+    "@graphql-codegen/typescript-operations": "2.2.2",
+    "@graphql-codegen/typescript-react-apollo": "3.2.3",
     "@types/apollo-upload-client": "^14.1.0",
     "@types/react": "^17.0.37",
     "@types/react-cookies": "^0.1.0",
     "@types/uuid": "^8.3.3",
     "next-images": "^1.8.4",
-    "typescript": "^4.5.4",
-    "@graphql-codegen/typescript-graphql-files-modules": "2.1.1",
-    "@graphql-codegen/typescript": "2.4.2",
-    "@graphql-codegen/typescript-react-apollo": "3.2.3",
-    "@graphql-codegen/typescript-document-nodes": "2.2.2",
-    "@graphql-codegen/typescript-operations": "2.2.2"
+    "typescript": "^4.5.4"
   }
 }

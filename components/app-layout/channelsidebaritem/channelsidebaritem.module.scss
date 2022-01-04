@@ -1,0 +1,28 @@
+.channelSidebarItem {
+  height: 28px;
+  line-height: 28px;
+  padding: 0 16px;
+  position: relative;
+  user-select: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-radius: 0;
+  color: rgb(203, 222, 251);
+  display: flex;
+  align-items: center;
+  svg {
+    width: 26px;
+    path {
+      stroke: rgb(203, 222, 251);
+    }
+  }
+  .channelSidebarItemName {
+    margin-right: auto;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 1;
+  }
+}

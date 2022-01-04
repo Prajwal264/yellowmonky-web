@@ -1,0 +1,6 @@
+query FetchAllChannels($teamId: String!) {
+  allChannels(teamId: $teamId) {
+    id
+    name
+  }
+}

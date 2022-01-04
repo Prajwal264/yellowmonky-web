@@ -1,3 +1,4 @@
+# user
 mutation RegisterAdmin($username: String!, $email: String!, $password: String!) {
   registerAdmin(username: $username, email: $email, password: $password) {
     id
@@ -7,12 +8,5 @@ mutation RegisterAdmin($username: String!, $email: String!, $password: String!) 
     teamId
     createdAt
     updatedAt
-  }
-}
-
-mutation EditTeam($name: String, $id: String!, $ownerId: String!, $channels: [String], $members: [String]) {
-  editTeam(name: $name, id: $id, ownerId: $ownerId, channels: $channels, members: $members) {
-    teamId,
-    channels
   }
 }

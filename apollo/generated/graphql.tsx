@@ -91,7 +91,13 @@ export type MutationRegisterAdminArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  allChannels: Array<Maybe<Channel>>;
   getUsers: Array<Maybe<User>>;
+};
+
+
+export type QueryAllChannelsArgs = {
+  teamId: Scalars['String'];
 };
 
 export type RegisterAdminResponse = EntityWrapper & {
@@ -119,12 +125,25 @@ export type TeamMember = EntityWrapper & {
   __typename?: 'TeamMember';
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
-  role: Scalars['String'];
-  status: Scalars['String'];
+  role: TeamMemberRole;
+  status: TeamMemberStatus;
   teamId: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   userId: Scalars['String'];
 };
+
+/** The team member role type */
+export enum TeamMemberRole {
+  Admin = 'ADMIN',
+  Member = 'MEMBER'
+}
+
+/** The team member status type */
+export enum TeamMemberStatus {
+  Invited = 'INVITED',
+  Joined = 'JOINED',
+  Rejected = 'REJECTED'
+}
 
 export type TeamResponse = EntityWrapper & {
   __typename?: 'TeamResponse';
@@ -175,6 +194,13 @@ export type EditTeamMutationVariables = Exact<{
 
 
 export type EditTeamMutation = { __typename?: 'Mutation', editTeam: { __typename?: 'EditTeamResponse', teamId: string, channels: Array<string> } };
+
+export type FetchAllChannelsQueryVariables = Exact<{
+  teamId: Scalars['String'];
+}>;
+
+
+export type FetchAllChannelsQuery = { __typename?: 'Query', allChannels: Array<{ __typename?: 'Channel', id: string, name: string } | null | undefined> };
 
 
 export const RegisterAdminDocument = gql`
@@ -262,3 +288,39 @@ export function useEditTeamMutation(baseOptions?: Apollo.MutationHookOptions<Edi
 export type EditTeamMutationHookResult = ReturnType<typeof useEditTeamMutation>;
 export type EditTeamMutationResult = Apollo.MutationResult<EditTeamMutation>;
 export type EditTeamMutationOptions = Apollo.BaseMutationOptions<EditTeamMutation, EditTeamMutationVariables>;
+export const FetchAllChannelsDocument = gql`
+    query FetchAllChannels($teamId: String!) {
+  allChannels(teamId: $teamId) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useFetchAllChannelsQuery__
+ *
+ * To run a query within a React component, call `useFetchAllChannelsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchAllChannelsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchAllChannelsQuery({
+ *   variables: {
+ *      teamId: // value for 'teamId'
+ *   },
+ * });
+ */
+export function useFetchAllChannelsQuery(baseOptions: Apollo.QueryHookOptions<FetchAllChannelsQuery, FetchAllChannelsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchAllChannelsQuery, FetchAllChannelsQueryVariables>(FetchAllChannelsDocument, options);
+      }
+export function useFetchAllChannelsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchAllChannelsQuery, FetchAllChannelsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchAllChannelsQuery, FetchAllChannelsQueryVariables>(FetchAllChannelsDocument, options);
+        }
+export type FetchAllChannelsQueryHookResult = ReturnType<typeof useFetchAllChannelsQuery>;
+export type FetchAllChannelsLazyQueryHookResult = ReturnType<typeof useFetchAllChannelsLazyQuery>;
+export type FetchAllChannelsQueryResult = Apollo.QueryResult<FetchAllChannelsQuery, FetchAllChannelsQueryVariables>;

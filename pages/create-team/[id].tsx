@@ -192,7 +192,6 @@ const CreateTeamPage: React.FC<Props> = ({ data: { teamId } }) => {
 
       router.push({
         pathname: '/app/client/[teamId]/[channelId]',
-
         query: {
           teamId,
           channelId: createdChannels![createdChannels?.length! - 1], // TODO: update channelId from api
