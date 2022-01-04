@@ -1,4 +1,4 @@
-import React, { Children, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import ChannelSidebarItem from '../channelsidebaritem/channelsidebaritem.component';
 import styles from './channelsidebar.module.scss';
 import { GrChannel } from 'react-icons/gr'
@@ -8,7 +8,7 @@ import { IoMdAddCircle } from 'react-icons/io'
 import { Tree } from 'antd';
 import { DataNode } from 'antd/lib/tree';
 import Avatar from 'react-avatar';
-import { FetchAllChannelsQuery, useFetchAllChannelsLazyQuery } from '../../../apollo/generated/graphql';
+import { FetchAllChannelsQuery, FetchAllTeamMembersQuery, useFetchAllChannelsLazyQuery, useFetchAllTeamMembersLazyQuery } from '../../../apollo/generated/graphql';
 import { AppContext } from '../../../context/AppContextProvider';
 import toast from 'react-hot-toast';
 
@@ -17,15 +17,23 @@ interface Props {
 }
 const contructTree = (config: {
   parentNode: DataNode,
-  children: FetchAllChannelsQuery['allChannels'],
+  children: any, // TODO: fix type
   lastChild: DataNode,
 }, treeType: 'channels' | 'members') => {
   const { parentNode, children, lastChild } = config;
   const tree = [parentNode];
-  const childNodes = children.map((child) => ({
-    title: <ChannelSidebarItem icon={<BiHash />} name={child?.name!} />,
-    key: child?.id!,
-  }))
+  let childNodes = [];
+  if (treeType === 'channels') {
+    childNodes = children.map((child: any) => ({
+      title: <ChannelSidebarItem icon={<BiHash />} name={child?.name!} />,
+      key: child?.id!,
+    }))
+  } else {
+    childNodes = children.map((child: any) => ({
+      title: <ChannelSidebarItem icon={<Avatar name={child.user.username} />} name={child.user.username} />,
+      key: child.id,
+    }))
+  }
   parentNode.children?.push(...childNodes);
   parentNode.children!.push(lastChild);
   return tree;
@@ -35,7 +43,9 @@ const ChannelSidebar: React.FC<Props> = ({
 }) => {
   const { teamId } = useContext(AppContext);
   const [fetchAllChannels] = useFetchAllChannelsLazyQuery();
+  const [fetchAllMembers] = useFetchAllTeamMembersLazyQuery();
   const [channels, setChannels] = useState<FetchAllChannelsQuery['allChannels']>([]);
+  const [members, setMembers] = useState<FetchAllTeamMembersQuery['allTeamMembers']>([]);
   useEffect(() => {
     if (teamId) {
       loadDependencies();
@@ -43,24 +53,38 @@ const ChannelSidebar: React.FC<Props> = ({
   }, [teamId]);
 
   const loadDependencies = async () => {
-    const response = await fetchAllChannels({
+    const channelsPromise = fetchAllChannels({
+      variables: {
+        teamId: teamId!
+      }
+    });
+    const membersPromise = fetchAllMembers({
       variables: {
         teamId: teamId!
       }
     })
-    if (response.error) {
-      toast.error(response.error.message);
+    const [channelsResponse, membersResponse] = await Promise.all([channelsPromise, membersPromise]);
+    if (channelsResponse.error) {
+      toast.error(channelsResponse.error.message);
       return;
     }
-    const allChannels = response.data?.allChannels;
+    if (membersResponse.error) {
+      toast.error(membersResponse.error.message);
+      return;
+    }
+    const allChannels = channelsResponse.data?.allChannels;
     if (allChannels?.length) {
       setChannels(allChannels);
+    }
+    const allTeamMembers = membersResponse.data?.allTeamMembers;
+    if (allTeamMembers?.length) {
+      setMembers(allTeamMembers);
     }
   }
   const channelTree: DataNode[] = useMemo(() => {
     const parentNode: DataNode = {
-      title: 'Channel',
-      key: 'channel',
+      title: 'Channels',
+      key: 'channels',
       children: [],
     };
     if (channels.length) {
@@ -77,27 +101,37 @@ const ChannelSidebar: React.FC<Props> = ({
       return tree;
     }
     return [parentNode];
-  }, [channels])
-  const memberTree: DataNode[] = [{
-    title: 'Direct messages',
-    key: 'direct-messages',
-    children: [{
-      title: <ChannelSidebarItem icon={<Avatar name='excitedchips' />} name='excitedchips' />,
-      key: 'general',
-    }, {
-      title: <ChannelSidebarItem icon={<Avatar name='prajwal' />} name='prajwal' />,
-      key: 'communication',
-    }, {
-      title: <ChannelSidebarItem icon={<IoMdAddCircle />} name='Add Channel' />,
-      key: 'add-channels',
-    }]
-  }]
+  }, [channels]);
+
+  const memberTree: DataNode[] = useMemo(() => {
+    const parentNode: DataNode = {
+      title: 'Direct messages',
+      key: 'direct-messages',
+      children: [],
+    };
+    if (members.length) {
+      const lastChild = {
+        title: <ChannelSidebarItem icon={<IoMdAddCircle />} name='Add Members' />,
+        key: 'add-members',
+        children: []
+      }
+      const tree = contructTree({
+        parentNode,
+        children: members,
+        lastChild
+      }, 'members');
+      return tree;
+    }
+    return [parentNode];
+  }, [members]);
+
   return (
     <div className={styles.channelSidebar}>
       <div className={styles.channelSidebarList}>
         <ChannelSidebarItem icon={<GrChannel />} name='Channel Browser' />
         <ChannelSidebarItem icon={<RiContactsBookFill />} name='People & user groups' />
         <Tree
+          defaultExpandedKeys={['channels']}
           className={styles.channelTree}
           treeData={channelTree}
         />

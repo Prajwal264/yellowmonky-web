@@ -1,0 +1,11 @@
+query FetchAllTeamMembers($teamId: String!) {
+  allTeamMembers(teamId: $teamId) {
+    id
+   	user {
+      id
+      email
+      username
+      profileImage
+    }
+  }
+}
