@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
+import toast from 'react-hot-toast';
+import { useFetchChannelLazyQuery } from '../../../apollo/generated/graphql';
+import { AppContext } from '../../../context/AppContextProvider';
 import styles from './primary-view-header.module.scss';
 
 interface Props {
@@ -8,6 +11,30 @@ interface Props {
 const PrimaryViewHeader: React.FC<Props> = ({
 
 }) => {
+  const { channelId } = useContext(AppContext);
+  const [fetchChannel, { data: channelInfo, error }] = useFetchChannelLazyQuery();
+  useEffect(() => {
+    if (channelId) {
+      loadDependencies();
+    }
+  }, [channelId])
+
+  const loadDependencies = async () => {
+    fetchChannel({
+      variables: {
+        channelId: channelId!,
+      }
+    }).catch((err) => {
+      console.log(err)
+    })
+  }
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message);
+    }
+  }, [error])
+
   return (
     <div className={styles.primaryViewHeader}>
       <div className={styles.text}>
@@ -15,7 +42,7 @@ const PrimaryViewHeader: React.FC<Props> = ({
           <button className={styles.channelButton}>
             <div className={styles.headerTitle}>
               <span>#&nbsp;</span>
-              <span>general</span>
+              <span>{channelInfo?.channel?.name}</span>
             </div>
           </button>
         </div>

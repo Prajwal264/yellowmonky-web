@@ -16,7 +16,9 @@ const PrimaryView: React.FC<Props> = ({
   }, [])
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
   return (
-    <div className={styles.fileDragDropContainer} {...getRootProps()}>
+    <div className={styles.fileDragDropContainer} {...getRootProps({
+      onClick: e => e.stopPropagation()
+    })}>
       <input {...getInputProps()} />
       {isDragActive ?
         <FileDropActive /> :

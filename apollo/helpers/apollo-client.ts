@@ -1,4 +1,4 @@
-import { ApolloClient, ApolloLink, createHttpLink, InMemoryCache } from "@apollo/client";
+import { ApolloClient, ApolloLink, createHttpLink, DefaultOptions, InMemoryCache } from "@apollo/client";
 import { onError } from 'apollo-link-error';
 // import { createUploadLink } from "apollo-upload-client";
 // import { GenerateNewAccessTokenDocument } from "apollo/generated/graphql";

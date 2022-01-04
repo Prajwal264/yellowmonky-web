@@ -12,7 +12,6 @@ import AppContextProvider from '../context/AppContextProvider';
 
 const appRoute = `/app/`;
 
-
 const MyApp = ({ Component, pageProps, router }: AppProps) => {
 
   let component = <Component {...pageProps} />;

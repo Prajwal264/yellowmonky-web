@@ -9,18 +9,21 @@ import { AppContext } from '../../../../../context/AppContextProvider';
 interface Props {
   data: {
     teamId: string;
+    channelId: string;
   }
 }
 
 const ChannelIdPage: React.FC<Props> = ({
   data: {
     teamId,
+    channelId,
   }
 }) => {
-  const { setTeamId } = useContext(AppContext)
+  const { setTeamId, setChannelId } = useContext(AppContext)
   useEffect(() => {
     setTeamId(teamId);
-  }, [])
+    setChannelId(channelId);
+  }, [channelId])
   return (
     <React.Fragment>
       <PrimaryViewHeader />
@@ -35,6 +38,7 @@ export const getServerSideProps = (context: GetServerSidePropsContext<NextParsed
     props: {
       data: {
         teamId: context.query.teamId,
+        channelId: context.query.channelId,
       }
     }
   }
