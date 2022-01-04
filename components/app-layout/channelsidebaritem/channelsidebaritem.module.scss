@@ -1,5 +1,5 @@
 .channelSidebarItem {
-  height: 28px;
+  height: 36px;
   line-height: 28px;
   padding: 0 16px;
   position: relative;
@@ -16,6 +16,25 @@
     width: 26px;
     path {
       stroke: rgb(203, 222, 251);
+    }
+  }
+  :global {
+    .sb-avatar.sb-avatar--text {
+      width: 20px !important;
+      height: 20px !important;
+      margin-right: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      .sb-avatar__text {
+        width: unset !important;
+        height: unset !important;
+        div {
+          span {
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
     }
   }
   .channelSidebarItemName {

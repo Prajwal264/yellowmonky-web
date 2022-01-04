@@ -13,5 +13,44 @@
   .channelSidebarList {
     flex: 1;
     overflow: scroll;
+    .channelTree {
+      background: inherit;
+      color: inherit;
+      padding: 0 16px;
+      :global(.ant-tree-indent) {
+        display: none;
+      }
+      :global(.ant-tree-switcher-noop) {
+        display: none;
+      }
+      :global(.ant-tree-list-holder) {
+        padding-top: 12px;
+      }
+      :global(.ant-tree-node-content-wrapper) {
+        &:hover {
+          background-color: inherit;
+        }
+      }
+      :global(.ant-tree-treenode.ant-tree-treenode-switcher-close) {
+        width: 100%;
+        :global(.ant-tree-node-content-wrapper.ant-tree-node-content-wrapper-normal) {
+          width: 100%;
+          padding: 0;
+          &:hover,
+          &:active,
+          &:focus {
+            background-color: inherit;
+          }
+          :global(.ant-tree-title) {
+            & > div {
+              height: 26px;
+            }
+          }
+        }
+        :global(.ant-tree-node-content-wrapper.ant-tree-node-selected) {
+          background-color: inherit;
+        }
+      }
+    }
   }
 }
