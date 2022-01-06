@@ -1,0 +1,10 @@
+.primaryViewFooter {
+  position: sticky;
+  z-index: 200;
+  margin-top: -8px;
+  box-shadow: none;
+  background: linear-gradient(rgba(255, 255, 255, 0), rgb(255, 255, 255) 8px);
+  transition: height 0.16s cubic-bezier(0.36, 0.19, 0.29, 1);
+  display: flex;
+  padding: 0 20px;
+}

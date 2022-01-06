@@ -1,0 +1,59 @@
+.messageInputMain {
+  .inputContainer {
+    border-radius: 8px;
+    transition: border-color 0.16s, box-shadow 0.16s;
+    position: relative;
+    border-style: solid;
+    border-width: 1px;
+    background: #fff;
+    border-color: rgba(29, 28, 29, 0.13);
+    margin-bottom: 24px;
+    .basicContainer {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      position: relative;
+      grid-template-rows: auto auto minmax(0, 100%) auto auto;
+      grid-template-areas:
+        "context context context"
+        "formatting formatting formatting"
+        "input input input"
+        "attachments attachments attachments"
+        "prefix toolbar_buttons suffix";
+      .toolbar {
+      }
+      .containerMultilineInput {
+        transition: box-shadow 80ms linear;
+        grid-area: input;
+        align-self: stretch;
+        display: flex;
+        flex: 1;
+        min-width: 0;
+        .messageInputMessagePane {
+          display: flex;
+          flex-grow: 1;
+          min-width: 0;
+          font-size: 13px;
+          height: auto;
+          margin: 0;
+          position: relative;
+          .editor {
+            border-right: none;
+            line-height: 1.46668;
+            font-size: 15px;
+            padding-left: 12px;
+            padding-bottom: 8px;
+            padding-right: 12px;
+            padding-top: 8px;
+            max-height: calc(60vh - 80px);
+            width: 100%;
+            tab-size: 8;
+            &::placeholder {
+              font-size: 15px;
+              color: rgb(209, 210, 211);
+            }
+          }
+        }
+      }
+    }
+  }
+}
