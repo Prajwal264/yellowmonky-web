@@ -1,0 +1,40 @@
+.messagePaneJumbotron {
+  display: flex;
+  align-items: center;
+  margin: 48px 20px 16px 20px;
+  margin-top: 88px;
+  .iconPane {
+    border-radius: 4px;
+    background-color: #f4ede4;
+    cursor: default;
+    flex: none;
+    margin-right: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .contentPane {
+    display: flex;
+    flex-direction: column;
+    .title {
+      font-size: 15px;
+      line-height: 1.46668;
+      font-weight: 400;
+      color: rgb(29, 28, 29);
+      span {
+        color: rgb(18, 100, 163);
+      }
+    }
+    .description {
+      font-size: 15px;
+      line-height: 1.46668;
+      font-weight: 400;
+      color: rgba(29, 28, 29, 0.7);
+      span {
+        color: rgb(18, 100, 163);
+      }
+    }
+  }
+}
