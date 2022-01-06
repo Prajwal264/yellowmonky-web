@@ -1,0 +1,92 @@
+.message {
+  position: relative;
+
+  .gutter {
+    padding: 8px 20px;
+    display: flex;
+    .profileImage {
+      flex-shrink: 0;
+      margin-right: 8px;
+      display: flex;
+      position: relative;
+      button {
+        height: 36px;
+        width: 36px;
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        outline: none;
+        background: none;
+        border: 0;
+        color: inherit;
+        font: inherit;
+        margin: 0;
+        line-height: inherit;
+        overflow: initial;
+        padding: 0;
+        text-align: initial;
+        vertical-align: initial;
+        img {
+          height: 36px;
+          width: 36px;
+          background-size: 100%;
+          background-repeat: no-repeat;
+          display: inline-block;
+          position: relative;
+          border-radius: 4px;
+          background-color: rgba(29, 28, 29, 0.13);
+          color: rgb(29, 28, 29);
+        }
+      }
+      .dateHover {
+        font-size: 12px;
+        color: rgb(97, 96, 97);
+        margin: -4px 0;
+        text-align: right;
+        opacity: 0;
+        margin-left: -20px;
+        width: 56px;
+      }
+    }
+    .messageContentPane {
+      flex: 1 1 0;
+      min-width: 0;
+      padding: 8px;
+      padding-left: 16px;
+      margin: -12px -8px -16px -16px;
+      .messageOwner {
+        span:first-of-type {
+          font-weight: 900;
+          margin-right: 8px;
+        }
+        span:last-of-type {
+          font-size: 12px;
+          color: rgb(97, 96, 97);
+        }
+      }
+      .richTextMessageBlocks {
+        max-width: none;
+        margin-bottom: 4px;
+        .block {
+          max-width: none;
+          word-wrap: break-word;
+          line-height: 1.46668;
+          font-size: 15px;
+          .content {
+            counter-reset: list-0 list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+          }
+        }
+      }
+    }
+  }
+
+  &:hover {
+    .gutter {
+      .profileImage {
+        .dateHover {
+          opacity: 1;
+        }
+      }
+    }
+  }
+}
