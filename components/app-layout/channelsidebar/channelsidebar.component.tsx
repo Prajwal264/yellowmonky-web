@@ -3,17 +3,15 @@ import ChannelSidebarItem from '../channelsidebaritem/channelsidebaritem.compone
 import styles from './channelsidebar.module.scss';
 import { GrChannel } from 'react-icons/gr'
 import { RiContactsBookFill } from 'react-icons/ri'
-import { BiHash } from 'react-icons/bi'
 import { Tree } from 'antd';
-import { DataNode, EventDataNode } from 'antd/lib/tree';
-import Avatar from 'react-avatar';
+import { EventDataNode } from 'antd/lib/tree';
 import { useFetchAllChannelsLazyQuery, useFetchAllTeamMembersLazyQuery } from '../../../apollo/generated/graphql';
 import { AppContext } from '../../../context/AppContextProvider';
 import { useRouter } from 'next/router';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { channelsAtom } from '../../../state/atoms/channel.atom';
+import { allChannelsAtom } from '../../../state/atoms/all-channels.atom';
 import { channelTreeSelector } from '../../../state/selectors/channel-tree.selector';
-import { membersAtom } from '../../../state/atoms/member.atom';
+import { allMembersAtom } from '../../../state/atoms/all-members.atom';
 import { memberTreeSelector } from '../../../state/selectors/member-tree.selector';
 
 export enum NodeType {
@@ -30,8 +28,8 @@ const ChannelSidebar: React.FC<Props> = ({
   const { teamId } = useContext(AppContext);
   const [fetchAllChannels, { data: channelData }] = useFetchAllChannelsLazyQuery();
   const [fetchAllMembers, { data: memberData }] = useFetchAllTeamMembersLazyQuery();
-  const setChannels = useSetRecoilState(channelsAtom);
-  const setMembers = useSetRecoilState(membersAtom);
+  const setChannels = useSetRecoilState(allChannelsAtom);
+  const setMembers = useSetRecoilState(allMembersAtom);
   const channelTree = useRecoilValue(channelTreeSelector)
   const memberTree = useRecoilValue(memberTreeSelector)
   const router = useRouter();
