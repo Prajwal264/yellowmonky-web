@@ -9,6 +9,7 @@ import '../styles/utils/_global.scss';
 import 'emoji-mart/css/emoji-mart.css'
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import AppContextProvider from '../context/AppContextProvider';
+import { RecoilRoot } from 'recoil';
 
 const appRoute = `/app/`;
 
@@ -18,11 +19,13 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
 
   if (router.pathname.startsWith(appRoute)) {
     component =
-      <AppContextProvider>
-        <AppLayout>
-          {component}
-        </AppLayout>
-      </AppContextProvider>
+      <RecoilRoot>
+        <AppContextProvider>
+          <AppLayout>
+            {component}
+          </AppLayout>
+        </AppContextProvider>
+      </RecoilRoot>
   }
 
   return (
