@@ -59,11 +59,42 @@ export type Error = {
   statusCode: Scalars['Int'];
 };
 
+export type Message = EntityWrapper & {
+  __typename?: 'Message';
+  childMessages?: Maybe<Message>;
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  creator: User;
+  creatorId: Scalars['String'];
+  id: Scalars['ID'];
+  parentMessage?: Maybe<Message>;
+  parentMessageId?: Maybe<Scalars['String']>;
+  sourceChannel: Channel;
+  sourceChannelId: Scalars['String'];
+  sourceType: MessageSourceType;
+  updatedAt: Scalars['DateTime'];
+};
+
+/** The source type of the message */
+export enum MessageSourceType {
+  Channel = 'CHANNEL',
+  DirectMessage = 'DIRECT_MESSAGE'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
+  createMessage: Scalars['String'];
   editTeam: EditTeamResponse;
   login: UserResponse;
   registerAdmin: RegisterAdminResponse;
+};
+
+
+export type MutationCreateMessageArgs = {
+  content: Scalars['String'];
+  creatorId: Scalars['String'];
+  sourceChannelId?: InputMaybe<Scalars['String']>;
+  sourceType: MessageSourceType;
 };
 
 
@@ -197,6 +228,16 @@ export type RegisterAdminMutationVariables = Exact<{
 
 export type RegisterAdminMutation = { __typename?: 'Mutation', registerAdmin: { __typename?: 'RegisterAdminResponse', id: string, email: string, username: string, profileImage?: string | null | undefined, teamId: string, createdAt: any, updatedAt: any } };
 
+export type CreateMessageMutationVariables = Exact<{
+  content: Scalars['String'];
+  sourceType: MessageSourceType;
+  creatorId: Scalars['String'];
+  sourceChannelId: Scalars['String'];
+}>;
+
+
+export type CreateMessageMutation = { __typename?: 'Mutation', createMessage: string };
+
 export type EditTeamMutationVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
   id: Scalars['String'];
@@ -271,6 +312,45 @@ export function useRegisterAdminMutation(baseOptions?: Apollo.MutationHookOption
 export type RegisterAdminMutationHookResult = ReturnType<typeof useRegisterAdminMutation>;
 export type RegisterAdminMutationResult = Apollo.MutationResult<RegisterAdminMutation>;
 export type RegisterAdminMutationOptions = Apollo.BaseMutationOptions<RegisterAdminMutation, RegisterAdminMutationVariables>;
+export const CreateMessageDocument = gql`
+    mutation CreateMessage($content: String!, $sourceType: MessageSourceType!, $creatorId: String!, $sourceChannelId: String!) {
+  createMessage(
+    content: $content
+    sourceType: $sourceType
+    creatorId: $creatorId
+    sourceChannelId: $sourceChannelId
+  )
+}
+    `;
+export type CreateMessageMutationFn = Apollo.MutationFunction<CreateMessageMutation, CreateMessageMutationVariables>;
+
+/**
+ * __useCreateMessageMutation__
+ *
+ * To run a mutation, you first call `useCreateMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createMessageMutation, { data, loading, error }] = useCreateMessageMutation({
+ *   variables: {
+ *      content: // value for 'content'
+ *      sourceType: // value for 'sourceType'
+ *      creatorId: // value for 'creatorId'
+ *      sourceChannelId: // value for 'sourceChannelId'
+ *   },
+ * });
+ */
+export function useCreateMessageMutation(baseOptions?: Apollo.MutationHookOptions<CreateMessageMutation, CreateMessageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateMessageMutation, CreateMessageMutationVariables>(CreateMessageDocument, options);
+      }
+export type CreateMessageMutationHookResult = ReturnType<typeof useCreateMessageMutation>;
+export type CreateMessageMutationResult = Apollo.MutationResult<CreateMessageMutation>;
+export type CreateMessageMutationOptions = Apollo.BaseMutationOptions<CreateMessageMutation, CreateMessageMutationVariables>;
 export const EditTeamDocument = gql`
     mutation EditTeam($name: String, $id: String!, $ownerId: String!, $channels: [String], $members: [String]) {
   editTeam(
