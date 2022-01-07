@@ -8,6 +8,7 @@
     background: #fff;
     border-color: rgba(29, 28, 29, 0.13);
     margin-bottom: 24px;
+    overflow: hidden;
     .basicContainer {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr) auto;
