@@ -1,7 +1,9 @@
 import React, { useContext, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { useSetRecoilState } from 'recoil';
 import { useFetchChannelLazyQuery } from '../../../apollo/generated/graphql';
 import { AppContext } from '../../../context/AppContextProvider';
+import { channelInfoAtom } from '../../../state/atoms/channel-info.atom';
 import styles from './primary-view-header.module.scss';
 
 interface Props {
@@ -13,6 +15,7 @@ const PrimaryViewHeader: React.FC<Props> = ({
 }) => {
   const { channelId } = useContext(AppContext);
   const [fetchChannel, { data: channelInfo, error }] = useFetchChannelLazyQuery();
+  const setChannelInfo = useSetRecoilState(channelInfoAtom)
   useEffect(() => {
     if (channelId) {
       loadDependencies();
@@ -28,6 +31,12 @@ const PrimaryViewHeader: React.FC<Props> = ({
       console.log(err)
     })
   }
+
+  useEffect(() => {
+    if (channelInfo) {
+      setChannelInfo(channelInfo.channel)
+    }
+  }, [channelInfo])
 
   useEffect(() => {
     if (error) {
