@@ -70,6 +70,7 @@ const SignupPage: React.FC<Props> = () => {
           username: formData.username,
         }
       })
+      cookie.remove('userId');
       cookie.save('userId', response.data?.registerAdmin.id!, {});
       const teamId = response.data?.registerAdmin.teamId;
       router.push({

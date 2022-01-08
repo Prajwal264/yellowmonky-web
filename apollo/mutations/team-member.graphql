@@ -1,0 +1,8 @@
+#team member
+mutation CreateMemberAndAddToTeam($username: String!, $password: String!, $email: String!, $teamId: String!) {
+  createUserAndAddToTeam(username: $username, password: $password, email: $email, teamId: $teamId) {
+    id
+    teamId
+    channelId
+  }
+}
