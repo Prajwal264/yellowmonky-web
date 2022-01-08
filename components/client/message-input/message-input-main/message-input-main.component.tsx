@@ -6,6 +6,7 @@ import styles from './message-input-main.module.scss';
 import cookie from 'react-cookies';
 import MessageSendButton from './message-send-button/message-send-button.component';
 import { AppContext } from '../../../../context/AppContextProvider';
+import toast from 'react-hot-toast';
 
 interface Props {
 
@@ -30,14 +31,19 @@ const MessageInputMain: React.FC<Props> = ({ }) => {
 
   const sendMessage = async () => {
     if (message) {
-      await createMessage({
-        variables: {
-          content: message,
-          creatorId: cookie.load('userId'),
-          sourceChannelId: channelId!,
-          sourceType: MessageSourceType.Channel
-        }
-      })
+      try {
+        await createMessage({
+          variables: {
+            content: message,
+            creatorId: cookie.load('userId'), // TODO: this should be passed from jwt
+            sourceChannelId: channelId!,
+            sourceType: MessageSourceType.Channel
+          }
+        })
+        setMessage('');
+      } catch (e) {
+        toast.error('Failed to send message.')
+      }
     }
   }
 
@@ -48,8 +54,13 @@ const MessageInputMain: React.FC<Props> = ({ }) => {
           {/* <div className="toolbar"></div> TODO*/}
           <div className={styles.containerMultilineInput}>
             <div className={styles.messageInputMessagePane}>
-              <input className={styles.editor} placeholder={`Send message to #${channelInfo?.name}`} onChange={handleChange} onKeyDown={onKeyDown} />
-              <MessageSendButton />
+              <input
+                value={message}
+                className={styles.editor}
+                placeholder={`Send message to #${channelInfo?.name}`}
+                onChange={handleChange}
+                onKeyDown={onKeyDown} />
+              <MessageSendButton onClick={sendMessage} />
             </div>
           </div>
         </div>

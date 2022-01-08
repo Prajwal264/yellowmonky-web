@@ -122,10 +122,16 @@ export type MutationRegisterAdminArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  allChannelMessages: Array<Message>;
   allChannels: Array<Maybe<Channel>>;
   allTeamMembers: Array<TeamMember>;
   channel: Channel;
   getUsers: Array<Maybe<User>>;
+};
+
+
+export type QueryAllChannelMessagesArgs = {
+  channelId: Scalars['String'];
 };
 
 
@@ -237,6 +243,13 @@ export type CreateMessageMutationVariables = Exact<{
 
 
 export type CreateMessageMutation = { __typename?: 'Mutation', createMessage: string };
+
+export type AllChannelMessagesQueryVariables = Exact<{
+  channelId: Scalars['String'];
+}>;
+
+
+export type AllChannelMessagesQuery = { __typename?: 'Query', allChannelMessages: Array<{ __typename?: 'Message', id: string, content: string, creatorId: string, createdAt: any }> };
 
 export type EditTeamMutationVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
@@ -351,6 +364,44 @@ export function useCreateMessageMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateMessageMutationHookResult = ReturnType<typeof useCreateMessageMutation>;
 export type CreateMessageMutationResult = Apollo.MutationResult<CreateMessageMutation>;
 export type CreateMessageMutationOptions = Apollo.BaseMutationOptions<CreateMessageMutation, CreateMessageMutationVariables>;
+export const AllChannelMessagesDocument = gql`
+    query AllChannelMessages($channelId: String!) {
+  allChannelMessages(channelId: $channelId) {
+    id
+    content
+    creatorId
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useAllChannelMessagesQuery__
+ *
+ * To run a query within a React component, call `useAllChannelMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAllChannelMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAllChannelMessagesQuery({
+ *   variables: {
+ *      channelId: // value for 'channelId'
+ *   },
+ * });
+ */
+export function useAllChannelMessagesQuery(baseOptions: Apollo.QueryHookOptions<AllChannelMessagesQuery, AllChannelMessagesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AllChannelMessagesQuery, AllChannelMessagesQueryVariables>(AllChannelMessagesDocument, options);
+      }
+export function useAllChannelMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AllChannelMessagesQuery, AllChannelMessagesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AllChannelMessagesQuery, AllChannelMessagesQueryVariables>(AllChannelMessagesDocument, options);
+        }
+export type AllChannelMessagesQueryHookResult = ReturnType<typeof useAllChannelMessagesQuery>;
+export type AllChannelMessagesLazyQueryHookResult = ReturnType<typeof useAllChannelMessagesLazyQuery>;
+export type AllChannelMessagesQueryResult = Apollo.QueryResult<AllChannelMessagesQuery, AllChannelMessagesQueryVariables>;
 export const EditTeamDocument = gql`
     mutation EditTeam($name: String, $id: String!, $ownerId: String!, $channels: [String], $members: [String]) {
   editTeam(
