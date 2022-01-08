@@ -14,6 +14,10 @@ const MessageListDayDivider: React.FC<Props> = ({
     if (isToday) return 'Today';
     const isYesterday = dayjs(date).isSame(dayjs().subtract(1, 'day'), 'day')
     if (isYesterday) return 'Yesterday';
+    const isSameYear = dayjs(date).isSame(dayjs(), 'year');
+    if (isSameYear) {
+      return dayjs(date).format('dddd, MMMM D');
+    }
     return dayjs(date).format('MMMM D, YYYY');
   }, [date])
   return (

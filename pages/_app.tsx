@@ -1,9 +1,9 @@
 
+import client from "../apollo/helpers/apollo-client";
 import { AppProps } from 'next/app';
 import React from 'react';
 import { Toaster } from 'react-hot-toast';
 import AppLayout from '../components/app-layout/app-layout.component';
-import client from "../apollo/helpers/apollo-client";
 import { ApolloProvider } from '@apollo/client';
 import '../styles/utils/_global.scss';
 import 'emoji-mart/css/emoji-mart.css'

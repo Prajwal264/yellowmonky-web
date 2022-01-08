@@ -160,6 +160,16 @@ export type RegisterAdminResponse = EntityWrapper & {
   username: Scalars['String'];
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  newChannelMessage: Message;
+};
+
+
+export type SubscriptionNewChannelMessageArgs = {
+  channelId: Scalars['String'];
+};
+
 export type Team = EntityWrapper & {
   __typename?: 'Team';
   createdAt: Scalars['DateTime'];
@@ -282,6 +292,13 @@ export type FetchAllTeamMembersQueryVariables = Exact<{
 
 
 export type FetchAllTeamMembersQuery = { __typename?: 'Query', allTeamMembers: Array<{ __typename?: 'TeamMember', id: string, user: { __typename?: 'User', id: string, email: string, username: string, profileImage?: string | null | undefined } }> };
+
+export type NewChannelMessageSubscriptionVariables = Exact<{
+  channelId: Scalars['String'];
+}>;
+
+
+export type NewChannelMessageSubscription = { __typename?: 'Subscription', newChannelMessage: { __typename?: 'Message', id: string, content: string, creatorId: string, createdAt: any } };
 
 
 export const RegisterAdminDocument = gql`
@@ -561,3 +578,36 @@ export function useFetchAllTeamMembersLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type FetchAllTeamMembersQueryHookResult = ReturnType<typeof useFetchAllTeamMembersQuery>;
 export type FetchAllTeamMembersLazyQueryHookResult = ReturnType<typeof useFetchAllTeamMembersLazyQuery>;
 export type FetchAllTeamMembersQueryResult = Apollo.QueryResult<FetchAllTeamMembersQuery, FetchAllTeamMembersQueryVariables>;
+export const NewChannelMessageDocument = gql`
+    subscription NewChannelMessage($channelId: String!) {
+  newChannelMessage(channelId: $channelId) {
+    id
+    content
+    creatorId
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useNewChannelMessageSubscription__
+ *
+ * To run a query within a React component, call `useNewChannelMessageSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNewChannelMessageSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNewChannelMessageSubscription({
+ *   variables: {
+ *      channelId: // value for 'channelId'
+ *   },
+ * });
+ */
+export function useNewChannelMessageSubscription(baseOptions: Apollo.SubscriptionHookOptions<NewChannelMessageSubscription, NewChannelMessageSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<NewChannelMessageSubscription, NewChannelMessageSubscriptionVariables>(NewChannelMessageDocument, options);
+      }
+export type NewChannelMessageSubscriptionHookResult = ReturnType<typeof useNewChannelMessageSubscription>;
+export type NewChannelMessageSubscriptionResult = Apollo.SubscriptionResult<NewChannelMessageSubscription>;

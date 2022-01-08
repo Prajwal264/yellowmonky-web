@@ -1,5 +1,8 @@
-import { ApolloClient, ApolloLink, createHttpLink, DefaultOptions, InMemoryCache } from "@apollo/client";
+import { ApolloClient, ApolloLink, createHttpLink, InMemoryCache, split } from "@apollo/client";
+import { getMainDefinition } from '@apollo/client/utilities';
 import { onError } from 'apollo-link-error';
+import { wsLink } from './ws-link';
+
 // import { createUploadLink } from "apollo-upload-client";
 // import { GenerateNewAccessTokenDocument } from "apollo/generated/graphql";
 // import { Cookies } from "types/cookie.types";
@@ -82,11 +85,24 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
   }
 });
 
+
 const httpLink = createHttpLink({
   uri: 'http://localhost:4000/graphql/',
   fetch,
 });
-const link = ApolloLink.from([httpLink]);
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    );
+  },
+  wsLink,
+  httpLink,
+);
+
+const link = ApolloLink.from([splitLink]);
 
 const client = new ApolloClient({
   // link: ApolloLink.from([errorLink as any, authLink, uploadLink]),

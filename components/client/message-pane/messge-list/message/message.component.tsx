@@ -9,7 +9,6 @@ interface Props {
 const Message: React.FC<Props> = ({
   data,
 }) => {
-  debugger;
   return (
     <div className={styles.message}>
       <div className={styles.gutter}>

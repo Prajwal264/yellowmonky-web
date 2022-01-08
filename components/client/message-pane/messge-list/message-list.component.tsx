@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import React, { useContext, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useFetchAllChannelMessagesLazyQuery } from '../../../../apollo/generated/graphql';
+import { useFetchAllChannelMessagesLazyQuery, useNewChannelMessageSubscription } from '../../../../apollo/generated/graphql';
 import { AppContext } from '../../../../context/AppContextProvider';
 import { channelMessagesAtom } from '../../../../state/atoms/channel-messages.atom';
 import { channelMessageTreeSelector } from '../../../../state/selectors/channel-message-tree.selector';
@@ -18,8 +18,14 @@ const MessageList: React.FC<Props> = ({ }) => {
   const setChannelMesssages = useSetRecoilState(channelMessagesAtom);
   const allChannelMessages = useRecoilValue(channelMessageTreeSelector);
   const [fetchChannelMessages, { data: messsages }] = useFetchAllChannelMessagesLazyQuery();
+  const { data: newChannelMessageData } = useNewChannelMessageSubscription({
+    variables: {
+      channelId: channelId!
+    }
+  })
   useEffect(() => {
     if (channelId) {
+      // get
       fetchChannelMessages({
         variables: {
           channelId
@@ -29,8 +35,14 @@ const MessageList: React.FC<Props> = ({ }) => {
   }, [channelId])
 
   useEffect(() => {
+    if (newChannelMessageData?.newChannelMessage) {
+      setChannelMesssages((prevState) => ([...prevState, newChannelMessageData.newChannelMessage as any]))
+    }
+  }, [newChannelMessageData])
+
+
+  useEffect(() => {
     if (messsages) {
-      console.log(messsages.allChannelMessages);
       setChannelMesssages(messsages.allChannelMessages)
     }
   }, [messsages])
