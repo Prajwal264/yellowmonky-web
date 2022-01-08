@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import React, { useContext, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useFetchAllChannelMessagesLazyQuery, useNewChannelMessageSubscription } from '../../../../apollo/generated/graphql';
