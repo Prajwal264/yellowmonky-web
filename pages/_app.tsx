@@ -11,7 +11,7 @@ import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import AppContextProvider from '../context/AppContextProvider';
 import { RecoilRoot } from 'recoil';
 
-const appRoute = `/app/`;
+const appRoute = `/app`;
 
 const MyApp = ({ Component, pageProps, router }: AppProps) => {
 
