@@ -47,7 +47,7 @@ class WebSocketLink extends ApolloLink {
 }
 
 export const wsLink =  new WebSocketLink({
-  url: 'ws://localhost:4001/graphql', 
+  url: process.env.BASE_WS_URL!, 
   webSocketImpl: w3cwebsocket,
   // connectionParams: () => {
   //   const session = getSession();
