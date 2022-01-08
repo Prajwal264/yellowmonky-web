@@ -87,7 +87,7 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
 
 
 const httpLink = createHttpLink({
-  uri: process.env.BASE_HTTP_URL,
+  uri: process.env.NEXT_PUBLIC_BASE_HTTP_URL,
   fetch,
 });
 const splitLink = split(
