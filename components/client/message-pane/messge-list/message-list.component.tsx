@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import React, { useContext, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useFetchAllChannelMessagesLazyQuery } from '../../../../apollo/generated/graphql';
@@ -35,8 +36,12 @@ const MessageList: React.FC<Props> = ({ }) => {
   }, [messsages])
   return (
     <div className={styles.messageList}>
-      <MessageListDayDivider date={new Date()} />
-      {[...allChannelMessages.values()].map((message) => (<Message key={message.id} data={message} />))}
+      {[...allChannelMessages.values()].map((message) => (
+        <React.Fragment>
+          {message.showDivider && <MessageListDayDivider date={message.createdAt} />}
+          <Message key={message.id} data={message} />
+        </React.Fragment>
+      ))}
     </div>
   )
 }

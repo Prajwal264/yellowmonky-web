@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { selector } from 'recoil';
 import { FetchAllChannelMessagesQuery, FetchAllTeamMembersQuery, User } from '../../apollo/generated/graphql';
 import { allMembersAtom } from '../atoms/all-members.atom';
@@ -8,6 +9,7 @@ type TeamMember = FetchAllTeamMembersQuery['allTeamMembers'][0];
 export type MessageWithCreator = FetchAllChannelMessagesQuery['allChannelMessages'][0] & {
   creator: User,
   showOwner: boolean,
+  showDivider: boolean,
 }
 
 export const channelMessageTreeSelector = selector({
@@ -22,11 +24,21 @@ export const channelMessageTreeSelector = selector({
 
     const allChannelMessageMap:  Map<string, MessageWithCreator> = allChannelMessages.reduce((acc, cur, index) => {
       const extendedValue: any = {...cur}
-      extendedValue.showOwner = true
+      extendedValue.showOwner = true;
+      extendedValue.showDivider = false;
+      const prevMessage =allChannelMessages[index-1];
       if(!index) {
-      } else if(cur.creatorId === allChannelMessages[index-1].creatorId) {
-        extendedValue.showOwner = false;
-      }
+        extendedValue.showDivider = true;
+      } else {
+        if(cur.creatorId === prevMessage.creatorId) {
+          extendedValue.showOwner = false;
+        }
+        if(dayjs(cur.createdAt).isSame(dayjs(prevMessage.createdAt), 'day')) {
+        } else {
+          extendedValue.showDivider = true;
+          extendedValue.showOwner = true;
+        }
+      } 
       extendedValue.creator = allMembersMap.get(cur.creatorId);
       acc.set(cur.id, extendedValue);
       return acc;
