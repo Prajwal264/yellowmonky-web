@@ -3,7 +3,7 @@ mutation CreateMessage($content: String!, $sourceType: MessageSourceType!, $crea
   createMessage(content: $content, sourceType: $sourceType, creatorId: $creatorId, sourceChannelId: $sourceChannelId)
 }
 
-query AllChannelMessages($channelId: String!) {
+query FetchAllChannelMessages($channelId: String!) {
   allChannelMessages(channelId: $channelId) {
     id
     content
