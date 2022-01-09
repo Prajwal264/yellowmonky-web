@@ -39,7 +39,7 @@
           &:hover,
           &:active,
           &:focus {
-            background-color: inherit;
+            background: #1164a3;
           }
           :global(.ant-tree-title) {
             & > div {
@@ -48,7 +48,7 @@
           }
         }
         :global(.ant-tree-node-content-wrapper.ant-tree-node-selected) {
-          background-color: inherit;
+          background: #1164a3;
         }
       }
     }
