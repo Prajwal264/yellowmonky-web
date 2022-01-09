@@ -19,6 +19,7 @@ export interface FormField {
 interface Props {
   fields?: FormField[],
   onSubmit: (data: Record<string, string>) => void | Promise<void>,
+  loading?: boolean,
 }
 /**
  *
@@ -28,6 +29,7 @@ interface Props {
 const SignupForm: React.FC<Props> = ({
   fields = [],
   onSubmit,
+  loading = false,
 }) => {
 
   const defaultValues = useMemo(() => fields.reduce((acc: Record<string, string>, cur) => {
@@ -116,7 +118,7 @@ const SignupForm: React.FC<Props> = ({
             />
           </React.Fragment>
         ))}
-        <PrimaryButton content="continue" type='submit' />
+        <PrimaryButton content="continue" type='submit' disabled={loading} />
       </form>
     </div>
   )

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from '../../styles/pages/signup.module.scss';
 import Header from '../../components/shared/header/header.component';
 import SignupForm, { FormField } from '../../components/signup/signup-form.component';
@@ -55,6 +55,7 @@ const fields: FormField[] = [{
 const SignupPage: React.FC<Props> = () => {
   const router = useRouter();
   const [registerAdmin] = useRegisterAdminMutation()
+  const [loading, setLoading] = useState(false);
 
   /**
    *
@@ -62,14 +63,23 @@ const SignupPage: React.FC<Props> = () => {
    * @param {Record<string, string>} formData
    */
   const signup = async (formData: Record<string, string>) => {
+    setLoading(true);
     try {
-      const response = await registerAdmin({
+      const registerPromise = registerAdmin({
         variables: {
           email: formData.email,
           password: formData.password,
           username: formData.username,
         }
       })
+      toast.promise(registerPromise, {
+        loading: 'Registering User',
+        success: 'Registeration Successfull',
+        error: 'Something went wrong',
+      }, {
+        position: 'top-center'
+      })
+      const response = await registerPromise;
       cookie.remove('userId');
       cookie.save('userId', response.data?.registerAdmin.id!, {});
       const teamId = response.data?.registerAdmin.teamId;
@@ -80,6 +90,7 @@ const SignupPage: React.FC<Props> = () => {
         },
       });
     } catch (err: any) {
+      setLoading(false);
       toast.error(err.message)
     }
   }
@@ -87,7 +98,7 @@ const SignupPage: React.FC<Props> = () => {
   return (
     <div className={styles.signupPage}>
       <Header />
-      <SignupForm fields={fields} onSubmit={signup} />
+      <SignupForm fields={fields} onSubmit={signup} loading={loading} />
     </div>
   )
 }
