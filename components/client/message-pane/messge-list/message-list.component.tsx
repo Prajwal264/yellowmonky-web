@@ -6,6 +6,7 @@ import { channelMessagesAtom } from '../../../../state/atoms/channel-messages.at
 import { channelMessageTreeSelector } from '../../../../state/selectors/channel-message-tree.selector';
 import MessageListDayDivider from './message-list-day-divider/message-list-day-divider.component';
 import styles from './message-list.module.scss';
+import cookie from 'react-cookies';
 import Message from './message/message.component';
 
 interface Props {
@@ -35,7 +36,9 @@ const MessageList: React.FC<Props> = ({ }) => {
 
   useEffect(() => {
     if (newChannelMessageData?.newChannelMessage) {
-      setChannelMesssages((prevState) => ([...prevState, newChannelMessageData.newChannelMessage as any]))
+      if (newChannelMessageData.newChannelMessage.creatorId !== cookie.load('userId')) {
+        setChannelMesssages((prevState) => ([...prevState, newChannelMessageData.newChannelMessage as any]))
+      }
     }
   }, [newChannelMessageData])
 

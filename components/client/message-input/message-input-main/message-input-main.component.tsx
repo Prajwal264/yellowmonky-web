@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { MessageSourceType, useCreateMessageMutation } from '../../../../apollo/generated/graphql';
 import { channelInfoAtom } from '../../../../state/atoms/channel-info.atom';
 import styles from './message-input-main.module.scss';
@@ -7,6 +7,7 @@ import cookie from 'react-cookies';
 import MessageSendButton from './message-send-button/message-send-button.component';
 import { AppContext } from '../../../../context/AppContextProvider';
 import toast from 'react-hot-toast';
+import { channelMessagesAtom } from '../../../../state/atoms/channel-messages.atom';
 
 interface Props {
 
@@ -17,6 +18,7 @@ const MessageInputMain: React.FC<Props> = ({ }) => {
   const { channelId } = useContext(AppContext);
   const [message, setMessage] = useState('');
   const [createMessage] = useCreateMessageMutation();
+  const setChannelMesssages = useSetRecoilState(channelMessagesAtom);
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const content = e.target.value;
@@ -32,15 +34,17 @@ const MessageInputMain: React.FC<Props> = ({ }) => {
   const sendMessage = async () => {
     if (message) {
       try {
-        await createMessage({
+        setMessage('');
+        const { data } = await createMessage({
           variables: {
             content: message,
             creatorId: cookie.load('userId'), // TODO: this should be passed from jwt
             sourceChannelId: channelId!,
             sourceType: MessageSourceType.Channel
           }
-        })
-        setMessage('');
+        });
+        setChannelMesssages((prevState) => ([...prevState, data?.createMessage as any]))
+
       } catch (e) {
         toast.error('Failed to send message.')
       }
