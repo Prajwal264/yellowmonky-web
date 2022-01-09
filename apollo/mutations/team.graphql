@@ -1,4 +1,14 @@
 # team
+query FetchTeamInfo($teamId: String!) {
+  team(teamId: $teamId) {
+    id
+    name
+    description
+    createdAt
+    updatedAt
+  }
+}
+
 mutation EditTeam($name: String, $id: String!, $ownerId: String!, $channels: [String], $members: [String]) {
   editTeam(name: $name, id: $id, ownerId: $ownerId, channels: $channels, members: $members) {
     teamId,

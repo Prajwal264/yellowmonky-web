@@ -151,6 +151,7 @@ export type Query = {
   allTeamMembers: Array<TeamMember>;
   channel: Channel;
   getUsers: Array<Maybe<User>>;
+  team: Team;
 };
 
 
@@ -171,6 +172,11 @@ export type QueryAllTeamMembersArgs = {
 
 export type QueryChannelArgs = {
   channelId: Scalars['String'];
+};
+
+
+export type QueryTeamArgs = {
+  teamId: Scalars['String'];
 };
 
 export type RegisterAdminResponse = EntityWrapper & {
@@ -197,6 +203,7 @@ export type SubscriptionNewChannelMessageArgs = {
 export type Team = EntityWrapper & {
   __typename?: 'Team';
   createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
   displayPicture?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
@@ -232,6 +239,7 @@ export enum TeamMemberStatus {
 export type TeamResponse = EntityWrapper & {
   __typename?: 'TeamResponse';
   createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
   displayPicture?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
@@ -294,6 +302,13 @@ export type CreateMemberAndAddToTeamMutationVariables = Exact<{
 
 
 export type CreateMemberAndAddToTeamMutation = { __typename?: 'Mutation', createUserAndAddToTeam: { __typename?: 'CreateMemberResponse', id: string, teamId: string, channelId: string } };
+
+export type FetchTeamInfoQueryVariables = Exact<{
+  teamId: Scalars['String'];
+}>;
+
+
+export type FetchTeamInfoQuery = { __typename?: 'Query', team: { __typename?: 'Team', id: string, name?: string | null | undefined, description?: string | null | undefined, createdAt: any, updatedAt: any } };
 
 export type EditTeamMutationVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
@@ -496,6 +511,45 @@ export function useCreateMemberAndAddToTeamMutation(baseOptions?: Apollo.Mutatio
 export type CreateMemberAndAddToTeamMutationHookResult = ReturnType<typeof useCreateMemberAndAddToTeamMutation>;
 export type CreateMemberAndAddToTeamMutationResult = Apollo.MutationResult<CreateMemberAndAddToTeamMutation>;
 export type CreateMemberAndAddToTeamMutationOptions = Apollo.BaseMutationOptions<CreateMemberAndAddToTeamMutation, CreateMemberAndAddToTeamMutationVariables>;
+export const FetchTeamInfoDocument = gql`
+    query FetchTeamInfo($teamId: String!) {
+  team(teamId: $teamId) {
+    id
+    name
+    description
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useFetchTeamInfoQuery__
+ *
+ * To run a query within a React component, call `useFetchTeamInfoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchTeamInfoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchTeamInfoQuery({
+ *   variables: {
+ *      teamId: // value for 'teamId'
+ *   },
+ * });
+ */
+export function useFetchTeamInfoQuery(baseOptions: Apollo.QueryHookOptions<FetchTeamInfoQuery, FetchTeamInfoQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchTeamInfoQuery, FetchTeamInfoQueryVariables>(FetchTeamInfoDocument, options);
+      }
+export function useFetchTeamInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchTeamInfoQuery, FetchTeamInfoQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchTeamInfoQuery, FetchTeamInfoQueryVariables>(FetchTeamInfoDocument, options);
+        }
+export type FetchTeamInfoQueryHookResult = ReturnType<typeof useFetchTeamInfoQuery>;
+export type FetchTeamInfoLazyQueryHookResult = ReturnType<typeof useFetchTeamInfoLazyQuery>;
+export type FetchTeamInfoQueryResult = Apollo.QueryResult<FetchTeamInfoQuery, FetchTeamInfoQueryVariables>;
 export const EditTeamDocument = gql`
     mutation EditTeam($name: String, $id: String!, $ownerId: String!, $channels: [String], $members: [String]) {
   editTeam(
