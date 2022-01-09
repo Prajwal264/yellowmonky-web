@@ -36,6 +36,7 @@ const MessageList: React.FC<Props> = ({ }) => {
 
   useEffect(() => {
     if (newChannelMessageData?.newChannelMessage) {
+      debugger;
       if (newChannelMessageData.newChannelMessage.creatorId !== cookie.load('userId')) {
         setChannelMesssages((prevState) => ([...prevState, newChannelMessageData.newChannelMessage as any]))
       }

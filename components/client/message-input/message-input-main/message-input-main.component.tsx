@@ -32,18 +32,25 @@ const MessageInputMain: React.FC<Props> = ({ }) => {
   }
 
   const sendMessage = async () => {
+    const content = message;
     if (message) {
       try {
         setMessage('');
+        const creatorId = cookie.load('userId');
         const { data } = await createMessage({
           variables: {
             content: message,
-            creatorId: cookie.load('userId'), // TODO: this should be passed from jwt
+            creatorId, // TODO: this should be passed from jwt
             sourceChannelId: channelId!,
             sourceType: MessageSourceType.Channel
           }
         });
-        setChannelMesssages((prevState) => ([...prevState, data?.createMessage as any]))
+        setChannelMesssages((prevState) => ([...prevState, {
+          id: data?.createMessage,
+          content,
+          createdAt: new Date(),
+          creatorId: creatorId,
+        } as any]))
 
       } catch (e) {
         toast.error('Failed to send message.')
