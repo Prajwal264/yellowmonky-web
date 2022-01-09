@@ -5,6 +5,7 @@ import React from 'react';
 import { Toaster } from 'react-hot-toast';
 import AppLayout from '../components/app-layout/app-layout.component';
 import { ApolloProvider } from '@apollo/client';
+import '../styles/utils/fonts.scss';
 import '../styles/utils/_global.scss';
 import 'emoji-mart/css/emoji-mart.css'
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'

@@ -27,7 +27,7 @@
     "start": "npm run dev",
     "dev": "next dev",
     "build": "next build",
-    "serve": "next serve",
+    "serve": "next start",
     "lint": "next lint",
     "codegen": "graphql-codegen --config codegen.yml"
   },
