@@ -52,9 +52,9 @@ const MessageList: React.FC<Props> = ({ }) => {
   return (
     <div className={styles.messageList}>
       {[...allChannelMessages.values()].map((message) => (
-        <React.Fragment>
+        <React.Fragment key={message.id}>
           {message.showDivider && <MessageListDayDivider date={message.createdAt} />}
-          <Message key={message.id} data={message} />
+          <Message data={message} />
         </React.Fragment>
       ))}
     </div>
