@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import styles from '../../styles/pages/signup.module.scss';
 import Header from '../../components/shared/header/header.component';
 import SignupForm, { FormField } from '../../components/signup/signup-form.component';
@@ -21,6 +21,7 @@ const JoinTeamPage: React.FC<Props> = () => {
   const router = useRouter();
 
   const [registerMember] = useCreateMemberAndAddToTeamMutation();
+  const [loading, setLoading] = useState(false);
 
   const fields = useMemo(() => {
     const allFormFields: FormField[] = [{
@@ -72,6 +73,7 @@ const JoinTeamPage: React.FC<Props> = () => {
    * @param {Record<string, string>} formData
    */
   const joinTeam = async (formData: Record<string, string>) => {
+    setLoading(true);
     try {
       let email;
       if (router.query.joinId) {
@@ -79,14 +81,22 @@ const JoinTeamPage: React.FC<Props> = () => {
       } else {
         email = formData.email;
       }
-      const response = await registerMember({
+      const registerMemberPromise = registerMember({
         variables: {
           email,
           password: formData.password,
           username: formData.username,
           teamId: decodeURI(router.query.teamId as string),
         }
+      });
+      toast.promise(registerMemberPromise, {
+        loading: 'Registering User',
+        success: 'Registeration Successfull',
+        error: 'Something went wrong',
+      }, {
+        position: 'top-center'
       })
+      const response = await registerMemberPromise;
       cookie.remove('userId');
       cookie.save('userId', response.data?.createUserAndAddToTeam.id!, {});
       const teamId = response.data?.createUserAndAddToTeam.teamId;
@@ -99,6 +109,7 @@ const JoinTeamPage: React.FC<Props> = () => {
         },
       });
     } catch (err: any) {
+      setLoading(false);
       toast.error(err.message)
     }
   }
@@ -106,7 +117,7 @@ const JoinTeamPage: React.FC<Props> = () => {
   return (
     <div className={styles.signupPage}>
       <Header />
-      <SignupForm fields={fields} onSubmit={joinTeam} />
+      <SignupForm fields={fields} onSubmit={joinTeam} loading={loading} />
     </div>
   )
 }
