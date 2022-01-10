@@ -14,8 +14,8 @@
     cursor: pointer;
     @media screen and (max-width: 640px) {
       span {
-        width: 267px;
-        height: 50px;
+        width: 267px !important;
+        height: 50px !important;
       }
     }
   }
