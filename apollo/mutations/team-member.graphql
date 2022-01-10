@@ -6,3 +6,7 @@ mutation CreateMemberAndAddToTeam($username: String!, $password: String!, $email
     channelId
   }
 }
+
+mutation InviteMembers($inviterId:String!, $inviteeEmails: [String!]!, $teamId: String!) {
+  inviteMembers(inviterId: $inviterId, inviteeEmails: $inviteeEmails, teamId: $teamId)
+}

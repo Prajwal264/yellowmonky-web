@@ -6,6 +6,9 @@ import { PopupType, popupAtom } from '../../../state/atoms/popup.atom';
 interface Props {
   title: string | React.ReactNode,
   popupType: PopupType
+  disabled: boolean,
+  onOk: Function,
+  onCancel: Function,
 }
 
 
@@ -13,11 +16,29 @@ const ModalWrapper: React.FC<Props> = ({
   title,
   children,
   popupType,
+  disabled = true,
+  onOk,
+  onCancel
 }) => {
-  const [currentPopup, setCurrentPopup] = useRecoilState(popupAtom)
+  const [currentPopup, setCurrentPopup] = useRecoilState(popupAtom);
+
+  /**
+   *
+   *
+   */
   const closePopup = () => {
-    console.log('triggered');
     setCurrentPopup(null)
+    onCancel();
+  }
+
+  /**
+   *
+   *
+   * @param {*} e
+   */
+  const onOkay: ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void) = async (e) => {
+    closePopup();
+    await onOk()
   }
   return (
     <React.Fragment>
@@ -30,7 +51,10 @@ const ModalWrapper: React.FC<Props> = ({
         className={'modal-wrapper'}
         okText="Send"
         cancelText=""
-        onOk={closePopup}
+        okButtonProps={{
+          disabled: disabled
+        }}
+        onOk={onOkay}
         onCancel={closePopup}
       >
         {children}

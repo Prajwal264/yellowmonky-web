@@ -68,7 +68,9 @@ const ChannelSidebar: React.FC<Props> = ({
   const onSelectNode = (selectedNode: EventDataNode, type: NodeType) => {
     if (type === NodeType.CHANNELS) {
       if (selectedNode.key === 'add-channels') {
-        setCurrentPopup(null);
+        setCurrentPopup({
+          type: PopupType.CREATE_CHANNEL,
+        });
         return;
       }
       router.push({

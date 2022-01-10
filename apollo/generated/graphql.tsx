@@ -90,12 +90,21 @@ export enum MessageSourceType {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createChannel: Channel;
   createMessage: Scalars['String'];
   createUserAndAddToTeam: CreateMemberResponse;
   editTeam: EditTeamResponse;
-  inviteMember: Scalars['Boolean'];
+  inviteMembers: Scalars['Boolean'];
   login: UserResponse;
   registerAdmin: RegisterAdminResponse;
+};
+
+
+export type MutationCreateChannelArgs = {
+  adminId: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  teamId: Scalars['String'];
 };
 
 
@@ -125,8 +134,8 @@ export type MutationEditTeamArgs = {
 };
 
 
-export type MutationInviteMemberArgs = {
-  inviteeEmail: Scalars['String'];
+export type MutationInviteMembersArgs = {
+  inviteeEmails: Array<Scalars['String']>;
   inviterId: Scalars['String'];
   teamId: Scalars['String'];
 };
@@ -303,6 +312,15 @@ export type CreateMemberAndAddToTeamMutationVariables = Exact<{
 
 export type CreateMemberAndAddToTeamMutation = { __typename?: 'Mutation', createUserAndAddToTeam: { __typename?: 'CreateMemberResponse', id: string, teamId: string, channelId: string } };
 
+export type InviteMembersMutationVariables = Exact<{
+  inviterId: Scalars['String'];
+  inviteeEmails: Array<Scalars['String']> | Scalars['String'];
+  teamId: Scalars['String'];
+}>;
+
+
+export type InviteMembersMutation = { __typename?: 'Mutation', inviteMembers: boolean };
+
 export type FetchTeamInfoQueryVariables = Exact<{
   teamId: Scalars['String'];
 }>;
@@ -334,6 +352,16 @@ export type FetchAllChannelsQueryVariables = Exact<{
 
 
 export type FetchAllChannelsQuery = { __typename?: 'Query', allChannels: Array<{ __typename?: 'Channel', id: string, name: string } | null | undefined> };
+
+export type CreateChannelMutationVariables = Exact<{
+  teamId: Scalars['String'];
+  adminId: Scalars['String'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+}>;
+
+
+export type CreateChannelMutation = { __typename?: 'Mutation', createChannel: { __typename?: 'Channel', id: string, name: string } };
 
 export type FetchAllTeamMembersQueryVariables = Exact<{
   teamId: Scalars['String'];
@@ -511,6 +539,43 @@ export function useCreateMemberAndAddToTeamMutation(baseOptions?: Apollo.Mutatio
 export type CreateMemberAndAddToTeamMutationHookResult = ReturnType<typeof useCreateMemberAndAddToTeamMutation>;
 export type CreateMemberAndAddToTeamMutationResult = Apollo.MutationResult<CreateMemberAndAddToTeamMutation>;
 export type CreateMemberAndAddToTeamMutationOptions = Apollo.BaseMutationOptions<CreateMemberAndAddToTeamMutation, CreateMemberAndAddToTeamMutationVariables>;
+export const InviteMembersDocument = gql`
+    mutation InviteMembers($inviterId: String!, $inviteeEmails: [String!]!, $teamId: String!) {
+  inviteMembers(
+    inviterId: $inviterId
+    inviteeEmails: $inviteeEmails
+    teamId: $teamId
+  )
+}
+    `;
+export type InviteMembersMutationFn = Apollo.MutationFunction<InviteMembersMutation, InviteMembersMutationVariables>;
+
+/**
+ * __useInviteMembersMutation__
+ *
+ * To run a mutation, you first call `useInviteMembersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInviteMembersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [inviteMembersMutation, { data, loading, error }] = useInviteMembersMutation({
+ *   variables: {
+ *      inviterId: // value for 'inviterId'
+ *      inviteeEmails: // value for 'inviteeEmails'
+ *      teamId: // value for 'teamId'
+ *   },
+ * });
+ */
+export function useInviteMembersMutation(baseOptions?: Apollo.MutationHookOptions<InviteMembersMutation, InviteMembersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InviteMembersMutation, InviteMembersMutationVariables>(InviteMembersDocument, options);
+      }
+export type InviteMembersMutationHookResult = ReturnType<typeof useInviteMembersMutation>;
+export type InviteMembersMutationResult = Apollo.MutationResult<InviteMembersMutation>;
+export type InviteMembersMutationOptions = Apollo.BaseMutationOptions<InviteMembersMutation, InviteMembersMutationVariables>;
 export const FetchTeamInfoDocument = gql`
     query FetchTeamInfo($teamId: String!) {
   team(teamId: $teamId) {
@@ -668,6 +733,48 @@ export function useFetchAllChannelsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type FetchAllChannelsQueryHookResult = ReturnType<typeof useFetchAllChannelsQuery>;
 export type FetchAllChannelsLazyQueryHookResult = ReturnType<typeof useFetchAllChannelsLazyQuery>;
 export type FetchAllChannelsQueryResult = Apollo.QueryResult<FetchAllChannelsQuery, FetchAllChannelsQueryVariables>;
+export const CreateChannelDocument = gql`
+    mutation CreateChannel($teamId: String!, $adminId: String!, $name: String!, $description: String!) {
+  createChannel(
+    teamId: $teamId
+    adminId: $adminId
+    name: $name
+    description: $description
+  ) {
+    id
+    name
+  }
+}
+    `;
+export type CreateChannelMutationFn = Apollo.MutationFunction<CreateChannelMutation, CreateChannelMutationVariables>;
+
+/**
+ * __useCreateChannelMutation__
+ *
+ * To run a mutation, you first call `useCreateChannelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateChannelMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createChannelMutation, { data, loading, error }] = useCreateChannelMutation({
+ *   variables: {
+ *      teamId: // value for 'teamId'
+ *      adminId: // value for 'adminId'
+ *      name: // value for 'name'
+ *      description: // value for 'description'
+ *   },
+ * });
+ */
+export function useCreateChannelMutation(baseOptions?: Apollo.MutationHookOptions<CreateChannelMutation, CreateChannelMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateChannelMutation, CreateChannelMutationVariables>(CreateChannelDocument, options);
+      }
+export type CreateChannelMutationHookResult = ReturnType<typeof useCreateChannelMutation>;
+export type CreateChannelMutationResult = Apollo.MutationResult<CreateChannelMutation>;
+export type CreateChannelMutationOptions = Apollo.BaseMutationOptions<CreateChannelMutation, CreateChannelMutationVariables>;
 export const FetchAllTeamMembersDocument = gql`
     query FetchAllTeamMembers($teamId: String!) {
   allTeamMembers(teamId: $teamId) {

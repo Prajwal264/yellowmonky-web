@@ -2,7 +2,8 @@ import { atom } from 'recoil';
 import { AtomTypes } from '../state-types/atom.types';
 
 export enum PopupType {
-  ADD_MEMBER = 'ADD_MEMBER'
+  ADD_MEMBER = 'ADD_MEMBER',
+  CREATE_CHANNEL = 'CREATE_CHANNEL'
 }
 
 export interface IPopupAtom {

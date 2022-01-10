@@ -154,13 +154,11 @@ body {
       white-space: nowrap;
       &.ant-btn-primary {
         transition: all 80ms linear;
-        cursor: default;
-        pointer-events: none;
-        text-shadow: none;
-        transition: all 80ms linear;
         background: #007a5a;
         color: #fff;
         &:disabled {
+          cursor: default;
+          pointer-events: none;
           background-color: rgb(221, 221, 221);
           border-color: rgb(221, 221, 221);
           color: rgba(29, 28, 29, 0.75);
