@@ -10,6 +10,12 @@
   flex-direction: column;
   color: rgb(203, 222, 251);
   background-color: #3079ed;
+  @media screen and (max-width: 640px) {
+    padding-bottom: 12px;
+    &.hideOnMobile {
+      display: none;
+    }
+  }
   .channelSidebarList {
     flex: 1;
     overflow: scroll;

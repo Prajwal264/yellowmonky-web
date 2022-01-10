@@ -17,6 +17,9 @@
     grid-template-rows: auto;
     overflow: hidden;
     position: relative;
+    @media screen and (max-width: 640px) {
+      grid-template-columns: auto;
+    }
     .primaryView {
       grid-template-areas: "p-workspace__primary_view_contents";
       grid-template-rows: auto;
@@ -26,6 +29,10 @@
       grid-area: p-workspace__primary_view;
       display: grid;
       grid-template-columns: auto;
+
+      @media screen and (max-width: 640px) {
+        margin-top: 12px;
+      }
       .primaryViewContent {
         display: flex;
         flex-direction: column;

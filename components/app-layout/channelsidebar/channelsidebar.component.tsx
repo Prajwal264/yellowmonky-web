@@ -21,10 +21,11 @@ export enum NodeType {
 }
 
 interface Props {
-
+  show: boolean,
 }
 
 const ChannelSidebar: React.FC<Props> = ({
+  show = true
 }) => {
   const { teamId, channelId } = useContext(AppContext);
   const [fetchAllChannels, { data: channelData }] = useFetchAllChannelsLazyQuery();
@@ -87,7 +88,7 @@ const ChannelSidebar: React.FC<Props> = ({
   }
 
   return (
-    <div className={styles.channelSidebar}>
+    <div className={`${styles.channelSidebar} ${!show ? styles.hideOnMobile : ''}`}>
       <div className={styles.channelSidebarList}>
         <ChannelSidebarItem icon={<GrChannel />} name='Channel Browser' />
         <ChannelSidebarItem icon={<RiContactsBookFill />} name='People & user groups' />
