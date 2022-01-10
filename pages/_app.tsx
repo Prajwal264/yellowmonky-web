@@ -36,7 +36,7 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
       <ApolloProvider client={client}>
         {component}
         <Toaster
-          position="bottom-left"
+          position={typeof window !== 'undefined' && window.innerWidth < 640 ? "top-center" : "bottom-left"}
         />
       </ApolloProvider>
     </React.Fragment>
