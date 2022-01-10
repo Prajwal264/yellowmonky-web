@@ -7,6 +7,22 @@
   display: grid;
   grid-template-columns: auto;
   position: relative;
+  @media screen and (max-width: 640px) {
+    position: fixed;
+    width: 100%;
+    z-index: 203;
+    top: 0;
+  }
+  .dropdownIcon {
+    display: none;
+    @media screen and (max-width: 640px) {
+      display: block;
+      position: absolute;
+      z-index: 2;
+      top: 16px;
+      left: 16px;
+    }
+  }
   .channelSidebar {
     display: flex;
     flex-direction: column;

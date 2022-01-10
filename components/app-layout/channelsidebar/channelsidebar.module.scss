@@ -10,6 +10,12 @@
   flex-direction: column;
   color: rgb(203, 222, 251);
   background-color: #3079ed;
+  @media screen and (max-width: 640px) {
+    padding-bottom: 12px;
+    &.hideOnMobile {
+      display: none;
+    }
+  }
   .channelSidebarList {
     flex: 1;
     overflow: scroll;
@@ -39,7 +45,7 @@
           &:hover,
           &:active,
           &:focus {
-            background-color: inherit;
+            background: #1164a3;
           }
           :global(.ant-tree-title) {
             & > div {
@@ -48,7 +54,7 @@
           }
         }
         :global(.ant-tree-node-content-wrapper.ant-tree-node-selected) {
-          background-color: inherit;
+          background: #1164a3;
         }
       }
     }

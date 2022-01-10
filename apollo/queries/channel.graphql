@@ -13,3 +13,10 @@ query FetchAllChannels($teamId: String!) {
     name
   }
 }
+
+mutation CreateChannel($teamId: String!, $adminId: String!, $name: String!, $description: String!) {
+  createChannel(teamId: $teamId, adminId: $adminId, name: $name, description: $description) {
+    id
+    name
+  }
+}

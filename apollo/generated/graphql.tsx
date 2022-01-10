@@ -90,12 +90,21 @@ export enum MessageSourceType {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createChannel: Channel;
   createMessage: Scalars['String'];
   createUserAndAddToTeam: CreateMemberResponse;
   editTeam: EditTeamResponse;
-  inviteMember: Scalars['Boolean'];
+  inviteMembers: Scalars['Boolean'];
   login: UserResponse;
   registerAdmin: RegisterAdminResponse;
+};
+
+
+export type MutationCreateChannelArgs = {
+  adminId: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  teamId: Scalars['String'];
 };
 
 
@@ -125,8 +134,8 @@ export type MutationEditTeamArgs = {
 };
 
 
-export type MutationInviteMemberArgs = {
-  inviteeEmail: Scalars['String'];
+export type MutationInviteMembersArgs = {
+  inviteeEmails: Array<Scalars['String']>;
   inviterId: Scalars['String'];
   teamId: Scalars['String'];
 };
@@ -149,8 +158,10 @@ export type Query = {
   allChannelMessages: Array<Message>;
   allChannels: Array<Maybe<Channel>>;
   allTeamMembers: Array<TeamMember>;
+  allTeams: Array<TeamListResponse>;
   channel: Channel;
   getUsers: Array<Maybe<User>>;
+  team: Team;
 };
 
 
@@ -169,8 +180,18 @@ export type QueryAllTeamMembersArgs = {
 };
 
 
+export type QueryAllTeamsArgs = {
+  userId: Scalars['String'];
+};
+
+
 export type QueryChannelArgs = {
   channelId: Scalars['String'];
+};
+
+
+export type QueryTeamArgs = {
+  teamId: Scalars['String'];
 };
 
 export type RegisterAdminResponse = EntityWrapper & {
@@ -197,10 +218,25 @@ export type SubscriptionNewChannelMessageArgs = {
 export type Team = EntityWrapper & {
   __typename?: 'Team';
   createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
   displayPicture?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   ownerId: Scalars['String'];
+  teamMembers: Array<TeamMember>;
+  updatedAt: Scalars['DateTime'];
+};
+
+export type TeamListResponse = EntityWrapper & {
+  __typename?: 'TeamListResponse';
+  createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
+  displayPicture?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  memberCount: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  ownerId: Scalars['String'];
+  teamMembers: Array<TeamMember>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -232,10 +268,12 @@ export enum TeamMemberStatus {
 export type TeamResponse = EntityWrapper & {
   __typename?: 'TeamResponse';
   createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
   displayPicture?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   ownerId: Scalars['String'];
+  teamMembers: Array<TeamMember>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -268,6 +306,14 @@ export type RegisterAdminMutationVariables = Exact<{
 
 export type RegisterAdminMutation = { __typename?: 'Mutation', registerAdmin: { __typename?: 'RegisterAdminResponse', id: string, email: string, username: string, profileImage?: string | null | undefined, teamId: string, createdAt: any, updatedAt: any } };
 
+export type LoginMutationVariables = Exact<{
+  email: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', id: string } };
+
 export type CreateMessageMutationVariables = Exact<{
   content: Scalars['String'];
   sourceType: MessageSourceType;
@@ -295,6 +341,29 @@ export type CreateMemberAndAddToTeamMutationVariables = Exact<{
 
 export type CreateMemberAndAddToTeamMutation = { __typename?: 'Mutation', createUserAndAddToTeam: { __typename?: 'CreateMemberResponse', id: string, teamId: string, channelId: string } };
 
+export type InviteMembersMutationVariables = Exact<{
+  inviterId: Scalars['String'];
+  inviteeEmails: Array<Scalars['String']> | Scalars['String'];
+  teamId: Scalars['String'];
+}>;
+
+
+export type InviteMembersMutation = { __typename?: 'Mutation', inviteMembers: boolean };
+
+export type FetchTeamInfoQueryVariables = Exact<{
+  teamId: Scalars['String'];
+}>;
+
+
+export type FetchTeamInfoQuery = { __typename?: 'Query', team: { __typename?: 'Team', id: string, name?: string | null | undefined, description?: string | null | undefined, createdAt: any, updatedAt: any } };
+
+export type FetchAllTeamsForUserQueryVariables = Exact<{
+  userId: Scalars['String'];
+}>;
+
+
+export type FetchAllTeamsForUserQuery = { __typename?: 'Query', allTeams: Array<{ __typename?: 'TeamListResponse', id: string, name?: string | null | undefined, description?: string | null | undefined, memberCount: string }> };
+
 export type EditTeamMutationVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
   id: Scalars['String'];
@@ -319,6 +388,16 @@ export type FetchAllChannelsQueryVariables = Exact<{
 
 
 export type FetchAllChannelsQuery = { __typename?: 'Query', allChannels: Array<{ __typename?: 'Channel', id: string, name: string } | null | undefined> };
+
+export type CreateChannelMutationVariables = Exact<{
+  teamId: Scalars['String'];
+  adminId: Scalars['String'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+}>;
+
+
+export type CreateChannelMutation = { __typename?: 'Mutation', createChannel: { __typename?: 'Channel', id: string, name: string } };
 
 export type FetchAllTeamMembersQueryVariables = Exact<{
   teamId: Scalars['String'];
@@ -376,6 +455,40 @@ export function useRegisterAdminMutation(baseOptions?: Apollo.MutationHookOption
 export type RegisterAdminMutationHookResult = ReturnType<typeof useRegisterAdminMutation>;
 export type RegisterAdminMutationResult = Apollo.MutationResult<RegisterAdminMutation>;
 export type RegisterAdminMutationOptions = Apollo.BaseMutationOptions<RegisterAdminMutation, RegisterAdminMutationVariables>;
+export const LoginDocument = gql`
+    mutation Login($email: String!, $password: String!) {
+  login(email: $email, password: $password) {
+    id
+  }
+}
+    `;
+export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
+
+/**
+ * __useLoginMutation__
+ *
+ * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginMutation, { data, loading, error }] = useLoginMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, options);
+      }
+export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
+export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
+export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const CreateMessageDocument = gql`
     mutation CreateMessage($content: String!, $sourceType: MessageSourceType!, $creatorId: String!, $sourceChannelId: String!) {
   createMessage(
@@ -496,6 +609,120 @@ export function useCreateMemberAndAddToTeamMutation(baseOptions?: Apollo.Mutatio
 export type CreateMemberAndAddToTeamMutationHookResult = ReturnType<typeof useCreateMemberAndAddToTeamMutation>;
 export type CreateMemberAndAddToTeamMutationResult = Apollo.MutationResult<CreateMemberAndAddToTeamMutation>;
 export type CreateMemberAndAddToTeamMutationOptions = Apollo.BaseMutationOptions<CreateMemberAndAddToTeamMutation, CreateMemberAndAddToTeamMutationVariables>;
+export const InviteMembersDocument = gql`
+    mutation InviteMembers($inviterId: String!, $inviteeEmails: [String!]!, $teamId: String!) {
+  inviteMembers(
+    inviterId: $inviterId
+    inviteeEmails: $inviteeEmails
+    teamId: $teamId
+  )
+}
+    `;
+export type InviteMembersMutationFn = Apollo.MutationFunction<InviteMembersMutation, InviteMembersMutationVariables>;
+
+/**
+ * __useInviteMembersMutation__
+ *
+ * To run a mutation, you first call `useInviteMembersMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInviteMembersMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [inviteMembersMutation, { data, loading, error }] = useInviteMembersMutation({
+ *   variables: {
+ *      inviterId: // value for 'inviterId'
+ *      inviteeEmails: // value for 'inviteeEmails'
+ *      teamId: // value for 'teamId'
+ *   },
+ * });
+ */
+export function useInviteMembersMutation(baseOptions?: Apollo.MutationHookOptions<InviteMembersMutation, InviteMembersMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InviteMembersMutation, InviteMembersMutationVariables>(InviteMembersDocument, options);
+      }
+export type InviteMembersMutationHookResult = ReturnType<typeof useInviteMembersMutation>;
+export type InviteMembersMutationResult = Apollo.MutationResult<InviteMembersMutation>;
+export type InviteMembersMutationOptions = Apollo.BaseMutationOptions<InviteMembersMutation, InviteMembersMutationVariables>;
+export const FetchTeamInfoDocument = gql`
+    query FetchTeamInfo($teamId: String!) {
+  team(teamId: $teamId) {
+    id
+    name
+    description
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useFetchTeamInfoQuery__
+ *
+ * To run a query within a React component, call `useFetchTeamInfoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchTeamInfoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchTeamInfoQuery({
+ *   variables: {
+ *      teamId: // value for 'teamId'
+ *   },
+ * });
+ */
+export function useFetchTeamInfoQuery(baseOptions: Apollo.QueryHookOptions<FetchTeamInfoQuery, FetchTeamInfoQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchTeamInfoQuery, FetchTeamInfoQueryVariables>(FetchTeamInfoDocument, options);
+      }
+export function useFetchTeamInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchTeamInfoQuery, FetchTeamInfoQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchTeamInfoQuery, FetchTeamInfoQueryVariables>(FetchTeamInfoDocument, options);
+        }
+export type FetchTeamInfoQueryHookResult = ReturnType<typeof useFetchTeamInfoQuery>;
+export type FetchTeamInfoLazyQueryHookResult = ReturnType<typeof useFetchTeamInfoLazyQuery>;
+export type FetchTeamInfoQueryResult = Apollo.QueryResult<FetchTeamInfoQuery, FetchTeamInfoQueryVariables>;
+export const FetchAllTeamsForUserDocument = gql`
+    query FetchAllTeamsForUser($userId: String!) {
+  allTeams(userId: $userId) {
+    id
+    name
+    description
+    memberCount
+  }
+}
+    `;
+
+/**
+ * __useFetchAllTeamsForUserQuery__
+ *
+ * To run a query within a React component, call `useFetchAllTeamsForUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchAllTeamsForUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchAllTeamsForUserQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useFetchAllTeamsForUserQuery(baseOptions: Apollo.QueryHookOptions<FetchAllTeamsForUserQuery, FetchAllTeamsForUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchAllTeamsForUserQuery, FetchAllTeamsForUserQueryVariables>(FetchAllTeamsForUserDocument, options);
+      }
+export function useFetchAllTeamsForUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchAllTeamsForUserQuery, FetchAllTeamsForUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchAllTeamsForUserQuery, FetchAllTeamsForUserQueryVariables>(FetchAllTeamsForUserDocument, options);
+        }
+export type FetchAllTeamsForUserQueryHookResult = ReturnType<typeof useFetchAllTeamsForUserQuery>;
+export type FetchAllTeamsForUserLazyQueryHookResult = ReturnType<typeof useFetchAllTeamsForUserLazyQuery>;
+export type FetchAllTeamsForUserQueryResult = Apollo.QueryResult<FetchAllTeamsForUserQuery, FetchAllTeamsForUserQueryVariables>;
 export const EditTeamDocument = gql`
     mutation EditTeam($name: String, $id: String!, $ownerId: String!, $channels: [String], $members: [String]) {
   editTeam(
@@ -614,6 +841,48 @@ export function useFetchAllChannelsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type FetchAllChannelsQueryHookResult = ReturnType<typeof useFetchAllChannelsQuery>;
 export type FetchAllChannelsLazyQueryHookResult = ReturnType<typeof useFetchAllChannelsLazyQuery>;
 export type FetchAllChannelsQueryResult = Apollo.QueryResult<FetchAllChannelsQuery, FetchAllChannelsQueryVariables>;
+export const CreateChannelDocument = gql`
+    mutation CreateChannel($teamId: String!, $adminId: String!, $name: String!, $description: String!) {
+  createChannel(
+    teamId: $teamId
+    adminId: $adminId
+    name: $name
+    description: $description
+  ) {
+    id
+    name
+  }
+}
+    `;
+export type CreateChannelMutationFn = Apollo.MutationFunction<CreateChannelMutation, CreateChannelMutationVariables>;
+
+/**
+ * __useCreateChannelMutation__
+ *
+ * To run a mutation, you first call `useCreateChannelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateChannelMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createChannelMutation, { data, loading, error }] = useCreateChannelMutation({
+ *   variables: {
+ *      teamId: // value for 'teamId'
+ *      adminId: // value for 'adminId'
+ *      name: // value for 'name'
+ *      description: // value for 'description'
+ *   },
+ * });
+ */
+export function useCreateChannelMutation(baseOptions?: Apollo.MutationHookOptions<CreateChannelMutation, CreateChannelMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateChannelMutation, CreateChannelMutationVariables>(CreateChannelDocument, options);
+      }
+export type CreateChannelMutationHookResult = ReturnType<typeof useCreateChannelMutation>;
+export type CreateChannelMutationResult = Apollo.MutationResult<CreateChannelMutation>;
+export type CreateChannelMutationOptions = Apollo.BaseMutationOptions<CreateChannelMutation, CreateChannelMutationVariables>;
 export const FetchAllTeamMembersDocument = gql`
     query FetchAllTeamMembers($teamId: String!) {
   allTeamMembers(teamId: $teamId) {

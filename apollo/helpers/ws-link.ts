@@ -1,8 +1,9 @@
 import { ApolloLink } from '@apollo/client';
 import { w3cwebsocket } from 'websocket';
 import {  FetchResult, Observable, Operation } from '@apollo/client/core';
-import { print, GraphQLError } from 'graphql';
+import { print } from 'graphql';
 import { Client, ClientOptions, createClient } from 'graphql-ws';
+import toast from 'react-hot-toast';
 
 class WebSocketLink extends ApolloLink {
   private client: Client;
@@ -19,12 +20,13 @@ class WebSocketLink extends ApolloLink {
         query: print(operation.query) },{
           next: sink.next.bind(sink),
           complete: sink.complete.bind(sink),
-          error: (err) => {
+          error: (err: any) => {
             if (err instanceof Error) {
               return sink.error(err);
             }
 
-            if (err instanceof CloseEvent) {
+            if (isLikeCloseEvent(err)) {
+              toast.error('Websocket not registered')
               return sink.error(
                 // reason will be available on clean closes
                 new Error(
@@ -32,18 +34,19 @@ class WebSocketLink extends ApolloLink {
                 ),
               );
             }
+            toast.error('Websocket not registered')
             return sink.error(
-              new Error(
-                (err as GraphQLError[])
-                  .map(({ message }) => message)
-                  .join(', '),
-              ),
+              new Error(err.message),
             );
           },
         },
       );
     });
   }
+}
+
+function isLikeCloseEvent(val: any) {
+  return 'code' in Object(val) && 'reason' in Object(val);
 }
 
 export const wsLink =  new WebSocketLink({

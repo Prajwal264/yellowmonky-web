@@ -13,6 +13,7 @@ import { allChannelsAtom } from '../../../state/atoms/all-channels.atom';
 import { channelTreeSelector } from '../../../state/selectors/channel-tree.selector';
 import { allMembersAtom } from '../../../state/atoms/all-members.atom';
 import { memberTreeSelector } from '../../../state/selectors/member-tree.selector';
+import { popupAtom, PopupType } from '../../../state/atoms/popup.atom';
 
 export enum NodeType {
   CHANNELS = 'channels',
@@ -20,16 +21,18 @@ export enum NodeType {
 }
 
 interface Props {
-
+  show: boolean,
 }
 
 const ChannelSidebar: React.FC<Props> = ({
+  show = true
 }) => {
-  const { teamId } = useContext(AppContext);
+  const { teamId, channelId } = useContext(AppContext);
   const [fetchAllChannels, { data: channelData }] = useFetchAllChannelsLazyQuery();
   const [fetchAllMembers, { data: memberData }] = useFetchAllTeamMembersLazyQuery();
   const setChannels = useSetRecoilState(allChannelsAtom);
   const setMembers = useSetRecoilState(allMembersAtom);
+  const setCurrentPopup = useSetRecoilState(popupAtom)
   const channelTree = useRecoilValue(channelTreeSelector)
   const memberTree = useRecoilValue(memberTreeSelector)
   const router = useRouter();
@@ -64,6 +67,12 @@ const ChannelSidebar: React.FC<Props> = ({
 
   const onSelectNode = (selectedNode: EventDataNode, type: NodeType) => {
     if (type === NodeType.CHANNELS) {
+      if (selectedNode.key === 'add-channels') {
+        setCurrentPopup({
+          type: PopupType.CREATE_CHANNEL,
+        });
+        return;
+      }
       router.push({
         pathname: '/app/client/[teamId]/channels/[channelId]',
         query: {
@@ -71,11 +80,17 @@ const ChannelSidebar: React.FC<Props> = ({
           channelId: selectedNode.key,
         }
       })
+    } else {
+      if (selectedNode.key === 'add-members') {
+        setCurrentPopup({
+          type: PopupType.ADD_MEMBER,
+        });
+      }
     }
   }
 
   return (
-    <div className={styles.channelSidebar}>
+    <div className={`${styles.channelSidebar} ${!show ? styles.hideOnMobile : ''}`}>
       <div className={styles.channelSidebarList}>
         <ChannelSidebarItem icon={<GrChannel />} name='Channel Browser' />
         <ChannelSidebarItem icon={<RiContactsBookFill />} name='People & user groups' />
@@ -83,11 +98,14 @@ const ChannelSidebar: React.FC<Props> = ({
           defaultExpandedKeys={['channels']}
           className={styles.channelTree}
           treeData={channelTree}
+          selectedKeys={[channelId!]}
           onSelect={(_, { node }) => onSelectNode(node, NodeType.CHANNELS)}
         />
         <Tree
           className={styles.channelTree}
           treeData={memberTree}
+          selectedKeys={[channelId!]}
+          onSelect={(_, { node }) => onSelectNode(node, NodeType.MEMBERS)}
         />
       </div>
     </div>

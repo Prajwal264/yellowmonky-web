@@ -1,0 +1,85 @@
+.teamListPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .heading {
+    font-family: Roboto;
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 46px;
+    max-width: 700px;
+    text-align: center;
+    letter-spacing: -0.75px;
+    margin-bottom: 10px;
+  }
+  .subHeading {
+    font-size: 18px;
+    line-height: 27px;
+    margin-bottom: 32px;
+    color: #454245;
+    max-width: 700px;
+    text-align: center;
+  }
+  .cardList {
+    margin: 24px 40px;
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    width: 100%;
+    .card {
+      display: flex;
+      min-height: 72px;
+      padding: 16px 12px;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid rgba(29, 28, 29, 0.3);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+      transition: border 80ms ease-out, box-shadow 80ms ease-out;
+      &:hover {
+        box-shadow: 0 0 0 1px #3079ed, 0 0 0 5px rgba(48, 121, 237, 0.3);
+        border-color: transparent;
+      }
+      margin: 8px 0;
+      cursor: pointer;
+      :global(.sb-avatar) {
+        border-radius: 4px;
+        overflow: hidden;
+        margin-right: 16px;
+        width: 60px !important;
+        height: 60px !important;
+        min-width: 60px;
+        :global(.sb-avatar__text) {
+          width: 60px !important;
+          height: 60px !important;
+        }
+      }
+      .content {
+        display: flex;
+        justify-content: space-between;
+        min-width: 0;
+        width: 100%;
+        flex-direction: column;
+        .name {
+          flex: 0 1 auto;
+          display: flex;
+          align-items: baseline;
+          font-size: 15px;
+          line-height: 1.46668;
+          font-weight: 400;
+          margin-bottom: 4px;
+        }
+        .details {
+          display: block;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          font-size: 13px;
+          line-height: 1.38463;
+          font-weight: 400;
+          color: rgba(29, 28, 29, 0.7);
+        }
+      }
+    }
+  }
+}

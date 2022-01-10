@@ -11,6 +11,7 @@ import 'emoji-mart/css/emoji-mart.css'
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import AppContextProvider from '../context/AppContextProvider';
 import { RecoilRoot } from 'recoil';
+import PopupHolder from '../components/popups/popupholder.component';
 
 const appRoute = `/app`;
 
@@ -25,6 +26,7 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
           <AppLayout>
             {component}
           </AppLayout>
+          <PopupHolder />
         </AppContextProvider>
       </RecoilRoot>
   }
@@ -34,7 +36,7 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
       <ApolloProvider client={client}>
         {component}
         <Toaster
-          position="bottom-left"
+          position={typeof window !== 'undefined' && window.innerWidth < 640 ? "top-center" : "bottom-left"}
         />
       </ApolloProvider>
     </React.Fragment>

@@ -185,7 +185,9 @@ const CreateTeamPage: React.FC<Props> = ({ data: { teamId } }) => {
         variables: {
           id: teamId,
           ownerId: cookie.load('userId'),
-          ...payload,
+          name: payload.teamName,
+          members: payload.members,
+          channels: payload.channels,
         }
       })
       const createdChannels = editTeamResponse.data?.editTeam.channels;

@@ -17,7 +17,7 @@ export const channelTreeSelector = selector({
       children: [],
       selectable: false,
     };
-    if (channels.length) {
+    if (channels?.length) {
       const lastChild = {
         title: <ChannelSidebarItem icon={<IoMdAddCircle />} name='Add Channel' />,
         key: 'add-channels',

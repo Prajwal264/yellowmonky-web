@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import { handleEmailValidation } from '../../helpers/validation.helper';
 import FormInput from '../shared/form-input/form-input.component';
 import PrimaryButton from '../shared/primary-button/primary-button.component';
-import styles from './signup-form.module.scss';
+import styles from './form-holder.module.scss';
 
 export interface FormField {
   name: string,
@@ -17,17 +17,24 @@ export interface FormField {
 }
 
 interface Props {
+  content: {
+    title: string,
+    subtitle?: string,
+  }
   fields?: FormField[],
   onSubmit: (data: Record<string, string>) => void | Promise<void>,
+  loading?: boolean,
 }
 /**
  *
  *
  * @return {*} 
  */
-const SignupForm: React.FC<Props> = ({
+const FormHolder: React.FC<Props> = ({
+  content,
   fields = [],
   onSubmit,
+  loading = false,
 }) => {
 
   const defaultValues = useMemo(() => fields.reduce((acc: Record<string, string>, cur) => {
@@ -96,12 +103,12 @@ const SignupForm: React.FC<Props> = ({
   }
 
   return (
-    <div className={styles.signupForm}>
+    <div className={styles.formHolder}>
       <h4 className={styles.heading}>
-        Create an Account
+        {content.title}
       </h4>
       <h6 className={styles.subHeading}>
-        We suggest using the email address you use at work.
+        {content.subtitle}
       </h6>
       <form noValidate onSubmit={handleSubmit}>
         {fields.map((field, i) => (
@@ -116,10 +123,10 @@ const SignupForm: React.FC<Props> = ({
             />
           </React.Fragment>
         ))}
-        <PrimaryButton content="continue" type='submit' />
+        <PrimaryButton content="continue" type='submit' disabled={loading} />
       </form>
     </div>
   )
 }
 
-export default SignupForm
+export default FormHolder

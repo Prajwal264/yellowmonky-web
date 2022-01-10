@@ -1,4 +1,23 @@
 # team
+query FetchTeamInfo($teamId: String!) {
+  team(teamId: $teamId) {
+    id
+    name
+    description
+    createdAt
+    updatedAt
+  }
+}
+
+query FetchAllTeamsForUser($userId: String!) {
+  allTeams(userId: $userId) {
+    id
+    name
+    description
+    memberCount
+  }
+}
+
 mutation EditTeam($name: String, $id: String!, $ownerId: String!, $channels: [String], $members: [String]) {
   editTeam(name: $name, id: $id, ownerId: $ownerId, channels: $channels, members: $members) {
     teamId,
