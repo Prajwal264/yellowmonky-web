@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import styles from '../../styles/pages/signup.module.scss';
 import Header from '../../components/shared/header/header.component';
-import SignupForm, { FormField } from '../../components/signup/signup-form.component';
+import FormHolder, { FormField } from '../../components/signup/form-holder.component';
 import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { useCreateMemberAndAddToTeamMutation } from '../../apollo/generated/graphql';
@@ -117,7 +117,15 @@ const JoinTeamPage: React.FC<Props> = () => {
   return (
     <div className={styles.signupPage}>
       <Header />
-      <SignupForm fields={fields} onSubmit={joinTeam} loading={loading} />
+      <FormHolder
+        content={{
+          title: 'Create an Account',
+          subtitle: 'We suggest using the email address you use at work.'
+        }}
+        fields={fields}
+        onSubmit={joinTeam}
+        loading={loading}
+      />
     </div>
   )
 }

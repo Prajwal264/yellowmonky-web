@@ -10,3 +10,9 @@ mutation RegisterAdmin($username: String!, $email: String!, $password: String!) 
     updatedAt
   }
 }
+
+mutation Login($email: String!, $password:String!) {
+  login(email: $email, password: $password) {
+    id
+  }
+}
