@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 
 import React, { useEffect } from 'react'
 import toast from 'react-hot-toast';
-import { useFetchAllChannelsLazyQuery, useFetchChannelLazyQuery } from '../../../../apollo/generated/graphql';
+import { useFetchAllChannelsLazyQuery } from '../../../../apollo/generated/graphql';
 interface Props {
   data: {
     teamId: string,

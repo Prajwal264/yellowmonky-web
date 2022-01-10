@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import SidebarHeader from '../../sidebarheader/sidebarheader.component';
 import ChannelSidebar from '../channelsidebar/channelsidebar.component';

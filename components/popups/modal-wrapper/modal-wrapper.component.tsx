@@ -36,7 +36,7 @@ const ModalWrapper: React.FC<Props> = ({
    *
    * @param {*} e
    */
-  const onOkay: ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void) = async (e) => {
+  const onOkay: ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void) = async () => {
     closePopup();
     await onOk()
   }
