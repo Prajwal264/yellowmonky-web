@@ -21,10 +21,11 @@
     text-align: center;
   }
   .cardList {
-    margin: 0 40px;
+    margin: 24px 40px;
     display: flex;
     flex-direction: column;
     max-width: 800px;
+    width: 100%;
     .card {
       display: flex;
       min-height: 72px;
@@ -47,6 +48,7 @@
         margin-right: 16px;
         width: 60px !important;
         height: 60px !important;
+        min-width: 60px;
         :global(.sb-avatar__text) {
           width: 60px !important;
           height: 60px !important;

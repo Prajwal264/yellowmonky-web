@@ -158,6 +158,7 @@ export type Query = {
   allChannelMessages: Array<Message>;
   allChannels: Array<Maybe<Channel>>;
   allTeamMembers: Array<TeamMember>;
+  allTeams: Array<TeamListResponse>;
   channel: Channel;
   getUsers: Array<Maybe<User>>;
   team: Team;
@@ -176,6 +177,11 @@ export type QueryAllChannelsArgs = {
 
 export type QueryAllTeamMembersArgs = {
   teamId: Scalars['String'];
+};
+
+
+export type QueryAllTeamsArgs = {
+  userId: Scalars['String'];
 };
 
 
@@ -217,6 +223,20 @@ export type Team = EntityWrapper & {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   ownerId: Scalars['String'];
+  teamMembers: Array<TeamMember>;
+  updatedAt: Scalars['DateTime'];
+};
+
+export type TeamListResponse = EntityWrapper & {
+  __typename?: 'TeamListResponse';
+  createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
+  displayPicture?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  memberCount: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  ownerId: Scalars['String'];
+  teamMembers: Array<TeamMember>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -253,6 +273,7 @@ export type TeamResponse = EntityWrapper & {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   ownerId: Scalars['String'];
+  teamMembers: Array<TeamMember>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -335,6 +356,13 @@ export type FetchTeamInfoQueryVariables = Exact<{
 
 
 export type FetchTeamInfoQuery = { __typename?: 'Query', team: { __typename?: 'Team', id: string, name?: string | null | undefined, description?: string | null | undefined, createdAt: any, updatedAt: any } };
+
+export type FetchAllTeamsForUserQueryVariables = Exact<{
+  userId: Scalars['String'];
+}>;
+
+
+export type FetchAllTeamsForUserQuery = { __typename?: 'Query', allTeams: Array<{ __typename?: 'TeamListResponse', id: string, name?: string | null | undefined, description?: string | null | undefined, memberCount: string }> };
 
 export type EditTeamMutationVariables = Exact<{
   name?: InputMaybe<Scalars['String']>;
@@ -657,6 +685,44 @@ export function useFetchTeamInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type FetchTeamInfoQueryHookResult = ReturnType<typeof useFetchTeamInfoQuery>;
 export type FetchTeamInfoLazyQueryHookResult = ReturnType<typeof useFetchTeamInfoLazyQuery>;
 export type FetchTeamInfoQueryResult = Apollo.QueryResult<FetchTeamInfoQuery, FetchTeamInfoQueryVariables>;
+export const FetchAllTeamsForUserDocument = gql`
+    query FetchAllTeamsForUser($userId: String!) {
+  allTeams(userId: $userId) {
+    id
+    name
+    description
+    memberCount
+  }
+}
+    `;
+
+/**
+ * __useFetchAllTeamsForUserQuery__
+ *
+ * To run a query within a React component, call `useFetchAllTeamsForUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchAllTeamsForUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchAllTeamsForUserQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useFetchAllTeamsForUserQuery(baseOptions: Apollo.QueryHookOptions<FetchAllTeamsForUserQuery, FetchAllTeamsForUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchAllTeamsForUserQuery, FetchAllTeamsForUserQueryVariables>(FetchAllTeamsForUserDocument, options);
+      }
+export function useFetchAllTeamsForUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchAllTeamsForUserQuery, FetchAllTeamsForUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchAllTeamsForUserQuery, FetchAllTeamsForUserQueryVariables>(FetchAllTeamsForUserDocument, options);
+        }
+export type FetchAllTeamsForUserQueryHookResult = ReturnType<typeof useFetchAllTeamsForUserQuery>;
+export type FetchAllTeamsForUserLazyQueryHookResult = ReturnType<typeof useFetchAllTeamsForUserLazyQuery>;
+export type FetchAllTeamsForUserQueryResult = Apollo.QueryResult<FetchAllTeamsForUserQuery, FetchAllTeamsForUserQueryVariables>;
 export const EditTeamDocument = gql`
     mutation EditTeam($name: String, $id: String!, $ownerId: String!, $channels: [String], $members: [String]) {
   editTeam(
