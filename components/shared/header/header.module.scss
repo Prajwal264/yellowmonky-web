@@ -4,11 +4,20 @@
   display: grid;
   align-items: center;
   grid-template-columns: repeat(3, 1fr);
+  @media screen and (max-width: 640px) {
+    padding: 24px 16px;
+  }
   .leftCol {
   }
   .centerCol {
     text-align: center;
     cursor: pointer;
+    @media screen and (max-width: 640px) {
+      span {
+        width: 267px;
+        height: 50px;
+      }
+    }
   }
   .rightCol {
     display: flex;
