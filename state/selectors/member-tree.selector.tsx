@@ -4,7 +4,6 @@ import { selector } from 'recoil';
 import { NodeType } from '../../components/app-layout/channelsidebar/channelsidebar.component';
 import ChannelSidebarItem from '../../components/app-layout/channelsidebaritem/channelsidebaritem.component';
 import { allMembersAtom } from '../atoms/all-members.atom';
-import { PopupType } from '../atoms/popup.atom';
 import { constructTree } from '../helpers/construct-tree.helper';
 import { SelectorTypes } from '../state-types/selector.types';
 

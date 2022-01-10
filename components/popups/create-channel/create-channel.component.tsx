@@ -7,7 +7,7 @@ import cookie from 'react-cookies';
 import toast from 'react-hot-toast'
 import FormInput from '../../shared/form-input/form-input.component';
 import { useCreateChannelMutation } from '../../../apollo/generated/graphql';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { allChannelsAtom } from '../../../state/atoms/all-channels.atom';
 
 interface Props {
