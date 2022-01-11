@@ -13,6 +13,8 @@ import { channelInfoAtom } from '../../../../state/atoms/channel-info.atom';
 import MessagePaneJumbotron from '../message-pane-jumbotron/message-pane-jumbotron.component';
 import { BsLightbulb } from 'react-icons/bs';
 import Message from './message/message.component';
+import messageNotification from '../../../../assets/audio/message-notification.mp3';
+import { useSound } from 'use-sound';
 
 interface Props {
 
@@ -24,6 +26,7 @@ const MessageList: React.FC<Props> = ({ }) => {
   const allChannelMessages = useRecoilValue(channelMessageTreeSelector);
   const channelInfo = useRecoilValue(channelInfoAtom);
   const [fetchChannelMessages, { data: messages }] = useFetchAllChannelMessagesLazyQuery();
+  const [notificationSound] = useSound(messageNotification);
   const { data: newChannelMessageData } = useNewChannelMessageSubscription({
     variables: {
       channelId: channelId!
@@ -46,6 +49,7 @@ const MessageList: React.FC<Props> = ({ }) => {
       if (newChannelMessageData.newChannelMessage.creatorId !== cookie.load('userId')) {
         setChannelMesssages((prevState) => ([...prevState, newChannelMessageData.newChannelMessage as any]))
         const scrollableBodyRef = document.querySelector('.message:first-of-type');
+        notificationSound();
         if (scrollableBodyRef) {
           scrollableBodyRef.scrollIntoView();
         }
