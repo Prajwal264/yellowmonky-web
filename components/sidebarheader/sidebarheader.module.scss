@@ -45,6 +45,9 @@
     text-align: initial;
     vertical-align: initial;
     cursor: pointer;
+    @media screen and (max-width: 640px) {
+      margin-left: 30px;
+    }
     span {
       min-width: 0;
       font-weight: 900;

@@ -10,7 +10,7 @@ const Message: React.FC<Props> = ({
   data,
 }) => {
   return (
-    <div className={styles.message}>
+    <div className={`message ${styles.message}`}>
       <div className={styles.gutter}>
         <div className={styles.profileImage}>
           {data.showOwner ? <button>

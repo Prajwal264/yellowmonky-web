@@ -51,7 +51,10 @@ const MessageInputMain: React.FC<Props> = ({ }) => {
           createdAt: new Date(),
           creatorId: creatorId,
         } as any]))
-
+        const scrollableBodyRef = document.querySelector('.message:first-of-type');
+        if (scrollableBodyRef) {
+          scrollableBodyRef.scrollIntoView();
+        }
       } catch (e) {
         toast.error('Failed to send message.')
       }

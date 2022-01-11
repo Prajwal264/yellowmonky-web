@@ -35,7 +35,7 @@ const MessageList: React.FC<Props> = ({ }) => {
       fetchChannelMessages({
         variables: {
           channelId,
-          limit: 20,
+          limit: 25,
         }
       })
     }
@@ -45,10 +45,9 @@ const MessageList: React.FC<Props> = ({ }) => {
     if (newChannelMessageData?.newChannelMessage) {
       if (newChannelMessageData.newChannelMessage.creatorId !== cookie.load('userId')) {
         setChannelMesssages((prevState) => ([...prevState, newChannelMessageData.newChannelMessage as any]))
-        const scrollableBodyRef = document.getElementById('#scrollableDiv');
+        const scrollableBodyRef = document.querySelector('.message:first-of-type');
         if (scrollableBodyRef) {
-          const ele = scrollableBodyRef;
-          ele.scrollTop = ele.scrollHeight;
+          scrollableBodyRef.scrollIntoView();
         }
       }
     }
