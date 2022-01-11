@@ -12,5 +12,8 @@
     overflow: auto;
     display: flex;
     flex-direction: column-reverse;
+    @media screen and (max-width: 640px) {
+      margin-bottom: 16px;
+    }
   }
 }

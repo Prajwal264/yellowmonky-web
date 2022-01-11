@@ -19,6 +19,8 @@
     position: relative;
     @media screen and (max-width: 640px) {
       grid-template-columns: auto;
+      grid-template-areas: unset;
+      display: flex;
     }
     .primaryView {
       grid-template-areas: "p-workspace__primary_view_contents";
@@ -32,6 +34,7 @@
 
       @media screen and (max-width: 640px) {
         margin-top: 12px;
+        width: 100%;
       }
       .primaryViewContent {
         display: flex;

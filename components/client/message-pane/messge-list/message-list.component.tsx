@@ -89,7 +89,7 @@ const MessageList: React.FC<Props> = ({ }) => {
       <InfiniteScroll
         dataLength={allChannelMessages.size}
         next={loadMessages}
-        hasMore={messages?.allChannelMessages?.length! >= 10}
+        hasMore={!!messages?.allChannelMessages?.length!}
         loader={<Skeleton
           avatar={{
             shape: 'square'

@@ -22,10 +22,12 @@ export enum NodeType {
 
 interface Props {
   show: boolean,
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ChannelSidebar: React.FC<Props> = ({
-  show = true
+  show = true,
+  setShowMenu
 }) => {
   const { teamId, channelId } = useContext(AppContext);
   const [fetchAllChannels, { data: channelData }] = useFetchAllChannelsLazyQuery();
@@ -66,6 +68,7 @@ const ChannelSidebar: React.FC<Props> = ({
   }, [memberData]);
 
   const onSelectNode = (selectedNode: EventDataNode, type: NodeType) => {
+    setShowMenu(false);
     if (type === NodeType.CHANNELS) {
       if (selectedNode.key === 'add-channels') {
         setCurrentPopup({
