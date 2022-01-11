@@ -30,6 +30,9 @@
     position: relative;
     grid-template-columns: 260px auto;
     grid-template-areas: "p-workspace__sidebar p-workspace__primary_view";
+    @media screen and (max-width: 640px) {
+      grid-template-columns: unset;
+    }
     .sidebar {
       grid-template-areas: "p-workspace__channel_sidebar";
       grid-template-rows: auto;
@@ -43,6 +46,9 @@
         "p-workspace__channel_sidebar";
       position: relative;
       background: rgb(48, 121, 237);
+      @media screen and (max-width: 640px) {
+        display: none;
+      }
       .channelSidebar {
         display: flex;
         flex-direction: column;
@@ -185,6 +191,9 @@
             padding: 32px 80px 64px 80px;
             height: 100%;
             max-width: 820px;
+            @media screen and (max-width: 640px) {
+              padding: 24px;
+            }
             .teamSetupStepCounter {
               flex-grow: 0;
               margin-bottom: 24px;
@@ -200,6 +209,11 @@
                 line-height: 56px;
                 margin-bottom: 36px;
                 font-weight: 700;
+                @media screen and (max-width: 640px) {
+                  font-size: 30px;
+                  line-height: 1.3;
+                  margin-bottom: 24px;
+                }
               }
               p {
                 margin-bottom: 24px;
