@@ -167,6 +167,8 @@ export type Query = {
 
 export type QueryAllChannelMessagesArgs = {
   channelId: Scalars['String'];
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Float'];
 };
 
 
@@ -326,6 +328,8 @@ export type CreateMessageMutation = { __typename?: 'Mutation', createMessage: st
 
 export type FetchAllChannelMessagesQueryVariables = Exact<{
   channelId: Scalars['String'];
+  limit: Scalars['Float'];
+  cursor?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -529,8 +533,8 @@ export type CreateMessageMutationHookResult = ReturnType<typeof useCreateMessage
 export type CreateMessageMutationResult = Apollo.MutationResult<CreateMessageMutation>;
 export type CreateMessageMutationOptions = Apollo.BaseMutationOptions<CreateMessageMutation, CreateMessageMutationVariables>;
 export const FetchAllChannelMessagesDocument = gql`
-    query FetchAllChannelMessages($channelId: String!) {
-  allChannelMessages(channelId: $channelId) {
+    query FetchAllChannelMessages($channelId: String!, $limit: Float!, $cursor: String) {
+  allChannelMessages(channelId: $channelId, limit: $limit, cursor: $cursor) {
     id
     content
     creatorId
@@ -552,6 +556,8 @@ export const FetchAllChannelMessagesDocument = gql`
  * const { data, loading, error } = useFetchAllChannelMessagesQuery({
  *   variables: {
  *      channelId: // value for 'channelId'
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
  *   },
  * });
  */

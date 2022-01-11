@@ -1,3 +1,21 @@
 .messageList {
   position: relative;
+  :global(.infinite-scroll-component) {
+    overflow: unset !important;
+    display: flex;
+    flex-direction: column-reverse;
+    :global(.ant-skeleton.ant-skeleton-with-avatar) {
+      padding: 8px 20px;
+      :global(.ant-skeleton-header) {
+        :global(.ant-skeleton-avatar-square) {
+          border-radius: 4px;
+        }
+      }
+      :global(.ant-skeleton-content) {
+        :global(.ant-skeleton-paragraph) {
+          margin-top: 8px;
+        }
+      }
+    }
+  }
 }

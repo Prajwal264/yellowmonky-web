@@ -7,6 +7,10 @@
   flex-direction: column-reverse;
   .virtualList {
     position: relative;
-    overflow: scroll;
+    // overflow: scroll;
+    height: 300;
+    overflow: auto;
+    display: flex;
+    flex-direction: column-reverse;
   }
 }
