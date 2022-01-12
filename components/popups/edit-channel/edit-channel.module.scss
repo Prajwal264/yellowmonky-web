@@ -47,6 +47,77 @@
           margin-right: 20px;
         }
       }
+      .ant-tabs-content-holder {
+        min-height: 150px;
+        .ant-tabs-content {
+          .ant-tabs-tabpane {
+            background-color: rgb(248, 248, 248);
+            :local(.fieldGroup) {
+              border-radius: 12px;
+              margin: 16px 28px;
+              border: 1px solid rgba(29, 28, 29, 0.13);
+              input {
+                margin: unset;
+              }
+              :local(.fieldCard) {
+                padding: 16px 20px;
+                background-color: rgb(255, 255, 255);
+                cursor: pointer;
+                &:hover {
+                  background-color: unset;
+                }
+                :local(.flexSpaceBw) {
+                  display: flex;
+                  justify-content: space-between;
+                  h3 {
+                    font-size: 15px;
+                    line-height: 1.46668;
+                    align-items: baseline;
+                    display: flex;
+                    font-weight: 700;
+                    justify-content: space-between;
+                    margin: 0;
+                  }
+                  button {
+                    font-size: 13px;
+                    line-height: 1.38463;
+                    font-weight: 700;
+                    overflow: initial;
+                    padding: 0;
+                    text-align: initial;
+                    vertical-align: initial;
+                    cursor: pointer;
+                    background: none;
+                    border: 0;
+                    color: rgb(18, 100, 163);
+                    font: inherit;
+                    margin: 0;
+                  }
+                }
+                p {
+                  word-break: break-word;
+                  margin-bottom: 0;
+                  color: rgba(29, 28, 29, 0.7);
+                }
+              }
+              :local(.fieldCard:first-child) {
+                border-top-left-radius: 12px;
+                border-top-right-radius: 12px;
+              }
+              :local(.fieldCard:last-child) {
+                border-bottom-left-radius: 12px;
+                border-bottom-right-radius: 12px;
+              }
+              :local(.fieldCard + .fieldCard) {
+                border-top: 1px solid rgba(var(--sk_foreground_low, 29, 28, 29), 0.13);
+              }
+            }
+            &.bg-white {
+              background-color: white;
+            }
+          }
+        }
+      }
     }
   }
 }
