@@ -4,6 +4,7 @@ import { useSetRecoilState } from 'recoil';
 import { useFetchChannelLazyQuery } from '../../../apollo/generated/graphql';
 import { AppContext } from '../../../context/AppContextProvider';
 import { channelInfoAtom } from '../../../state/atoms/channel-info.atom';
+import { popupAtom, PopupType } from '../../../state/atoms/popup.atom';
 import styles from './primary-view-header.module.scss';
 
 interface Props {
@@ -16,6 +17,7 @@ const PrimaryViewHeader: React.FC<Props> = ({
   const { channelId } = useContext(AppContext);
   const [fetchChannel, { data: channelInfo, error }] = useFetchChannelLazyQuery();
   const setChannelInfo = useSetRecoilState(channelInfoAtom)
+  const setCurrentPopup = useSetRecoilState(popupAtom)
   useEffect(() => {
     if (channelId) {
       loadDependencies();
@@ -44,11 +46,17 @@ const PrimaryViewHeader: React.FC<Props> = ({
     }
   }, [error])
 
+  const editChannelPopupTrigger = () => {
+    setCurrentPopup({
+      type: PopupType.EDIT_CHANNEL,
+    });
+  }
+
   return (
     <div className={styles.primaryViewHeader}>
       <div className={styles.text}>
         <div className={styles.coachmarkAnchor}>
-          <button className={styles.channelButton}>
+          <button className={styles.channelButton} onClick={editChannelPopupTrigger}>
             <div className={styles.headerTitle}>
               <span>#&nbsp;</span>
               <span>{channelInfo?.channel?.name}</span>

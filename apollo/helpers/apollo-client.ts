@@ -3,7 +3,7 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { onError } from 'apollo-link-error';
 import { wsLink } from './ws-link';
 
-// import { createUploadLink } from "apollo-upload-client";
+import { createUploadLink } from "apollo-upload-client";
 // import { GenerateNewAccessTokenDocument } from "apollo/generated/graphql";
 // import { Cookies } from "types/cookie.types";
 // import cookie from "react-cookies";

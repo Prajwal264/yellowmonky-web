@@ -6,9 +6,10 @@ import { PopupType, popupAtom } from '../../../state/atoms/popup.atom';
 interface Props {
   title: string | React.ReactNode,
   popupType: PopupType
-  disabled: boolean,
+  disabled?: boolean,
   onOk: Function,
   onCancel: Function,
+  showCtaSection?: boolean,
 }
 
 
@@ -18,7 +19,8 @@ const ModalWrapper: React.FC<Props> = ({
   popupType,
   disabled = true,
   onOk,
-  onCancel
+  onCancel,
+  showCtaSection = true
 }) => {
   const [currentPopup, setCurrentPopup] = useRecoilState(popupAtom);
 
@@ -51,6 +53,7 @@ const ModalWrapper: React.FC<Props> = ({
         className={'modal-wrapper'}
         okText="Send"
         cancelText=""
+        footer={null}
         okButtonProps={{
           disabled: disabled
         }}

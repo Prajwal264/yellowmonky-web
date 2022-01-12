@@ -1,0 +1,52 @@
+.editChannelPopup {
+  margin: -24px;
+  :global {
+    .ant-tabs {
+      min-height: 0;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      .ant-tabs-nav {
+        padding-left: 20px;
+        position: relative;
+        z-index: 1;
+        display: block;
+        box-shadow: rgb(221, 221, 221) 0px -1px 0px 0px inset;
+        margin: 0;
+        .ant-tabs-tab {
+          -webkit-tap-highlight-color: transparent;
+          background: none;
+          border: 0;
+          box-shadow: inset 0 -2px 0 0 transparent;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          padding: 9px 0;
+          margin: 0 8px;
+          text-align: center;
+          transition: box-shadow 0.125s ease-out;
+          .ant-tabs-tab-btn {
+            font-size: 13px;
+            line-height: 1.38463;
+            font-weight: 400;
+            color: rgb(97, 96, 97);
+          }
+          &.ant-tabs-tab-active {
+            .ant-tabs-tab-btn {
+              color: rgb(29, 28, 29);
+            }
+          }
+        }
+        .ant-tabs-ink-bar {
+          border: none;
+          box-shadow: inset 0 -2px 0 0 #007a5a;
+        }
+        .ant-tabs-tab:not(:last-child) {
+          margin-right: 20px;
+        }
+      }
+    }
+  }
+}
