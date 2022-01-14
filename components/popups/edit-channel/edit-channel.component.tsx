@@ -1,9 +1,11 @@
 import React from 'react'
 import ModalWrapper from '../modal-wrapper/modal-wrapper.component';
-import { PopupType } from '../../../state/atoms/popup.atom'
+import { popupAtom, PopupType } from '../../../state/atoms/popup.atom'
 import { Tabs } from 'antd';
 import styles from './edit-channel.module.scss';
 import FormInput from '../../shared/form-input/form-input.component';
+import Avatar from 'react-avatar';
+import { useSetRecoilState } from 'recoil';
 
 const { TabPane } = Tabs;
 
@@ -15,13 +17,15 @@ export const FieldCard: React.FC<{
   lable: string,
   content: string,
   ctaText?: string,
+  onClick?: React.MouseEventHandler<HTMLDivElement>,
 }> = ({
   lable,
   content,
   ctaText,
+  onClick
 }) => {
     return (
-      <div className={styles.fieldCard}>
+      <div onClick={onClick} className={styles.fieldCard}>
         <div className={styles.flexSpaceBw}>
           <h3>{lable}</h3>
           {ctaText && <button>{ctaText}</button>}
@@ -34,6 +38,7 @@ export const FieldCard: React.FC<{
 const EditChannelPopup: React.FC<Props> = ({
 
 }) => {
+  const setCurrentPopup = useSetRecoilState(popupAtom);
   return (
     <ModalWrapper
       popupType={PopupType.EDIT_CHANNEL}
@@ -80,6 +85,18 @@ const EditChannelPopup: React.FC<Props> = ({
                   placeholder: "Find Members"
                 }}
               />
+            </div>
+            <div className={styles.memberCard}>
+              <div className={styles.item}>
+                <Avatar name='prajwal' className={styles.avatar} />
+                <strong>Prajwal</strong>
+              </div>
+            </div>
+            <div className={styles.memberCard}>
+              <div className={styles.item}>
+                <Avatar name='prajwal' className={styles.avatar} />
+                <strong>Prajwal</strong>
+              </div>
             </div>
           </TabPane>
           <TabPane tab="Settings" key="3">

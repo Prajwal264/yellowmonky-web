@@ -138,6 +138,9 @@ body {
     }
   }
   .ant-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    background-color: transparent;
     .ant-btn {
       font-weight: 900;
       box-shadow: none;

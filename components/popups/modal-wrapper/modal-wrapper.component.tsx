@@ -42,6 +42,8 @@ const ModalWrapper: React.FC<Props> = ({
     closePopup();
     await onOk()
   }
+
+
   return (
     <React.Fragment>
       {!!(currentPopup && (currentPopup.type === popupType)) && <Modal
@@ -53,9 +55,16 @@ const ModalWrapper: React.FC<Props> = ({
         className={'modal-wrapper'}
         okText="Send"
         cancelText=""
-        footer={null}
         okButtonProps={{
-          disabled: disabled
+          disabled,
+          style: {
+            display: showCtaSection ? 'flex' : 'none'
+          }
+        }}
+        cancelButtonProps={{
+          style: {
+            display: showCtaSection ? 'flex' : 'none'
+          }
         }}
         onOk={onOkay}
         onCancel={closePopup}
