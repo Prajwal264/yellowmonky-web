@@ -9,8 +9,9 @@ import EditFieldPopup from '../edit-field/edit-field.component';
 import { useEditChannelMutation } from '../../../apollo/generated/graphql';
 import { AppContext } from '../../../context/AppContextProvider';
 import toast from 'react-hot-toast';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { channelInfoAtom } from '../../../state/atoms/channel-info.atom';
+import { allMembersAtom } from '../../../state/atoms/all-members.atom';
 
 const { TabPane } = Tabs;
 
@@ -52,7 +53,9 @@ const EditChannelPopup: React.FC<Props> = ({
     field: string,
   } | null>(null);
   const [editChannel] = useEditChannelMutation();
+  const [searchTerm, setSearchTerm] = useState('');
   const [channelInfo, setChannelInfo] = useRecoilState(channelInfoAtom);
+  const allMembers = useRecoilValue(allMembersAtom); // TODO: this has to be replaced with all members in a channel
   const closeOverlayPopup = () => {
     setOverlayPopup(null);
   }
@@ -145,25 +148,21 @@ const EditChannelPopup: React.FC<Props> = ({
             <div className={styles.fieldGroup}>
               <FormInput
                 name='memberSearchTerm'
-                onChange={() => { }}
-                value=''
+                onChange={(e) => { setSearchTerm(e.target.value) }}
+                value={searchTerm}
                 inputAttributes={{
                   placeholder: "Find Members"
                 }}
               />
             </div>
-            <div className={styles.memberCard}>
-              <div className={styles.item}>
-                <Avatar name='prajwal' className={styles.avatar} />
-                <strong>Prajwal</strong>
+            {allMembers.filter((member) => member.user.username.includes(searchTerm)).map((member) => (
+              <div className={styles.memberCard}>
+                <div className={styles.item}>
+                  <Avatar name={member.user?.username} className={styles.avatar} />
+                  <strong>{member.user?.username} </strong>
+                </div>
               </div>
-            </div>
-            <div className={styles.memberCard}>
-              <div className={styles.item}>
-                <Avatar name='prajwal' className={styles.avatar} />
-                <strong>Prajwal</strong>
-              </div>
-            </div>
+            ))}
           </TabPane>
           <TabPane tab="Settings" key="3">
             <div className={styles.fieldGroup}>
