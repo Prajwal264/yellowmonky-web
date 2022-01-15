@@ -1,11 +1,16 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import ModalWrapper from '../modal-wrapper/modal-wrapper.component';
-import { popupAtom, PopupType } from '../../../state/atoms/popup.atom'
+import { PopupType } from '../../../state/atoms/popup.atom'
 import { Tabs } from 'antd';
 import styles from './edit-channel.module.scss';
 import FormInput from '../../shared/form-input/form-input.component';
 import Avatar from 'react-avatar';
-import { useSetRecoilState } from 'recoil';
+import EditFieldPopup from '../edit-field/edit-field.component';
+import { useEditChannelMutation } from '../../../apollo/generated/graphql';
+import { AppContext } from '../../../context/AppContextProvider';
+import toast from 'react-hot-toast';
+import { useRecoilState } from 'recoil';
+import { channelInfoAtom } from '../../../state/atoms/channel-info.atom';
 
 const { TabPane } = Tabs;
 
@@ -38,11 +43,45 @@ export const FieldCard: React.FC<{
 const EditChannelPopup: React.FC<Props> = ({
 
 }) => {
-  const setCurrentPopup = useSetRecoilState(popupAtom);
+  const { channelId } = useContext(AppContext);
+  const [overlayPopup, setOverlayPopup] = useState<{
+    title: string,
+    label: string,
+    placeholder: string,
+    defaultValue?: string,
+    field: string,
+  } | null>(null);
+  const [editChannel] = useEditChannelMutation();
+  const [channelInfo, setChannelInfo] = useRecoilState(channelInfoAtom);
+  const closeOverlayPopup = () => {
+    setOverlayPopup(null);
+  }
+
+  const editField = async (formData: { [key: string]: any }) => {
+    try {
+      const editChannelPromise = editChannel({
+        variables: {
+          ...formData,
+          channelId: channelId!,
+        }
+      })
+      toast.promise(editChannelPromise, {
+        loading: "editing channel",
+        success: "Channel successfully edited",
+        error: "Something went wrong"
+      });
+      const { data: editChannelResponse } = await editChannelPromise;
+      if (editChannelResponse?.editChannel) {
+        setChannelInfo(editChannelResponse?.editChannel)
+      }
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  }
   return (
     <ModalWrapper
       popupType={PopupType.EDIT_CHANNEL}
-      title={'# Random'}
+      title={`# ${channelInfo?.name}`}
       onOk={() => { }}
       disabled={false}
       onCancel={() => { }}
@@ -54,8 +93,17 @@ const EditChannelPopup: React.FC<Props> = ({
             <div className={styles.fieldGroup}>
               <FieldCard
                 lable='Channel name'
-                content={"#random"}
+                content={`# ${channelInfo?.name}`}
                 ctaText='Edit'
+                onClick={() => {
+                  setOverlayPopup({
+                    title: "Rename this channel",
+                    label: "Channel Name",
+                    defaultValue: channelInfo?.name,
+                    field: 'name',
+                    placeholder: `# ${channelInfo?.name}`
+                  })
+                }}
               />
             </div>
             <div className={styles.fieldGroup}>
@@ -63,11 +111,29 @@ const EditChannelPopup: React.FC<Props> = ({
                 lable='Topic'
                 content={"Add a topic"}
                 ctaText='Edit'
+                onClick={() => {
+                  setOverlayPopup({
+                    title: "Edit topic",
+                    label: "",
+                    defaultValue: channelInfo?.topics || '',
+                    field: 'topics',
+                    placeholder: "Add a topic"
+                  })
+                }}
               />
               <FieldCard
                 lable='Description'
                 content={"#This channel is for... well, everything else. It’s a place for team jokes, spur-of-the-moment ideas, and funny GIFs. Go wild!"}
                 ctaText='Edit'
+                onClick={() => {
+                  setOverlayPopup({
+                    title: "Edit description",
+                    label: "",
+                    defaultValue: channelInfo?.description || '',
+                    field: 'description',
+                    placeholder: "Add a description"
+                  })
+                }}
               />
               <FieldCard
                 lable='Created by'
@@ -105,11 +171,25 @@ const EditChannelPopup: React.FC<Props> = ({
                 lable='Channel name'
                 content={"#random"}
                 ctaText='Edit'
+                onClick={() => {
+                  setOverlayPopup({
+                    title: "Rename this channel",
+                    label: "Channel Name",
+                    defaultValue: channelInfo?.name,
+                    field: 'name',
+                    placeholder: `# ${channelInfo?.name}`
+                  })
+                }}
               />
             </div>
           </TabPane>
         </Tabs>
       </div>
+      {overlayPopup && <EditFieldPopup
+        popupData={overlayPopup}
+        onOk={editField}
+        closePopup={closeOverlayPopup}
+      />}
     </ModalWrapper>
   )
 }

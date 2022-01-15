@@ -36,6 +36,7 @@ export type Channel = EntityWrapper & {
   id: Scalars['ID'];
   name: Scalars['String'];
   teamId: Scalars['String'];
+  topics?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -93,6 +94,7 @@ export type Mutation = {
   createChannel: Channel;
   createMessage: Scalars['String'];
   createUserAndAddToTeam: CreateMemberResponse;
+  editChannel: Channel;
   editTeam: EditTeamResponse;
   inviteMembers: Scalars['Boolean'];
   login: UserResponse;
@@ -105,6 +107,7 @@ export type MutationCreateChannelArgs = {
   description?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   teamId: Scalars['String'];
+  topics?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -121,6 +124,14 @@ export type MutationCreateUserAndAddToTeamArgs = {
   password: Scalars['String'];
   teamId: Scalars['String'];
   username: Scalars['String'];
+};
+
+
+export type MutationEditChannelArgs = {
+  channelId: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  topics?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -384,7 +395,7 @@ export type FetchChannelQueryVariables = Exact<{
 }>;
 
 
-export type FetchChannelQuery = { __typename?: 'Query', channel: { __typename?: 'Channel', name: string, description?: string | null | undefined, createdAt: any, adminId: string } };
+export type FetchChannelQuery = { __typename?: 'Query', channel: { __typename?: 'Channel', id: string, name: string, description?: string | null | undefined, topics?: string | null | undefined, createdAt: any, adminId: string } };
 
 export type FetchAllChannelsQueryVariables = Exact<{
   teamId: Scalars['String'];
@@ -402,6 +413,16 @@ export type CreateChannelMutationVariables = Exact<{
 
 
 export type CreateChannelMutation = { __typename?: 'Mutation', createChannel: { __typename?: 'Channel', id: string, name: string } };
+
+export type EditChannelMutationVariables = Exact<{
+  channelId: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  topics?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type EditChannelMutation = { __typename?: 'Mutation', editChannel: { __typename?: 'Channel', id: string, name: string, description?: string | null | undefined, topics?: string | null | undefined, createdAt: any, adminId: string } };
 
 export type FetchAllTeamMembersQueryVariables = Exact<{
   teamId: Scalars['String'];
@@ -776,8 +797,10 @@ export type EditTeamMutationOptions = Apollo.BaseMutationOptions<EditTeamMutatio
 export const FetchChannelDocument = gql`
     query FetchChannel($channelId: String!) {
   channel(channelId: $channelId) {
+    id
     name
     description
+    topics
     createdAt
     adminId
   }
@@ -889,6 +912,52 @@ export function useCreateChannelMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateChannelMutationHookResult = ReturnType<typeof useCreateChannelMutation>;
 export type CreateChannelMutationResult = Apollo.MutationResult<CreateChannelMutation>;
 export type CreateChannelMutationOptions = Apollo.BaseMutationOptions<CreateChannelMutation, CreateChannelMutationVariables>;
+export const EditChannelDocument = gql`
+    mutation EditChannel($channelId: String!, $name: String, $description: String, $topics: String) {
+  editChannel(
+    channelId: $channelId
+    name: $name
+    description: $description
+    topics: $topics
+  ) {
+    id
+    name
+    description
+    topics
+    createdAt
+    adminId
+  }
+}
+    `;
+export type EditChannelMutationFn = Apollo.MutationFunction<EditChannelMutation, EditChannelMutationVariables>;
+
+/**
+ * __useEditChannelMutation__
+ *
+ * To run a mutation, you first call `useEditChannelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditChannelMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editChannelMutation, { data, loading, error }] = useEditChannelMutation({
+ *   variables: {
+ *      channelId: // value for 'channelId'
+ *      name: // value for 'name'
+ *      description: // value for 'description'
+ *      topics: // value for 'topics'
+ *   },
+ * });
+ */
+export function useEditChannelMutation(baseOptions?: Apollo.MutationHookOptions<EditChannelMutation, EditChannelMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditChannelMutation, EditChannelMutationVariables>(EditChannelDocument, options);
+      }
+export type EditChannelMutationHookResult = ReturnType<typeof useEditChannelMutation>;
+export type EditChannelMutationResult = Apollo.MutationResult<EditChannelMutation>;
+export type EditChannelMutationOptions = Apollo.BaseMutationOptions<EditChannelMutation, EditChannelMutationVariables>;
 export const FetchAllTeamMembersDocument = gql`
     query FetchAllTeamMembers($teamId: String!) {
   allTeamMembers(teamId: $teamId) {

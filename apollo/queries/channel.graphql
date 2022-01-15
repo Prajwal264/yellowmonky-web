@@ -1,7 +1,9 @@
 query FetchChannel($channelId: String!) {
   channel(channelId: $channelId) {
+    id
     name
     description
+    topics
     createdAt
     adminId
   }
@@ -18,5 +20,16 @@ mutation CreateChannel($teamId: String!, $adminId: String!, $name: String!, $des
   createChannel(teamId: $teamId, adminId: $adminId, name: $name, description: $description) {
     id
     name
+  }
+}
+
+mutation EditChannel($channelId:String!, $name: String, $description: String, $topics: String) {
+  editChannel(channelId: $channelId, name: $name,  description: $description, topics: $topics) {
+    id
+    name
+    description
+    topics
+    createdAt
+    adminId
   }
 }
