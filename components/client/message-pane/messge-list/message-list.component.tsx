@@ -73,7 +73,7 @@ const MessageList: React.FC<Props> = ({ }) => {
 
   const loadMessages = () => {
     if (channelId) {
-      const cursor = allChannelMessages.keys().next().value;
+      const cursor = allChannelMessages[allChannelMessages.length - 1].id;
       fetchChannelMessages({
         variables: {
           channelId,
@@ -87,7 +87,7 @@ const MessageList: React.FC<Props> = ({ }) => {
 
     <div className={styles.messageList}>
       <InfiniteScroll
-        dataLength={allChannelMessages.size}
+        dataLength={allChannelMessages.length}
         next={loadMessages}
         hasMore={!!messages?.allChannelMessages?.length!}
         loader={<Skeleton
@@ -105,7 +105,7 @@ const MessageList: React.FC<Props> = ({ }) => {
           icon={<BsLightbulb />}
         />}
       >
-        {[...allChannelMessages.values()].reverse().map((message) => (
+        {[...allChannelMessages].reverse().map((message) => (
           <React.Fragment key={message.id}>
             <Message data={message} />
             {message.showDivider && <MessageListDayDivider date={message.createdAt} />}

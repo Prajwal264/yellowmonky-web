@@ -22,7 +22,7 @@ export const channelMessageTreeSelector = selector({
       return acc;
     }, new Map());
 
-    const allChannelMessageMap:  Map<string, MessageWithCreator> = allChannelMessages.reduce((acc, cur, index) => {
+    const allChannelMessageMap:  Array<MessageWithCreator> = allChannelMessages.reduce((acc, cur, index) => {
       const extendedValue: any = {...cur}
       extendedValue.showOwner = true;
       extendedValue.showDivider = false;
@@ -40,9 +40,9 @@ export const channelMessageTreeSelector = selector({
         }
       } 
       extendedValue.creator = allMembersMap.get(cur.creatorId);
-      acc.set(cur.id, extendedValue);
+      acc.push(extendedValue);
       return acc;
-    }, new Map())
+    }, [] as Array<MessageWithCreator>)
 
     return allChannelMessageMap;
   }

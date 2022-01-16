@@ -84,7 +84,7 @@ const EditChannelPopup: React.FC<Props> = ({
   return (
     <ModalWrapper
       popupType={PopupType.EDIT_CHANNEL}
-      title={`# ${channelInfo?.name}`}
+      title={`# ${channelInfo?.name || ''}`}
       onOk={() => { }}
       disabled={false}
       onCancel={() => { }}
@@ -96,15 +96,15 @@ const EditChannelPopup: React.FC<Props> = ({
             <div className={styles.fieldGroup}>
               <FieldCard
                 lable='Channel name'
-                content={`# ${channelInfo?.name}`}
+                content={`# ${channelInfo?.name || ''}`}
                 ctaText='Edit'
                 onClick={() => {
                   setOverlayPopup({
                     title: "Rename this channel",
                     label: "Channel Name",
-                    defaultValue: channelInfo?.name,
+                    defaultValue: channelInfo?.name || '',
                     field: 'name',
-                    placeholder: `# ${channelInfo?.name}`
+                    placeholder: `# ${channelInfo?.name || ''}`
                   })
                 }}
               />
@@ -156,7 +156,7 @@ const EditChannelPopup: React.FC<Props> = ({
               />
             </div>
             {allMembers.filter((member) => member.user.username.includes(searchTerm)).map((member) => (
-              <div className={styles.memberCard}>
+              <div className={styles.memberCard} key={member.id} >
                 <div className={styles.item}>
                   <Avatar name={member.user?.username} className={styles.avatar} />
                   <strong>{member.user?.username} </strong>

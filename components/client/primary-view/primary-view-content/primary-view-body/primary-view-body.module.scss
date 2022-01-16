@@ -8,6 +8,7 @@
   .virtualList {
     position: relative;
     // overflow: scroll;
+    padding: 8px 0;
     height: 300;
     overflow: auto;
     display: flex;
