@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { MessageSourceType, useCreateMessageMutation } from '../../../../apollo/generated/graphql';
+import { MessageSourceType, useCreateChannelMessageMutation } from '../../../../apollo/generated/graphql';
 import { channelInfoAtom } from '../../../../state/atoms/channel-info.atom';
 import styles from './message-input-main.module.scss';
 import cookie from 'react-cookies';
@@ -17,7 +17,7 @@ const MessageInputMain: React.FC<Props> = ({ }) => {
   const channelInfo = useRecoilValue(channelInfoAtom);
   const { channelId } = useContext(AppContext);
   const [message, setMessage] = useState('');
-  const [createMessage] = useCreateMessageMutation();
+  const [createChannelMessage] = useCreateChannelMessageMutation();
   const setChannelMesssages = useSetRecoilState(channelMessagesAtom);
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -37,7 +37,7 @@ const MessageInputMain: React.FC<Props> = ({ }) => {
       try {
         setMessage('');
         const creatorId = cookie.load('userId');
-        const { data } = await createMessage({
+        const { data } = await createChannelMessage({
           variables: {
             content: message,
             creatorId, // TODO: this should be passed from jwt
@@ -46,7 +46,7 @@ const MessageInputMain: React.FC<Props> = ({ }) => {
           }
         });
         setChannelMesssages((prevState) => ([...prevState, {
-          id: data?.createMessage,
+          id: data?.createChannelMessage,
           content,
           createdAt: new Date(),
           creatorId: creatorId,

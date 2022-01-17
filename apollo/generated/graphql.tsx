@@ -40,6 +40,22 @@ export type Channel = EntityWrapper & {
   updatedAt: Scalars['DateTime'];
 };
 
+export type ChannelMessage = EntityWrapper & {
+  __typename?: 'ChannelMessage';
+  childMessages?: Maybe<Message>;
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  creator: User;
+  creatorId: Scalars['String'];
+  id: Scalars['ID'];
+  parentMessage?: Maybe<Message>;
+  parentMessageId?: Maybe<Scalars['String']>;
+  sourceChannel: Channel;
+  sourceChannelId: Scalars['String'];
+  sourceType: MessageSourceType;
+  updatedAt: Scalars['DateTime'];
+};
+
 export type CreateMemberResponse = {
   __typename?: 'CreateMemberResponse';
   channelId: Scalars['String'];
@@ -92,7 +108,7 @@ export enum MessageSourceType {
 export type Mutation = {
   __typename?: 'Mutation';
   createChannel: Channel;
-  createMessage: Scalars['String'];
+  createChannelMessage: Scalars['String'];
   createUserAndAddToTeam: CreateMemberResponse;
   editChannel: Channel;
   editTeam: EditTeamResponse;
@@ -111,7 +127,7 @@ export type MutationCreateChannelArgs = {
 };
 
 
-export type MutationCreateMessageArgs = {
+export type MutationCreateChannelMessageArgs = {
   content: Scalars['String'];
   creatorId: Scalars['String'];
   sourceChannelId?: InputMaybe<Scalars['String']>;
@@ -327,7 +343,7 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', id: string } };
 
-export type CreateMessageMutationVariables = Exact<{
+export type CreateChannelMessageMutationVariables = Exact<{
   content: Scalars['String'];
   sourceType: MessageSourceType;
   creatorId: Scalars['String'];
@@ -335,7 +351,7 @@ export type CreateMessageMutationVariables = Exact<{
 }>;
 
 
-export type CreateMessageMutation = { __typename?: 'Mutation', createMessage: string };
+export type CreateChannelMessageMutation = { __typename?: 'Mutation', createChannelMessage: string };
 
 export type FetchAllChannelMessagesQueryVariables = Exact<{
   channelId: Scalars['String'];
@@ -514,9 +530,9 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
-export const CreateMessageDocument = gql`
-    mutation CreateMessage($content: String!, $sourceType: MessageSourceType!, $creatorId: String!, $sourceChannelId: String!) {
-  createMessage(
+export const CreateChannelMessageDocument = gql`
+    mutation CreateChannelMessage($content: String!, $sourceType: MessageSourceType!, $creatorId: String!, $sourceChannelId: String!) {
+  createChannelMessage(
     content: $content
     sourceType: $sourceType
     creatorId: $creatorId
@@ -524,20 +540,20 @@ export const CreateMessageDocument = gql`
   )
 }
     `;
-export type CreateMessageMutationFn = Apollo.MutationFunction<CreateMessageMutation, CreateMessageMutationVariables>;
+export type CreateChannelMessageMutationFn = Apollo.MutationFunction<CreateChannelMessageMutation, CreateChannelMessageMutationVariables>;
 
 /**
- * __useCreateMessageMutation__
+ * __useCreateChannelMessageMutation__
  *
- * To run a mutation, you first call `useCreateMessageMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateMessageMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateChannelMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateChannelMessageMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createMessageMutation, { data, loading, error }] = useCreateMessageMutation({
+ * const [createChannelMessageMutation, { data, loading, error }] = useCreateChannelMessageMutation({
  *   variables: {
  *      content: // value for 'content'
  *      sourceType: // value for 'sourceType'
@@ -546,13 +562,13 @@ export type CreateMessageMutationFn = Apollo.MutationFunction<CreateMessageMutat
  *   },
  * });
  */
-export function useCreateMessageMutation(baseOptions?: Apollo.MutationHookOptions<CreateMessageMutation, CreateMessageMutationVariables>) {
+export function useCreateChannelMessageMutation(baseOptions?: Apollo.MutationHookOptions<CreateChannelMessageMutation, CreateChannelMessageMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateMessageMutation, CreateMessageMutationVariables>(CreateMessageDocument, options);
+        return Apollo.useMutation<CreateChannelMessageMutation, CreateChannelMessageMutationVariables>(CreateChannelMessageDocument, options);
       }
-export type CreateMessageMutationHookResult = ReturnType<typeof useCreateMessageMutation>;
-export type CreateMessageMutationResult = Apollo.MutationResult<CreateMessageMutation>;
-export type CreateMessageMutationOptions = Apollo.BaseMutationOptions<CreateMessageMutation, CreateMessageMutationVariables>;
+export type CreateChannelMessageMutationHookResult = ReturnType<typeof useCreateChannelMessageMutation>;
+export type CreateChannelMessageMutationResult = Apollo.MutationResult<CreateChannelMessageMutation>;
+export type CreateChannelMessageMutationOptions = Apollo.BaseMutationOptions<CreateChannelMessageMutation, CreateChannelMessageMutationVariables>;
 export const FetchAllChannelMessagesDocument = gql`
     query FetchAllChannelMessages($channelId: String!, $limit: Float!, $cursor: String) {
   allChannelMessages(channelId: $channelId, limit: $limit, cursor: $cursor) {

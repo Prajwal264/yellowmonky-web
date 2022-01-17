@@ -1,6 +1,6 @@
 # message
-mutation CreateMessage($content: String!, $sourceType: MessageSourceType!, $creatorId: String!, $sourceChannelId: String!) {
-  createMessage(content: $content, sourceType: $sourceType, creatorId: $creatorId, sourceChannelId: $sourceChannelId)
+mutation CreateChannelMessage($content: String!, $sourceType: MessageSourceType!, $creatorId: String!, $sourceChannelId: String!) {
+  createChannelMessage(content: $content, sourceType: $sourceType, creatorId: $creatorId, sourceChannelId: $sourceChannelId)
 }
 
 query FetchAllChannelMessages($channelId: String!, $limit: Float!, $cursor: String) {
