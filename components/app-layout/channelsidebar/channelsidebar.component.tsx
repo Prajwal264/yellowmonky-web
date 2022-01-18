@@ -30,7 +30,7 @@ const ChannelSidebar: React.FC<Props> = ({
   show = true,
   setShowMenu
 }) => {
-  const { teamId, channelId } = useContext(AppContext);
+  const { teamId, recipientId } = useContext(AppContext);
   const [fetchAllChannels, { data: channelData }] = useFetchAllChannelsLazyQuery();
   const [fetchAllMembers, { data: memberData }] = useFetchAllTeamMembersLazyQuery();
   const setChannels = useSetRecoilState(allChannelsAtom);
@@ -108,16 +108,16 @@ const ChannelSidebar: React.FC<Props> = ({
         <ChannelSidebarItem icon={<GrChannel />} name='Channel Browser' />
         <ChannelSidebarItem icon={<RiContactsBookFill />} name='People & user groups' />
         <Tree
-          defaultExpandedKeys={['channels']}
+          defaultExpandedKeys={[NodeType.CHANNELS]}
           className={styles.channelTree}
           treeData={channelTree}
-          selectedKeys={[channelId!]}
+          selectedKeys={[recipientId!]}
           onSelect={(_, { node }) => onSelectNode(node, NodeType.CHANNELS)}
         />
         <Tree
           className={styles.channelTree}
           treeData={memberTree}
-          selectedKeys={[channelId!]}
+          selectedKeys={[recipientId!]}
           onSelect={(_, { node }) => onSelectNode(node, NodeType.MEMBERS)}
         />
       </div>

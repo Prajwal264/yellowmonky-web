@@ -7,32 +7,33 @@ import { useFetchTeamInfoLazyQuery } from '../../../../../apollo/generated/graph
 import BookmarkContainer from '../../../../../components/client/bookmark-container/bookmark-container.component';
 import PrimaryViewHeader from '../../../../../components/client/primary-view-header/primary-view-header.component';
 import PrimaryView from '../../../../../components/client/primary-view/primary-view.component';
-import { AppContext } from '../../../../../context/AppContextProvider';
+import { AppContext, RecipientType } from '../../../../../context/AppContextProvider';
 import { teamInfoAtom } from '../../../../../state/atoms/team-info.atom';
 
 interface Props {
   data: {
     teamId: string;
-    channelId: string;
+    recipientId: string;
   }
 }
 
 const ChannelIdPage: React.FC<Props> = ({
   data: {
     teamId,
-    channelId,
+    recipientId,
   }
 }) => {
-  const { setTeamId, setRecipientId } = useContext(AppContext);
+  const { setTeamId, setRecipientId, setRecipientType } = useContext(AppContext);
   const [fetchTeamInfo] = useFetchTeamInfoLazyQuery();
   const setTeamInfo = useSetRecoilState(teamInfoAtom)
   useEffect(() => {
-    if (teamId && channelId) {
+    setRecipientType(RecipientType.DIRECT_MESSAGE)
+    if (teamId && recipientId) {
       setTeamId(teamId);
-      setRecipientId(channelId);
+      setRecipientId(recipientId);
       loadTeamInfo(teamId);
     }
-  }, [channelId])
+  }, [recipientId])
 
   const loadTeamInfo = async (teamId: string) => {
     try {
@@ -62,7 +63,7 @@ export const getServerSideProps = (context: GetServerSidePropsContext<NextParsed
     props: {
       data: {
         teamId: context.query.teamId,
-        channelId: context.query.channelId,
+        recipientId: context.query.recipientId,
       }
     }
   }

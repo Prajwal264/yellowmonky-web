@@ -5,7 +5,7 @@ import { channelInfoAtom } from '../../../../state/atoms/channel-info.atom';
 import styles from './message-input-main.module.scss';
 import cookie from 'react-cookies';
 import MessageSendButton from './message-send-button/message-send-button.component';
-import { AppContext } from '../../../../context/AppContextProvider';
+import { AppContext, RecipientType } from '../../../../context/AppContextProvider';
 import toast from 'react-hot-toast';
 import { channelMessagesAtom } from '../../../../state/atoms/channel-messages.atom';
 
@@ -15,7 +15,7 @@ interface Props {
 
 const MessageInputMain: React.FC<Props> = ({ }) => {
   const channelInfo = useRecoilValue(channelInfoAtom);
-  const { channelId } = useContext(AppContext);
+  const { recipientId, recipientType } = useContext(AppContext);
   const [message, setMessage] = useState('');
   const [createChannelMessage] = useCreateChannelMessageMutation();
   const setChannelMesssages = useSetRecoilState(channelMessagesAtom);
@@ -41,7 +41,7 @@ const MessageInputMain: React.FC<Props> = ({ }) => {
           variables: {
             content: message,
             creatorId,
-            sourceChannelId: channelId!,
+            sourceChannelId: recipientId!,
             sourceType: MessageSourceType.Channel
           }
         });
@@ -71,7 +71,7 @@ const MessageInputMain: React.FC<Props> = ({ }) => {
               <input
                 value={message}
                 className={styles.editor}
-                placeholder={`Send message to #${channelInfo?.name}`}
+                placeholder={`Send message to ${recipientType === RecipientType.CHANNEL ? ('#' + channelInfo?.name) : ''}`}
                 onChange={handleChange}
                 onKeyDown={onKeyDown} />
               <MessageSendButton onClick={sendMessage} />

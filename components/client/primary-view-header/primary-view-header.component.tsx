@@ -14,20 +14,20 @@ interface Props {
 const PrimaryViewHeader: React.FC<Props> = ({
 
 }) => {
-  const { channelId } = useContext(AppContext);
+  const { recipientId } = useContext(AppContext);
   const [fetchChannel, { data: channelInfo, error }] = useFetchChannelLazyQuery();
   const setChannelInfo = useSetRecoilState(channelInfoAtom)
   const setCurrentPopup = useSetRecoilState(popupAtom)
   useEffect(() => {
-    if (channelId) {
+    if (recipientId) {
       loadDependencies();
     }
-  }, [channelId])
+  }, [recipientId])
 
   const loadDependencies = async () => {
     fetchChannel({
       variables: {
-        channelId: channelId!,
+        channelId: recipientId!,
       }
     }).catch((err) => {
       console.log(err)

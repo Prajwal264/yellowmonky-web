@@ -21,7 +21,7 @@ interface Props {
 }
 
 const MessageList: React.FC<Props> = ({ }) => {
-  const { channelId } = useContext(AppContext);
+  const { recipientId } = useContext(AppContext);
   const setChannelMesssages = useSetRecoilState(channelMessagesAtom);
   const allChannelMessages = useRecoilValue(channelMessageTreeSelector);
   const channelInfo = useRecoilValue(channelInfoAtom);
@@ -29,20 +29,20 @@ const MessageList: React.FC<Props> = ({ }) => {
   const [notificationSound] = useSound(messageNotification);
   const { data: newChannelMessageData } = useNewChannelMessageSubscription({
     variables: {
-      channelId: channelId!
+      channelId: recipientId!
     }
   })
   useEffect(() => {
-    if (channelId) {
+    if (recipientId) {
       setChannelMesssages([]);
       fetchChannelMessages({
         variables: {
-          channelId,
+          channelId: recipientId,
           limit: 25,
         }
       })
     }
-  }, [channelId])
+  }, [recipientId])
 
   useEffect(() => {
     if (newChannelMessageData?.newChannelMessage) {
@@ -72,11 +72,11 @@ const MessageList: React.FC<Props> = ({ }) => {
   }, [messages]);
 
   const loadMessages = () => {
-    if (channelId) {
+    if (recipientId) {
       const cursor = allChannelMessages[allChannelMessages.length - 1].id;
       fetchChannelMessages({
         variables: {
-          channelId,
+          channelId: recipientId,
           limit: 10,
           cursor,
         }

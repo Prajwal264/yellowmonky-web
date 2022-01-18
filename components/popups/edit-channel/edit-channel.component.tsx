@@ -44,7 +44,7 @@ export const FieldCard: React.FC<{
 const EditChannelPopup: React.FC<Props> = ({
 
 }) => {
-  const { channelId } = useContext(AppContext);
+  const { recipientId } = useContext(AppContext);
   const [overlayPopup, setOverlayPopup] = useState<{
     title: string,
     label: string,
@@ -65,7 +65,7 @@ const EditChannelPopup: React.FC<Props> = ({
       const editChannelPromise = editChannel({
         variables: {
           ...formData,
-          channelId: channelId!,
+          channelId: recipientId!,
         }
       })
       toast.promise(editChannelPromise, {
