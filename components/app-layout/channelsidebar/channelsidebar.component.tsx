@@ -98,7 +98,15 @@ const ChannelSidebar: React.FC<Props> = ({
         setCurrentPopup({
           type: PopupType.ADD_MEMBER,
         });
+        return;
       }
+      router.push({
+        pathname: '/app/client/[teamId]/member/[recipientId]',
+        query: {
+          teamId,
+          recipientId: selectedNode.key,
+        }
+      })
     }
   }
 

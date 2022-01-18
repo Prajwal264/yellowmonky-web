@@ -8,6 +8,7 @@ import MessageSendButton from './message-send-button/message-send-button.compone
 import { AppContext, RecipientType } from '../../../../context/AppContextProvider';
 import toast from 'react-hot-toast';
 import { channelMessagesAtom } from '../../../../state/atoms/channel-messages.atom';
+import { memberInfoAtom } from '../../../../state/atoms/member-info';
 
 interface Props {
 
@@ -15,6 +16,7 @@ interface Props {
 
 const MessageInputMain: React.FC<Props> = ({ }) => {
   const channelInfo = useRecoilValue(channelInfoAtom);
+  const memberInfo = useRecoilValue(memberInfoAtom);
   const { recipientId, recipientType } = useContext(AppContext);
   const [message, setMessage] = useState('');
   const [createChannelMessage] = useCreateChannelMessageMutation();
@@ -71,7 +73,7 @@ const MessageInputMain: React.FC<Props> = ({ }) => {
               <input
                 value={message}
                 className={styles.editor}
-                placeholder={`Send message to ${recipientType === RecipientType.CHANNEL ? ('#' + channelInfo?.name) : ''}`}
+                placeholder={`Send message to ${recipientType === RecipientType.CHANNEL ? ('#' + channelInfo?.name) : memberInfo?.user?.username}`}
                 onChange={handleChange}
                 onKeyDown={onKeyDown} />
               <MessageSendButton onClick={sendMessage} />

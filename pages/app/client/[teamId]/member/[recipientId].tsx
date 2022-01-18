@@ -17,7 +17,7 @@ interface Props {
   }
 }
 
-const ChannelIdPage: React.FC<Props> = ({
+const MemberIdPage: React.FC<Props> = ({
   data: {
     teamId,
     recipientId,
@@ -68,4 +68,4 @@ export const getServerSideProps = (context: GetServerSidePropsContext<NextParsed
     }
   }
 }
-export default ChannelIdPage
+export default MemberIdPage;

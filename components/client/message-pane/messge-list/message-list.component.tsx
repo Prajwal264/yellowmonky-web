@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useFetchAllChannelMessagesLazyQuery, useNewChannelMessageSubscription } from '../../../../apollo/generated/graphql';
-import { AppContext } from '../../../../context/AppContextProvider';
+import { AppContext, RecipientType } from '../../../../context/AppContextProvider';
 import { channelMessagesAtom } from '../../../../state/atoms/channel-messages.atom';
 import { channelMessageTreeSelector } from '../../../../state/selectors/channel-message-tree.selector';
 import MessageListDayDivider from './message-list-day-divider/message-list-day-divider.component';
@@ -21,7 +21,7 @@ interface Props {
 }
 
 const MessageList: React.FC<Props> = ({ }) => {
-  const { recipientId } = useContext(AppContext);
+  const { recipientId, recipientType } = useContext(AppContext);
   const setChannelMesssages = useSetRecoilState(channelMessagesAtom);
   const allChannelMessages = useRecoilValue(channelMessageTreeSelector);
   const channelInfo = useRecoilValue(channelInfoAtom);
@@ -100,8 +100,16 @@ const MessageList: React.FC<Props> = ({ }) => {
         scrollableTarget="scrollableDiv"
         inverse={true}
         endMessage={<MessagePaneJumbotron
-          title={<div>This is the very beginning of the <span>#{channelInfo?.name}</span> channel</div>}
-          description={<div>{channelInfo?.description || 'This channel is for working on a project. Hold meetings, share docs, and make decisions together with your team.'} <span>Edit description</span></div>}
+          title={
+            recipientType === RecipientType.CHANNEL ?
+              <div>This is the very beginning of the <span>#{channelInfo?.name}</span> channel</div> :
+              <div>This conversation is just between the two of you</div>
+          }
+          description={
+            recipientType === RecipientType.CHANNEL ?
+              <div>{channelInfo?.description || 'This channel is for working on a project. Hold meetings, share docs, and make decisions together with your team.'} <span>Edit description</span></div> :
+              <div>Here you can send messages and share files with <span>{recipientId}</span></div>
+          }
           icon={<BsLightbulb />}
         />}
       >

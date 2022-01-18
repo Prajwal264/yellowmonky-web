@@ -183,6 +183,7 @@ export type Query = {
   channel: Channel;
   getUsers: Array<Maybe<User>>;
   team: Team;
+  teamMember: TeamMember;
 };
 
 
@@ -215,6 +216,11 @@ export type QueryChannelArgs = {
 
 export type QueryTeamArgs = {
   teamId: Scalars['String'];
+};
+
+
+export type QueryTeamMemberArgs = {
+  memberId: Scalars['String'];
 };
 
 export type RegisterAdminResponse = EntityWrapper & {
@@ -440,6 +446,13 @@ export type FetchAllTeamMembersQueryVariables = Exact<{
 
 
 export type FetchAllTeamMembersQuery = { __typename?: 'Query', allTeamMembers: Array<{ __typename?: 'TeamMember', id: string, user: { __typename?: 'User', id: string, email: string, username: string, profileImage?: string | null | undefined } }> };
+
+export type FetchTeamMemberQueryVariables = Exact<{
+  memberId: Scalars['String'];
+}>;
+
+
+export type FetchTeamMemberQuery = { __typename?: 'Query', teamMember: { __typename?: 'TeamMember', id: string, user: { __typename?: 'User', id: string, email: string, username: string, profileImage?: string | null | undefined } } };
 
 export type NewChannelMessageSubscriptionVariables = Exact<{
   channelId: Scalars['String'];
@@ -1009,6 +1022,47 @@ export function useFetchAllTeamMembersLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type FetchAllTeamMembersQueryHookResult = ReturnType<typeof useFetchAllTeamMembersQuery>;
 export type FetchAllTeamMembersLazyQueryHookResult = ReturnType<typeof useFetchAllTeamMembersLazyQuery>;
 export type FetchAllTeamMembersQueryResult = Apollo.QueryResult<FetchAllTeamMembersQuery, FetchAllTeamMembersQueryVariables>;
+export const FetchTeamMemberDocument = gql`
+    query FetchTeamMember($memberId: String!) {
+  teamMember(memberId: $memberId) {
+    id
+    user {
+      id
+      email
+      username
+      profileImage
+    }
+  }
+}
+    `;
+
+/**
+ * __useFetchTeamMemberQuery__
+ *
+ * To run a query within a React component, call `useFetchTeamMemberQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchTeamMemberQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchTeamMemberQuery({
+ *   variables: {
+ *      memberId: // value for 'memberId'
+ *   },
+ * });
+ */
+export function useFetchTeamMemberQuery(baseOptions: Apollo.QueryHookOptions<FetchTeamMemberQuery, FetchTeamMemberQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchTeamMemberQuery, FetchTeamMemberQueryVariables>(FetchTeamMemberDocument, options);
+      }
+export function useFetchTeamMemberLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchTeamMemberQuery, FetchTeamMemberQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchTeamMemberQuery, FetchTeamMemberQueryVariables>(FetchTeamMemberDocument, options);
+        }
+export type FetchTeamMemberQueryHookResult = ReturnType<typeof useFetchTeamMemberQuery>;
+export type FetchTeamMemberLazyQueryHookResult = ReturnType<typeof useFetchTeamMemberLazyQuery>;
+export type FetchTeamMemberQueryResult = Apollo.QueryResult<FetchTeamMemberQuery, FetchTeamMemberQueryVariables>;
 export const NewChannelMessageDocument = gql`
     subscription NewChannelMessage($channelId: String!) {
   newChannelMessage(channelId: $channelId) {
