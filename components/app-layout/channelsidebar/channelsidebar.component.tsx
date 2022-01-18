@@ -14,6 +14,7 @@ import { channelTreeSelector } from '../../../state/selectors/channel-tree.selec
 import { allMembersAtom } from '../../../state/atoms/all-members.atom';
 import { memberTreeSelector } from '../../../state/selectors/member-tree.selector';
 import { popupAtom, PopupType } from '../../../state/atoms/popup.atom';
+import cookie from 'react-cookies';
 
 export enum NodeType {
   CHANNELS = 'channels',
@@ -63,7 +64,16 @@ const ChannelSidebar: React.FC<Props> = ({
 
   useEffect(() => {
     if (memberData?.allTeamMembers.length) {
-      setMembers(memberData?.allTeamMembers)
+      setMembers(memberData?.allTeamMembers);
+      const userId = cookie.load('userId');
+      const currentMember = memberData?.allTeamMembers.filter((member) => member.user.id === userId)?.[0];
+      if (currentMember) {
+        const tomorow = new Date();
+        tomorow.setDate(new Date().getDate() + 1)
+        cookie.save('memberId', currentMember.id, {
+          expires: tomorow, // TODO: jwt
+        });
+      }
     }
   }, [memberData]);
 

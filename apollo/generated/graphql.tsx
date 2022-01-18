@@ -40,15 +40,15 @@ export type Channel = EntityWrapper & {
   updatedAt: Scalars['DateTime'];
 };
 
-export type ChannelMessage = EntityWrapper & {
+export type ChannelMessage = EntityWrapper & Message & {
   __typename?: 'ChannelMessage';
-  childMessages?: Maybe<Message>;
+  childMessages?: Maybe<ChannelMessage>;
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
-  creator: User;
+  creator: TeamMember;
   creatorId: Scalars['String'];
   id: Scalars['ID'];
-  parentMessage?: Maybe<Message>;
+  parentMessage?: Maybe<ChannelMessage>;
   parentMessageId?: Maybe<Scalars['String']>;
   sourceChannel: Channel;
   sourceChannelId: Scalars['String'];
@@ -83,18 +83,12 @@ export type Error = {
   statusCode: Scalars['Int'];
 };
 
-export type Message = EntityWrapper & {
-  __typename?: 'Message';
-  childMessages?: Maybe<Message>;
+export type Message = {
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
-  creator: User;
   creatorId: Scalars['String'];
   id: Scalars['ID'];
-  parentMessage?: Maybe<Message>;
   parentMessageId?: Maybe<Scalars['String']>;
-  sourceChannel: Channel;
-  sourceChannelId: Scalars['String'];
   sourceType: MessageSourceType;
   updatedAt: Scalars['DateTime'];
 };
@@ -182,7 +176,7 @@ export type MutationRegisterAdminArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  allChannelMessages: Array<Message>;
+  allChannelMessages: Array<ChannelMessage>;
   allChannels: Array<Maybe<Channel>>;
   allTeamMembers: Array<TeamMember>;
   allTeams: Array<TeamListResponse>;
@@ -236,7 +230,7 @@ export type RegisterAdminResponse = EntityWrapper & {
 
 export type Subscription = {
   __typename?: 'Subscription';
-  newChannelMessage: Message;
+  newChannelMessage: ChannelMessage;
 };
 
 
@@ -360,7 +354,7 @@ export type FetchAllChannelMessagesQueryVariables = Exact<{
 }>;
 
 
-export type FetchAllChannelMessagesQuery = { __typename?: 'Query', allChannelMessages: Array<{ __typename?: 'Message', id: string, content: string, creatorId: string, createdAt: any }> };
+export type FetchAllChannelMessagesQuery = { __typename?: 'Query', allChannelMessages: Array<{ __typename?: 'ChannelMessage', id: string, content: string, creatorId: string, createdAt: any }> };
 
 export type CreateMemberAndAddToTeamMutationVariables = Exact<{
   username: Scalars['String'];
@@ -452,7 +446,7 @@ export type NewChannelMessageSubscriptionVariables = Exact<{
 }>;
 
 
-export type NewChannelMessageSubscription = { __typename?: 'Subscription', newChannelMessage: { __typename?: 'Message', id: string, content: string, creatorId: string, createdAt: any } };
+export type NewChannelMessageSubscription = { __typename?: 'Subscription', newChannelMessage: { __typename?: 'ChannelMessage', id: string, content: string, creatorId: string, createdAt: any } };
 
 
 export const RegisterAdminDocument = gql`

@@ -36,11 +36,11 @@ const MessageInputMain: React.FC<Props> = ({ }) => {
     if (message) {
       try {
         setMessage('');
-        const creatorId = cookie.load('userId');
+        const creatorId = cookie.load('memberId');
         const { data } = await createChannelMessage({
           variables: {
             content: message,
-            creatorId, // TODO: this should be passed from jwt
+            creatorId,
             sourceChannelId: channelId!,
             sourceType: MessageSourceType.Channel
           }

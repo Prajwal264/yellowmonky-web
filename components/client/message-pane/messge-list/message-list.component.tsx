@@ -46,7 +46,7 @@ const MessageList: React.FC<Props> = ({ }) => {
 
   useEffect(() => {
     if (newChannelMessageData?.newChannelMessage) {
-      if (newChannelMessageData.newChannelMessage.creatorId !== cookie.load('userId')) {
+      if (newChannelMessageData.newChannelMessage.creatorId !== cookie.load('memberId')) {
         setChannelMesssages((prevState) => ([...prevState, newChannelMessageData.newChannelMessage as any]))
         const scrollableBodyRef = document.querySelector('.message:first-of-type');
         notificationSound();

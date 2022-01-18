@@ -18,7 +18,7 @@ export const channelMessageTreeSelector = selector({
     const allChannelMessages = get(channelMessagesAtom);
     const allMembers = get(allMembersAtom); // TODO: this should be channel members not team members
     const allMembersMap: Map<string, TeamMember> = allMembers.reduce((acc, cur) => {
-      acc.set(cur.user.id, cur.user);
+      acc.set(cur.id, cur.user);
       return acc;
     }, new Map());
 
@@ -39,6 +39,7 @@ export const channelMessageTreeSelector = selector({
           extendedValue.showOwner = true;
         }
       } 
+      extendedValue.creatorId = cur.creatorId;
       extendedValue.creator = allMembersMap.get(cur.creatorId);
       acc.push(extendedValue);
       return acc;
