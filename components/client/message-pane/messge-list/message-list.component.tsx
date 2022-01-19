@@ -128,7 +128,7 @@ const MessageList: React.FC<Props> = ({ }) => {
         }
       }
     }
-  }, [directMessages]);
+  }, [directMessages, recipientType]);
 
   const loadMessages = () => {
     if (recipientId) {
