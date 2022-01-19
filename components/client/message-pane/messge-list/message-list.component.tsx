@@ -41,14 +41,13 @@ const MessageList: React.FC<Props> = ({ }) => {
   const { data: newDirectMessageData } = useNewDirectMessageSubscription({
     skip: recipientType !== RecipientType.DIRECT_MESSAGE,
     variables: {
-      recipientId: recipientId!,
-      creatorId: cookie.load('memberId'),
+      recipientId: cookie.load('memberId'),
+      creatorId: recipientId!,
     }
   })
   useEffect(() => {
     if (recipientId) {
       if (recipientType === RecipientType.CHANNEL) {
-        setChannelMesssages([]);
         fetchChannelMessages({
           variables: {
             channelId: recipientId,
@@ -56,7 +55,6 @@ const MessageList: React.FC<Props> = ({ }) => {
           }
         })
       } else {
-        setDirectMessages([]);
         fetchDirectMessages({
           variables: {
             creatorId: cookie.load('memberId'),
@@ -66,7 +64,7 @@ const MessageList: React.FC<Props> = ({ }) => {
         })
       }
     }
-  }, [recipientId])
+  }, [recipientId, recipientType])
 
   useEffect(() => {
     if (recipientType === RecipientType.CHANNEL) {
@@ -81,7 +79,7 @@ const MessageList: React.FC<Props> = ({ }) => {
         }
       }
     }
-  }, [newChannelMessageData]);
+  }, [newChannelMessageData, recipientType]);
 
   useEffect(() => {
     if (recipientType === RecipientType.DIRECT_MESSAGE) {
@@ -96,12 +94,13 @@ const MessageList: React.FC<Props> = ({ }) => {
         }
       }
     }
-  }, [newDirectMessageData]);
+  }, [newDirectMessageData, recipientType]);
 
 
 
   useEffect(() => {
     if (recipientType === RecipientType.CHANNEL) {
+      setChannelMesssages([]);
       if (channelMessages) {
         const oldMessages = [...channelMessages.allChannelMessages];
         oldMessages.reverse();
@@ -113,10 +112,11 @@ const MessageList: React.FC<Props> = ({ }) => {
         }
       }
     }
-  }, [channelMessages]);
+  }, [channelMessages, recipientType]);
 
   useEffect(() => {
     if (recipientType === RecipientType.DIRECT_MESSAGE) {
+      setDirectMessages([])
       if (directMessages) {
         const oldMessages = [...directMessages.allDirectMessagesByRecipientId];
         oldMessages.reverse();

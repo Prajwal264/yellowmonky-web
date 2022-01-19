@@ -7,7 +7,7 @@ import { useFetchTeamInfoLazyQuery } from '../../../../../apollo/generated/graph
 import BookmarkContainer from '../../../../../components/client/bookmark-container/bookmark-container.component';
 import PrimaryViewHeader from '../../../../../components/client/primary-view-header/primary-view-header.component';
 import PrimaryView from '../../../../../components/client/primary-view/primary-view.component';
-import { AppContext } from '../../../../../context/AppContextProvider';
+import { AppContext, RecipientType } from '../../../../../context/AppContextProvider';
 import { teamInfoAtom } from '../../../../../state/atoms/team-info.atom';
 
 interface Props {
@@ -23,10 +23,11 @@ const ChannelIdPage: React.FC<Props> = ({
     channelId,
   }
 }) => {
-  const { setTeamId, setRecipientId } = useContext(AppContext);
+  const { setTeamId, setRecipientId, setRecipientType } = useContext(AppContext);
   const [fetchTeamInfo] = useFetchTeamInfoLazyQuery();
   const setTeamInfo = useSetRecoilState(teamInfoAtom)
   useEffect(() => {
+    setRecipientType(RecipientType.CHANNEL)
     if (teamId && channelId) {
       setTeamId(teamId);
       setRecipientId(channelId);

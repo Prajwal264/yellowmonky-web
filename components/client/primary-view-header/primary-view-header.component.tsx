@@ -1,9 +1,8 @@
 import React, { useContext, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { useFetchChannelLazyQuery, useFetchTeamMemberLazyQuery } from '../../../apollo/generated/graphql';
 import { AppContext, RecipientType } from '../../../context/AppContextProvider';
-import { allMembersAtom } from '../../../state/atoms/all-members.atom';
 import { channelInfoAtom } from '../../../state/atoms/channel-info.atom';
 import { memberInfoAtom } from '../../../state/atoms/member-info';
 import { popupAtom, PopupType } from '../../../state/atoms/popup.atom';
