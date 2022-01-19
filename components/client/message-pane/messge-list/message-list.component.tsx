@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useFetchAllChannelMessagesLazyQuery, useNewChannelMessageSubscription } from '../../../../apollo/generated/graphql';
+import { useFetchAllChannelMessagesLazyQuery, useFetchAllDirectMessagesLazyQuery, useNewChannelMessageSubscription, useNewDirectMessageSubscription } from '../../../../apollo/generated/graphql';
 import { AppContext, RecipientType } from '../../../../context/AppContextProvider';
 import { channelMessagesAtom } from '../../../../state/atoms/channel-messages.atom';
 import { channelMessageTreeSelector } from '../../../../state/selectors/channel-message-tree.selector';
@@ -15,6 +15,8 @@ import { BsLightbulb } from 'react-icons/bs';
 import Message from './message/message.component';
 import messageNotification from '../../../../assets/audio/message-notification.mp3';
 import { useSound } from 'use-sound';
+import { directMessagesAtom } from '../../../../state/atoms/direct-messages.atom';
+import { directMessageTreeSelector } from '../../../../state/selectors/direct-message-tree.selector';
 
 interface Props {
 
@@ -23,73 +25,142 @@ interface Props {
 const MessageList: React.FC<Props> = ({ }) => {
   const { recipientId, recipientType } = useContext(AppContext);
   const setChannelMesssages = useSetRecoilState(channelMessagesAtom);
+  const setDirectMessages = useSetRecoilState(directMessagesAtom);
   const allChannelMessages = useRecoilValue(channelMessageTreeSelector);
+  const allDirectMessages = useRecoilValue(directMessageTreeSelector);
   const channelInfo = useRecoilValue(channelInfoAtom);
-  const [fetchChannelMessages, { data: messages }] = useFetchAllChannelMessagesLazyQuery();
+  const [fetchChannelMessages, { data: channelMessages }] = useFetchAllChannelMessagesLazyQuery();
+  const [fetchDirectMessages, { data: directMessages }] = useFetchAllDirectMessagesLazyQuery();
   const [notificationSound] = useSound(messageNotification);
   const { data: newChannelMessageData } = useNewChannelMessageSubscription({
+    skip: recipientType !== RecipientType.CHANNEL,
     variables: {
       channelId: recipientId!
     }
   })
+  const { data: newDirectMessageData } = useNewDirectMessageSubscription({
+    skip: recipientType !== RecipientType.DIRECT_MESSAGE,
+    variables: {
+      recipientId: recipientId!,
+      creatorId: cookie.load('memberId'),
+    }
+  })
   useEffect(() => {
     if (recipientId) {
-      setChannelMesssages([]);
-      fetchChannelMessages({
-        variables: {
-          channelId: recipientId,
-          limit: 25,
-        }
-      })
+      if (recipientType === RecipientType.CHANNEL) {
+        setChannelMesssages([]);
+        fetchChannelMessages({
+          variables: {
+            channelId: recipientId,
+            limit: 25,
+          }
+        })
+      } else {
+        setDirectMessages([]);
+        fetchDirectMessages({
+          variables: {
+            creatorId: cookie.load('memberId'),
+            recipientId,
+            limit: 25,
+          }
+        })
+      }
     }
   }, [recipientId])
 
   useEffect(() => {
-    if (newChannelMessageData?.newChannelMessage) {
-      if (newChannelMessageData.newChannelMessage.creatorId !== cookie.load('memberId')) {
-        setChannelMesssages((prevState) => ([...prevState, newChannelMessageData.newChannelMessage as any]))
-        const scrollableBodyRef = document.querySelector('.message:first-of-type');
-        notificationSound();
-        if (scrollableBodyRef) {
-          scrollableBodyRef.scrollIntoView();
+    if (recipientType === RecipientType.CHANNEL) {
+      if (newChannelMessageData?.newChannelMessage) {
+        if (newChannelMessageData.newChannelMessage.creatorId !== cookie.load('memberId')) {
+          setChannelMesssages((prevState) => ([...prevState, newChannelMessageData.newChannelMessage as any]))
+          const scrollableBodyRef = document.querySelector('.message:first-of-type');
+          notificationSound();
+          if (scrollableBodyRef) {
+            scrollableBodyRef.scrollIntoView();
+          }
         }
       }
     }
-  }, [newChannelMessageData])
+  }, [newChannelMessageData]);
+
+  useEffect(() => {
+    if (recipientType === RecipientType.DIRECT_MESSAGE) {
+      if (newDirectMessageData?.newDirectMessage) {
+        if (newDirectMessageData.newDirectMessage.creatorId !== cookie.load('memberId')) {
+          setDirectMessages((prevState) => ([...prevState, newDirectMessageData.newDirectMessage as any]))
+          const scrollableBodyRef = document.querySelector('.message:first-of-type');
+          notificationSound();
+          if (scrollableBodyRef) {
+            scrollableBodyRef.scrollIntoView();
+          }
+        }
+      }
+    }
+  }, [newDirectMessageData]);
+
 
 
   useEffect(() => {
-    if (messages) {
-      const oldMessages = [...messages.allChannelMessages];
-      oldMessages.reverse();
-      setChannelMesssages((prevState) => ([...oldMessages, ...prevState]));
-      const scrollableBodyRef = document.getElementById('#scrollableDiv');
-      if (scrollableBodyRef) {
-        const ele = scrollableBodyRef;
-        ele.scrollTop = 370; // TODO:  this needs to be a dynamic value
+    if (recipientType === RecipientType.CHANNEL) {
+      if (channelMessages) {
+        const oldMessages = [...channelMessages.allChannelMessages];
+        oldMessages.reverse();
+        setChannelMesssages((prevState) => ([...oldMessages, ...prevState]));
+        const scrollableBodyRef = document.getElementById('#scrollableDiv');
+        if (scrollableBodyRef) {
+          const ele = scrollableBodyRef;
+          ele.scrollTop = 370; // TODO:  this needs to be a dynamic value
+        }
       }
     }
-  }, [messages]);
+  }, [channelMessages]);
+
+  useEffect(() => {
+    if (recipientType === RecipientType.DIRECT_MESSAGE) {
+      if (directMessages) {
+        const oldMessages = [...directMessages.allDirectMessagesByRecipientId];
+        oldMessages.reverse();
+        setDirectMessages((prevState) => ([...oldMessages, ...prevState]));
+        const scrollableBodyRef = document.getElementById('#scrollableDiv');
+        if (scrollableBodyRef) {
+          const ele = scrollableBodyRef;
+          ele.scrollTop = 370; // TODO:  this needs to be a dynamic value
+        }
+      }
+    }
+  }, [directMessages]);
 
   const loadMessages = () => {
     if (recipientId) {
-      const cursor = allChannelMessages[allChannelMessages.length - 1].id;
-      fetchChannelMessages({
-        variables: {
-          channelId: recipientId,
-          limit: 10,
-          cursor,
-        }
-      })
+      if (recipientType === RecipientType.CHANNEL) {
+        const cursor = allChannelMessages[allChannelMessages.length - 1].id;
+        fetchChannelMessages({
+          variables: {
+            channelId: recipientId,
+            limit: 10,
+            cursor,
+          }
+        })
+      } else {
+        const cursor = allDirectMessages[allDirectMessages.length - 1].id;
+        fetchDirectMessages({
+          variables: {
+            creatorId: cookie.load('memberId'),
+            recipientId,
+            limit: 10,
+            cursor,
+          }
+        })
+      }
     }
   }
   return (
 
     <div className={styles.messageList}>
       <InfiniteScroll
-        dataLength={allChannelMessages.length}
+        dataLength={allChannelMessages.length || allDirectMessages.length}
         next={loadMessages}
-        hasMore={!!messages?.allChannelMessages?.length!}
+        hasMore={!!channelMessages?.allChannelMessages?.length! || !!directMessages?.allDirectMessagesByRecipientId?.length!}
         loader={<Skeleton
           avatar={{
             shape: 'square'
@@ -113,12 +184,20 @@ const MessageList: React.FC<Props> = ({ }) => {
           icon={<BsLightbulb />}
         />}
       >
-        {[...allChannelMessages].reverse().map((message) => (
-          <React.Fragment key={message.id}>
-            <Message data={message} />
-            {message.showDivider && <MessageListDayDivider date={message.createdAt} />}
-          </React.Fragment>
-        ))}
+        {recipientType === RecipientType.CHANNEL ?
+          [...allChannelMessages].reverse().map((message) => (
+            <React.Fragment key={message.id}>
+              <Message data={message} />
+              {message.showDivider && <MessageListDayDivider date={message.createdAt} />}
+            </React.Fragment>
+          )) :
+          [...allDirectMessages].reverse().map((message) => (
+            <React.Fragment key={message.id}>
+              <Message data={message} />
+              {message.showDivider && <MessageListDayDivider date={message.createdAt} />}
+            </React.Fragment>
+          ))
+        }
       </InfiniteScroll>
     </div>
   )

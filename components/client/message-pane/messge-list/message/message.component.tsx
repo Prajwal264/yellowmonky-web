@@ -1,9 +1,10 @@
 import dayjs from 'dayjs';
 import React from 'react'
-import { MessageWithCreator } from '../../../../../state/selectors/channel-message-tree.selector';
+import { ChannelMessageWithCreator } from '../../../../../state/selectors/channel-message-tree.selector';
+import { DirectMessageWithCreator } from '../../../../../state/selectors/direct-message-tree.selector';
 import styles from './message.module.scss';
 interface Props {
-  data: MessageWithCreator
+  data: ChannelMessageWithCreator | DirectMessageWithCreator
 }
 
 const Message: React.FC<Props> = ({

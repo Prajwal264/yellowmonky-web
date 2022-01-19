@@ -63,6 +63,22 @@ export type CreateMemberResponse = {
   teamId: Scalars['String'];
 };
 
+export type DirectMessage = EntityWrapper & Message & {
+  __typename?: 'DirectMessage';
+  childMessages?: Maybe<DirectMessage>;
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  creator: TeamMember;
+  creatorId: Scalars['String'];
+  id: Scalars['ID'];
+  parentMessage?: Maybe<DirectMessage>;
+  parentMessageId?: Maybe<Scalars['String']>;
+  recipient: TeamMember;
+  recipientId: Scalars['String'];
+  sourceType: MessageSourceType;
+  updatedAt: Scalars['DateTime'];
+};
+
 export type EditTeamResponse = {
   __typename?: 'EditTeamResponse';
   channels: Array<Scalars['String']>;
@@ -103,6 +119,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createChannel: Channel;
   createChannelMessage: Scalars['String'];
+  createDirectMessage: Scalars['String'];
   createUserAndAddToTeam: CreateMemberResponse;
   editChannel: Channel;
   editTeam: EditTeamResponse;
@@ -125,6 +142,14 @@ export type MutationCreateChannelMessageArgs = {
   content: Scalars['String'];
   creatorId: Scalars['String'];
   sourceChannelId?: InputMaybe<Scalars['String']>;
+  sourceType: MessageSourceType;
+};
+
+
+export type MutationCreateDirectMessageArgs = {
+  content: Scalars['String'];
+  creatorId: Scalars['String'];
+  recipientId?: InputMaybe<Scalars['String']>;
   sourceType: MessageSourceType;
 };
 
@@ -178,6 +203,7 @@ export type Query = {
   __typename?: 'Query';
   allChannelMessages: Array<ChannelMessage>;
   allChannels: Array<Maybe<Channel>>;
+  allDirectMessagesByRecipientId: Array<DirectMessage>;
   allTeamMembers: Array<TeamMember>;
   allTeams: Array<TeamListResponse>;
   channel: Channel;
@@ -196,6 +222,14 @@ export type QueryAllChannelMessagesArgs = {
 
 export type QueryAllChannelsArgs = {
   teamId: Scalars['String'];
+};
+
+
+export type QueryAllDirectMessagesByRecipientIdArgs = {
+  creatorId: Scalars['String'];
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Float'];
+  recipientId: Scalars['String'];
 };
 
 
@@ -237,11 +271,18 @@ export type RegisterAdminResponse = EntityWrapper & {
 export type Subscription = {
   __typename?: 'Subscription';
   newChannelMessage: ChannelMessage;
+  newDirectMessage: DirectMessage;
 };
 
 
 export type SubscriptionNewChannelMessageArgs = {
   channelId: Scalars['String'];
+};
+
+
+export type SubscriptionNewDirectMessageArgs = {
+  creatorId: Scalars['String'];
+  recipientId: Scalars['String'];
 };
 
 export type Team = EntityWrapper & {
@@ -362,6 +403,26 @@ export type FetchAllChannelMessagesQueryVariables = Exact<{
 
 export type FetchAllChannelMessagesQuery = { __typename?: 'Query', allChannelMessages: Array<{ __typename?: 'ChannelMessage', id: string, content: string, creatorId: string, createdAt: any }> };
 
+export type CreateDirectMessageMutationVariables = Exact<{
+  content: Scalars['String'];
+  creatorId: Scalars['String'];
+  recipientId: Scalars['String'];
+  sourceType: MessageSourceType;
+}>;
+
+
+export type CreateDirectMessageMutation = { __typename?: 'Mutation', createDirectMessage: string };
+
+export type FetchAllDirectMessagesQueryVariables = Exact<{
+  creatorId: Scalars['String'];
+  recipientId: Scalars['String'];
+  limit: Scalars['Float'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type FetchAllDirectMessagesQuery = { __typename?: 'Query', allDirectMessagesByRecipientId: Array<{ __typename?: 'DirectMessage', id: string, content: string, creatorId: string, createdAt: any }> };
+
 export type CreateMemberAndAddToTeamMutationVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
@@ -460,6 +521,14 @@ export type NewChannelMessageSubscriptionVariables = Exact<{
 
 
 export type NewChannelMessageSubscription = { __typename?: 'Subscription', newChannelMessage: { __typename?: 'ChannelMessage', id: string, content: string, creatorId: string, createdAt: any } };
+
+export type NewDirectMessageSubscriptionVariables = Exact<{
+  creatorId: Scalars['String'];
+  recipientId: Scalars['String'];
+}>;
+
+
+export type NewDirectMessageSubscription = { __typename?: 'Subscription', newDirectMessage: { __typename?: 'DirectMessage', id: string, content: string, creatorId: string, createdAt: any } };
 
 
 export const RegisterAdminDocument = gql`
@@ -616,6 +685,91 @@ export function useFetchAllChannelMessagesLazyQuery(baseOptions?: Apollo.LazyQue
 export type FetchAllChannelMessagesQueryHookResult = ReturnType<typeof useFetchAllChannelMessagesQuery>;
 export type FetchAllChannelMessagesLazyQueryHookResult = ReturnType<typeof useFetchAllChannelMessagesLazyQuery>;
 export type FetchAllChannelMessagesQueryResult = Apollo.QueryResult<FetchAllChannelMessagesQuery, FetchAllChannelMessagesQueryVariables>;
+export const CreateDirectMessageDocument = gql`
+    mutation CreateDirectMessage($content: String!, $creatorId: String!, $recipientId: String!, $sourceType: MessageSourceType!) {
+  createDirectMessage(
+    content: $content
+    creatorId: $creatorId
+    recipientId: $recipientId
+    sourceType: $sourceType
+  )
+}
+    `;
+export type CreateDirectMessageMutationFn = Apollo.MutationFunction<CreateDirectMessageMutation, CreateDirectMessageMutationVariables>;
+
+/**
+ * __useCreateDirectMessageMutation__
+ *
+ * To run a mutation, you first call `useCreateDirectMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDirectMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDirectMessageMutation, { data, loading, error }] = useCreateDirectMessageMutation({
+ *   variables: {
+ *      content: // value for 'content'
+ *      creatorId: // value for 'creatorId'
+ *      recipientId: // value for 'recipientId'
+ *      sourceType: // value for 'sourceType'
+ *   },
+ * });
+ */
+export function useCreateDirectMessageMutation(baseOptions?: Apollo.MutationHookOptions<CreateDirectMessageMutation, CreateDirectMessageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateDirectMessageMutation, CreateDirectMessageMutationVariables>(CreateDirectMessageDocument, options);
+      }
+export type CreateDirectMessageMutationHookResult = ReturnType<typeof useCreateDirectMessageMutation>;
+export type CreateDirectMessageMutationResult = Apollo.MutationResult<CreateDirectMessageMutation>;
+export type CreateDirectMessageMutationOptions = Apollo.BaseMutationOptions<CreateDirectMessageMutation, CreateDirectMessageMutationVariables>;
+export const FetchAllDirectMessagesDocument = gql`
+    query FetchAllDirectMessages($creatorId: String!, $recipientId: String!, $limit: Float!, $cursor: String) {
+  allDirectMessagesByRecipientId(
+    creatorId: $creatorId
+    recipientId: $recipientId
+    limit: $limit
+    cursor: $cursor
+  ) {
+    id
+    content
+    creatorId
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useFetchAllDirectMessagesQuery__
+ *
+ * To run a query within a React component, call `useFetchAllDirectMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchAllDirectMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchAllDirectMessagesQuery({
+ *   variables: {
+ *      creatorId: // value for 'creatorId'
+ *      recipientId: // value for 'recipientId'
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useFetchAllDirectMessagesQuery(baseOptions: Apollo.QueryHookOptions<FetchAllDirectMessagesQuery, FetchAllDirectMessagesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchAllDirectMessagesQuery, FetchAllDirectMessagesQueryVariables>(FetchAllDirectMessagesDocument, options);
+      }
+export function useFetchAllDirectMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchAllDirectMessagesQuery, FetchAllDirectMessagesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchAllDirectMessagesQuery, FetchAllDirectMessagesQueryVariables>(FetchAllDirectMessagesDocument, options);
+        }
+export type FetchAllDirectMessagesQueryHookResult = ReturnType<typeof useFetchAllDirectMessagesQuery>;
+export type FetchAllDirectMessagesLazyQueryHookResult = ReturnType<typeof useFetchAllDirectMessagesLazyQuery>;
+export type FetchAllDirectMessagesQueryResult = Apollo.QueryResult<FetchAllDirectMessagesQuery, FetchAllDirectMessagesQueryVariables>;
 export const CreateMemberAndAddToTeamDocument = gql`
     mutation CreateMemberAndAddToTeam($username: String!, $password: String!, $email: String!, $teamId: String!) {
   createUserAndAddToTeam(
@@ -1096,3 +1250,37 @@ export function useNewChannelMessageSubscription(baseOptions: Apollo.Subscriptio
       }
 export type NewChannelMessageSubscriptionHookResult = ReturnType<typeof useNewChannelMessageSubscription>;
 export type NewChannelMessageSubscriptionResult = Apollo.SubscriptionResult<NewChannelMessageSubscription>;
+export const NewDirectMessageDocument = gql`
+    subscription NewDirectMessage($creatorId: String!, $recipientId: String!) {
+  newDirectMessage(creatorId: $creatorId, recipientId: $recipientId) {
+    id
+    content
+    creatorId
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useNewDirectMessageSubscription__
+ *
+ * To run a query within a React component, call `useNewDirectMessageSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNewDirectMessageSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNewDirectMessageSubscription({
+ *   variables: {
+ *      creatorId: // value for 'creatorId'
+ *      recipientId: // value for 'recipientId'
+ *   },
+ * });
+ */
+export function useNewDirectMessageSubscription(baseOptions: Apollo.SubscriptionHookOptions<NewDirectMessageSubscription, NewDirectMessageSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<NewDirectMessageSubscription, NewDirectMessageSubscriptionVariables>(NewDirectMessageDocument, options);
+      }
+export type NewDirectMessageSubscriptionHookResult = ReturnType<typeof useNewDirectMessageSubscription>;
+export type NewDirectMessageSubscriptionResult = Apollo.SubscriptionResult<NewDirectMessageSubscription>;

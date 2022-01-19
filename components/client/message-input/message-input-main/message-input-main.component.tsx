@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { MessageSourceType, useCreateChannelMessageMutation } from '../../../../apollo/generated/graphql';
+import { MessageSourceType, useCreateChannelMessageMutation, useCreateDirectMessageMutation } from '../../../../apollo/generated/graphql';
 import { channelInfoAtom } from '../../../../state/atoms/channel-info.atom';
 import styles from './message-input-main.module.scss';
 import cookie from 'react-cookies';
@@ -9,6 +9,7 @@ import { AppContext, RecipientType } from '../../../../context/AppContextProvide
 import toast from 'react-hot-toast';
 import { channelMessagesAtom } from '../../../../state/atoms/channel-messages.atom';
 import { memberInfoAtom } from '../../../../state/atoms/member-info';
+import { directMessagesAtom } from '../../../../state/atoms/direct-messages.atom';
 
 interface Props {
 
@@ -20,7 +21,9 @@ const MessageInputMain: React.FC<Props> = ({ }) => {
   const { recipientId, recipientType } = useContext(AppContext);
   const [message, setMessage] = useState('');
   const [createChannelMessage] = useCreateChannelMessageMutation();
+  const [createDirectMessage] = useCreateDirectMessageMutation();
   const setChannelMesssages = useSetRecoilState(channelMessagesAtom);
+  const setDirectMessages = useSetRecoilState(directMessagesAtom);
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const content = e.target.value;
@@ -39,20 +42,37 @@ const MessageInputMain: React.FC<Props> = ({ }) => {
       try {
         setMessage('');
         const creatorId = cookie.load('memberId');
-        const { data } = await createChannelMessage({
-          variables: {
-            content: message,
-            creatorId,
-            sourceChannelId: recipientId!,
-            sourceType: MessageSourceType.Channel
-          }
-        });
-        setChannelMesssages((prevState) => ([...prevState, {
-          id: data?.createChannelMessage,
-          content,
-          createdAt: new Date(),
-          creatorId: creatorId,
-        } as any]))
+        if (recipientType === RecipientType.CHANNEL) {
+          const { data } = await createChannelMessage({
+            variables: {
+              content: message,
+              creatorId,
+              sourceChannelId: recipientId!,
+              sourceType: MessageSourceType.Channel
+            }
+          });
+          setChannelMesssages((prevState) => ([...prevState, {
+            id: data?.createChannelMessage,
+            content,
+            createdAt: new Date(),
+            creatorId: creatorId,
+          } as any]))
+        } else {
+          const { data } = await createDirectMessage({
+            variables: {
+              content: message,
+              creatorId,
+              recipientId: recipientId!,
+              sourceType: MessageSourceType.DirectMessage
+            }
+          });
+          setDirectMessages((prevState) => ([...prevState, {
+            id: data?.createDirectMessage,
+            content,
+            createdAt: new Date(),
+            creatorId: creatorId,
+          } as any]))
+        }
         const scrollableBodyRef = document.querySelector('.message:first-of-type');
         if (scrollableBodyRef) {
           scrollableBodyRef.scrollIntoView();

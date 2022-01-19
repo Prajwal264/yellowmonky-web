@@ -6,3 +6,12 @@ subscription NewChannelMessage($channelId: String!) {
     createdAt
   }
 }
+
+subscription NewDirectMessage($creatorId: String!, $recipientId: String!) {
+  newDirectMessage(creatorId: $creatorId, recipientId: $recipientId) {
+    id
+    content
+    creatorId
+    createdAt
+  }
+}

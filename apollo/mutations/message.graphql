@@ -11,3 +11,17 @@ query FetchAllChannelMessages($channelId: String!, $limit: Float!, $cursor: Stri
     createdAt
   }
 }
+
+mutation CreateDirectMessage($content: String!, $creatorId: String!, $recipientId:String!, $sourceType: MessageSourceType!) {
+  createDirectMessage(content: $content, creatorId: $creatorId, recipientId: $recipientId, sourceType: $sourceType)
+}
+
+
+query FetchAllDirectMessages($creatorId: String!, $recipientId: String!, $limit: Float!, $cursor: String) {
+  allDirectMessagesByRecipientId(creatorId: $creatorId, recipientId: $recipientId, limit: $limit, cursor: $cursor) {
+    id
+    content
+    creatorId
+    createdAt
+  }
+}
