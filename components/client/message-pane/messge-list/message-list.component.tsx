@@ -17,6 +17,7 @@ import messageNotification from '../../../../assets/audio/message-notification.m
 import { useSound } from 'use-sound';
 import { directMessagesAtom } from '../../../../state/atoms/direct-messages.atom';
 import { directMessageTreeSelector } from '../../../../state/selectors/direct-message-tree.selector';
+import { memberInfoAtom } from '../../../../state/atoms/member-info';
 
 interface Props {
 
@@ -29,6 +30,7 @@ const MessageList: React.FC<Props> = ({ }) => {
   const allChannelMessages = useRecoilValue(channelMessageTreeSelector);
   const allDirectMessages = useRecoilValue(directMessageTreeSelector);
   const channelInfo = useRecoilValue(channelInfoAtom);
+  const memberInfo = useRecoilValue(memberInfoAtom);
   const [fetchChannelMessages, { data: channelMessages }] = useFetchAllChannelMessagesLazyQuery();
   const [fetchDirectMessages, { data: directMessages }] = useFetchAllDirectMessagesLazyQuery();
   const [notificationSound] = useSound(messageNotification);
@@ -158,9 +160,9 @@ const MessageList: React.FC<Props> = ({ }) => {
 
     <div className={styles.messageList}>
       <InfiniteScroll
-        dataLength={allChannelMessages.length || allDirectMessages.length}
+        dataLength={recipientType === RecipientType.CHANNEL ? allChannelMessages.length : allDirectMessages.length}
         next={loadMessages}
-        hasMore={!!channelMessages?.allChannelMessages?.length! || !!directMessages?.allDirectMessagesByRecipientId?.length!}
+        hasMore={recipientType === RecipientType.CHANNEL ? !!channelMessages?.allChannelMessages?.length! : !!directMessages?.allDirectMessagesByRecipientId?.length!}
         loader={<Skeleton
           avatar={{
             shape: 'square'
@@ -179,7 +181,7 @@ const MessageList: React.FC<Props> = ({ }) => {
           description={
             recipientType === RecipientType.CHANNEL ?
               <div>{channelInfo?.description || 'This channel is for working on a project. Hold meetings, share docs, and make decisions together with your team.'} <span>Edit description</span></div> :
-              <div>Here you can send messages and share files with <span>{recipientId}</span></div>
+              <div>Here you can send messages and share files with <span>{memberInfo?.user.username}</span></div>
           }
           icon={<BsLightbulb />}
         />}
