@@ -10,7 +10,7 @@
     "emoji-mart": "^3.0.1",
     "file-loader": "^6.2.0",
     "graphql-ws": "^5.5.5",
-    "next": "^12.0.7",
+    "next": "^12.1.0",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
     "react-avatar": "^4.0.0",
