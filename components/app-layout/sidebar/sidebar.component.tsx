@@ -19,7 +19,7 @@ const Sidebar: React.FC<Props> = ({
       </div>
       <div className={styles.channelSidebar}>
         <SidebarHeader />
-        <ChannelSidebar show={showMenu} />
+        <ChannelSidebar show={showMenu} setShowMenu={setShowMenu} />
       </div>
     </div>
   )

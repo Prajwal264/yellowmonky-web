@@ -3,7 +3,9 @@ import { AtomTypes } from '../state-types/atom.types';
 
 export enum PopupType {
   ADD_MEMBER = 'ADD_MEMBER',
-  CREATE_CHANNEL = 'CREATE_CHANNEL'
+  CREATE_CHANNEL = 'CREATE_CHANNEL',
+  EDIT_CHANNEL = 'EDIT_CHANNEL',
+  EDIT_FIELD = 'EDIT_FIELD',
 }
 
 export interface IPopupAtom {

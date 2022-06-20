@@ -9,3 +9,16 @@ query FetchAllTeamMembers($teamId: String!) {
     }
   }
 }
+
+query FetchTeamMember($memberId: String!) {
+  teamMember(memberId: $memberId) {
+    id
+   	user {
+      id
+      email
+      username
+      profileImage
+    }
+  }
+}
+

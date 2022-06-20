@@ -13,27 +13,27 @@ import { teamInfoAtom } from '../../../../../state/atoms/team-info.atom';
 interface Props {
   data: {
     teamId: string;
-    channelId: string;
+    recipientId: string;
   }
 }
 
-const ChannelIdPage: React.FC<Props> = ({
+const MemberIdPage: React.FC<Props> = ({
   data: {
     teamId,
-    channelId,
+    recipientId,
   }
 }) => {
   const { setTeamId, setRecipientId, setRecipientType } = useContext(AppContext);
   const [fetchTeamInfo] = useFetchTeamInfoLazyQuery();
   const setTeamInfo = useSetRecoilState(teamInfoAtom)
   useEffect(() => {
-    setRecipientType(RecipientType.CHANNEL)
-    if (teamId && channelId) {
+    setRecipientType(RecipientType.DIRECT_MESSAGE)
+    if (teamId && recipientId) {
       setTeamId(teamId);
-      setRecipientId(channelId);
+      setRecipientId(recipientId);
       loadTeamInfo(teamId);
     }
-  }, [channelId])
+  }, [recipientId])
 
   const loadTeamInfo = async (teamId: string) => {
     try {
@@ -63,9 +63,9 @@ export const getServerSideProps = (context: GetServerSidePropsContext<NextParsed
     props: {
       data: {
         teamId: context.query.teamId,
-        channelId: context.query.channelId,
+        recipientId: context.query.recipientId,
       }
     }
   }
 }
-export default ChannelIdPage
+export default MemberIdPage;

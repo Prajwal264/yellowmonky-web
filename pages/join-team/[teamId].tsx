@@ -99,6 +99,7 @@ const JoinTeamPage: React.FC<Props> = () => {
       const response = await registerMemberPromise;
       cookie.remove('userId');
       cookie.save('userId', response.data?.createUserAndAddToTeam.id!, {});
+      cookie.save('userId', response.data?.createUserAndAddToTeam.id!, {});
       const teamId = response.data?.createUserAndAddToTeam.teamId;
       const channelId = response.data?.createUserAndAddToTeam.channelId;
       router.push({

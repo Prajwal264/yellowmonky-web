@@ -1,10 +1,24 @@
 # message
-mutation CreateMessage($content: String!, $sourceType: MessageSourceType!, $creatorId: String!, $sourceChannelId: String!) {
-  createMessage(content: $content, sourceType: $sourceType, creatorId: $creatorId, sourceChannelId: $sourceChannelId)
+mutation CreateChannelMessage($content: String!, $sourceType: MessageSourceType!, $creatorId: String!, $sourceChannelId: String!) {
+  createChannelMessage(content: $content, sourceType: $sourceType, creatorId: $creatorId, sourceChannelId: $sourceChannelId)
 }
 
 query FetchAllChannelMessages($channelId: String!, $limit: Float!, $cursor: String) {
   allChannelMessages(channelId: $channelId, limit: $limit, cursor: $cursor) {
+    id
+    content
+    creatorId
+    createdAt
+  }
+}
+
+mutation CreateDirectMessage($content: String!, $creatorId: String!, $recipientId:String!, $sourceType: MessageSourceType!) {
+  createDirectMessage(content: $content, creatorId: $creatorId, recipientId: $recipientId, sourceType: $sourceType)
+}
+
+
+query FetchAllDirectMessages($creatorId: String!, $recipientId: String!, $limit: Float!, $cursor: String) {
+  allDirectMessagesByRecipientId(creatorId: $creatorId, recipientId: $recipientId, limit: $limit, cursor: $cursor) {
     id
     content
     creatorId

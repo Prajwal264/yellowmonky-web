@@ -1,13 +1,15 @@
 import React, { useContext, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { MessageSourceType, useCreateMessageMutation } from '../../../../apollo/generated/graphql';
+import { MessageSourceType, useCreateChannelMessageMutation, useCreateDirectMessageMutation } from '../../../../apollo/generated/graphql';
 import { channelInfoAtom } from '../../../../state/atoms/channel-info.atom';
 import styles from './message-input-main.module.scss';
 import cookie from 'react-cookies';
 import MessageSendButton from './message-send-button/message-send-button.component';
-import { AppContext } from '../../../../context/AppContextProvider';
+import { AppContext, RecipientType } from '../../../../context/AppContextProvider';
 import toast from 'react-hot-toast';
 import { channelMessagesAtom } from '../../../../state/atoms/channel-messages.atom';
+import { memberInfoAtom } from '../../../../state/atoms/member-info';
+import { directMessagesAtom } from '../../../../state/atoms/direct-messages.atom';
 
 interface Props {
 
@@ -15,10 +17,13 @@ interface Props {
 
 const MessageInputMain: React.FC<Props> = ({ }) => {
   const channelInfo = useRecoilValue(channelInfoAtom);
-  const { channelId } = useContext(AppContext);
+  const memberInfo = useRecoilValue(memberInfoAtom);
+  const { recipientId, recipientType } = useContext(AppContext);
   const [message, setMessage] = useState('');
-  const [createMessage] = useCreateMessageMutation();
+  const [createChannelMessage] = useCreateChannelMessageMutation();
+  const [createDirectMessage] = useCreateDirectMessageMutation();
   const setChannelMesssages = useSetRecoilState(channelMessagesAtom);
+  const setDirectMessages = useSetRecoilState(directMessagesAtom);
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const content = e.target.value;
@@ -36,22 +41,42 @@ const MessageInputMain: React.FC<Props> = ({ }) => {
     if (message) {
       try {
         setMessage('');
-        const creatorId = cookie.load('userId');
-        const { data } = await createMessage({
-          variables: {
-            content: message,
-            creatorId, // TODO: this should be passed from jwt
-            sourceChannelId: channelId!,
-            sourceType: MessageSourceType.Channel
-          }
-        });
-        setChannelMesssages((prevState) => ([...prevState, {
-          id: data?.createMessage,
-          content,
-          createdAt: new Date(),
-          creatorId: creatorId,
-        } as any]))
-
+        const creatorId = cookie.load('memberId');
+        if (recipientType === RecipientType.CHANNEL) {
+          const { data } = await createChannelMessage({
+            variables: {
+              content: message,
+              creatorId,
+              sourceChannelId: recipientId!,
+              sourceType: MessageSourceType.Channel
+            }
+          });
+          setChannelMesssages((prevState) => ([...prevState, {
+            id: data?.createChannelMessage,
+            content,
+            createdAt: new Date(),
+            creatorId: creatorId,
+          } as any]))
+        } else {
+          const { data } = await createDirectMessage({
+            variables: {
+              content: message,
+              creatorId,
+              recipientId: recipientId!,
+              sourceType: MessageSourceType.DirectMessage
+            }
+          });
+          setDirectMessages((prevState) => ([...prevState, {
+            id: data?.createDirectMessage,
+            content,
+            createdAt: new Date(),
+            creatorId: creatorId,
+          } as any]))
+        }
+        const scrollableBodyRef = document.querySelector('.message:first-of-type');
+        if (scrollableBodyRef) {
+          scrollableBodyRef.scrollIntoView();
+        }
       } catch (e) {
         toast.error('Failed to send message.')
       }
@@ -68,7 +93,7 @@ const MessageInputMain: React.FC<Props> = ({ }) => {
               <input
                 value={message}
                 className={styles.editor}
-                placeholder={`Send message to #${channelInfo?.name}`}
+                placeholder={`Send message to ${recipientType === RecipientType.CHANNEL ? ('#' + channelInfo?.name) : memberInfo?.user?.username}`}
                 onChange={handleChange}
                 onKeyDown={onKeyDown} />
               <MessageSendButton onClick={sendMessage} />

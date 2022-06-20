@@ -14,6 +14,7 @@ import { channelTreeSelector } from '../../../state/selectors/channel-tree.selec
 import { allMembersAtom } from '../../../state/atoms/all-members.atom';
 import { memberTreeSelector } from '../../../state/selectors/member-tree.selector';
 import { popupAtom, PopupType } from '../../../state/atoms/popup.atom';
+import cookie from 'react-cookies';
 
 export enum NodeType {
   CHANNELS = 'channels',
@@ -22,12 +23,14 @@ export enum NodeType {
 
 interface Props {
   show: boolean,
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ChannelSidebar: React.FC<Props> = ({
-  show = true
+  show = true,
+  setShowMenu
 }) => {
-  const { teamId, channelId } = useContext(AppContext);
+  const { teamId, recipientId } = useContext(AppContext);
   const [fetchAllChannels, { data: channelData }] = useFetchAllChannelsLazyQuery();
   const [fetchAllMembers, { data: memberData }] = useFetchAllTeamMembersLazyQuery();
   const setChannels = useSetRecoilState(allChannelsAtom);
@@ -61,11 +64,21 @@ const ChannelSidebar: React.FC<Props> = ({
 
   useEffect(() => {
     if (memberData?.allTeamMembers.length) {
-      setMembers(memberData?.allTeamMembers)
+      setMembers(memberData?.allTeamMembers);
+      const userId = cookie.load('userId');
+      const currentMember = memberData?.allTeamMembers.filter((member) => member.user.id === userId)?.[0];
+      if (currentMember) {
+        const tomorow = new Date();
+        tomorow.setDate(new Date().getDate() + 1)
+        cookie.save('memberId', currentMember.id, {
+          expires: tomorow, // TODO: jwt
+        });
+      }
     }
   }, [memberData]);
 
   const onSelectNode = (selectedNode: EventDataNode, type: NodeType) => {
+    setShowMenu(false);
     if (type === NodeType.CHANNELS) {
       if (selectedNode.key === 'add-channels') {
         setCurrentPopup({
@@ -85,7 +98,15 @@ const ChannelSidebar: React.FC<Props> = ({
         setCurrentPopup({
           type: PopupType.ADD_MEMBER,
         });
+        return;
       }
+      router.push({
+        pathname: '/app/client/[teamId]/member/[recipientId]',
+        query: {
+          teamId,
+          recipientId: selectedNode.key,
+        }
+      })
     }
   }
 
@@ -95,16 +116,16 @@ const ChannelSidebar: React.FC<Props> = ({
         <ChannelSidebarItem icon={<GrChannel />} name='Channel Browser' />
         <ChannelSidebarItem icon={<RiContactsBookFill />} name='People & user groups' />
         <Tree
-          defaultExpandedKeys={['channels']}
+          defaultExpandedKeys={[NodeType.CHANNELS]}
           className={styles.channelTree}
           treeData={channelTree}
-          selectedKeys={[channelId!]}
+          selectedKeys={[recipientId!]}
           onSelect={(_, { node }) => onSelectNode(node, NodeType.CHANNELS)}
         />
         <Tree
           className={styles.channelTree}
           treeData={memberTree}
-          selectedKeys={[channelId!]}
+          selectedKeys={[recipientId!]}
           onSelect={(_, { node }) => onSelectNode(node, NodeType.MEMBERS)}
         />
       </div>

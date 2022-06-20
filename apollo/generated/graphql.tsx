@@ -36,6 +36,23 @@ export type Channel = EntityWrapper & {
   id: Scalars['ID'];
   name: Scalars['String'];
   teamId: Scalars['String'];
+  topics?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+};
+
+export type ChannelMessage = EntityWrapper & Message & {
+  __typename?: 'ChannelMessage';
+  childMessages?: Maybe<ChannelMessage>;
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  creator: TeamMember;
+  creatorId: Scalars['String'];
+  id: Scalars['ID'];
+  parentMessage?: Maybe<ChannelMessage>;
+  parentMessageId?: Maybe<Scalars['String']>;
+  sourceChannel: Channel;
+  sourceChannelId: Scalars['String'];
+  sourceType: MessageSourceType;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -44,6 +61,22 @@ export type CreateMemberResponse = {
   channelId: Scalars['String'];
   id: Scalars['String'];
   teamId: Scalars['String'];
+};
+
+export type DirectMessage = EntityWrapper & Message & {
+  __typename?: 'DirectMessage';
+  childMessages?: Maybe<DirectMessage>;
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  creator: TeamMember;
+  creatorId: Scalars['String'];
+  id: Scalars['ID'];
+  parentMessage?: Maybe<DirectMessage>;
+  parentMessageId?: Maybe<Scalars['String']>;
+  recipient: TeamMember;
+  recipientId: Scalars['String'];
+  sourceType: MessageSourceType;
+  updatedAt: Scalars['DateTime'];
 };
 
 export type EditTeamResponse = {
@@ -66,18 +99,12 @@ export type Error = {
   statusCode: Scalars['Int'];
 };
 
-export type Message = EntityWrapper & {
-  __typename?: 'Message';
-  childMessages?: Maybe<Message>;
+export type Message = {
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
-  creator: User;
   creatorId: Scalars['String'];
   id: Scalars['ID'];
-  parentMessage?: Maybe<Message>;
   parentMessageId?: Maybe<Scalars['String']>;
-  sourceChannel: Channel;
-  sourceChannelId: Scalars['String'];
   sourceType: MessageSourceType;
   updatedAt: Scalars['DateTime'];
 };
@@ -91,8 +118,10 @@ export enum MessageSourceType {
 export type Mutation = {
   __typename?: 'Mutation';
   createChannel: Channel;
-  createMessage: Scalars['String'];
+  createChannelMessage: Scalars['String'];
+  createDirectMessage: Scalars['String'];
   createUserAndAddToTeam: CreateMemberResponse;
+  editChannel: Channel;
   editTeam: EditTeamResponse;
   inviteMembers: Scalars['Boolean'];
   login: UserResponse;
@@ -105,13 +134,22 @@ export type MutationCreateChannelArgs = {
   description?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   teamId: Scalars['String'];
+  topics?: InputMaybe<Scalars['String']>;
 };
 
 
-export type MutationCreateMessageArgs = {
+export type MutationCreateChannelMessageArgs = {
   content: Scalars['String'];
   creatorId: Scalars['String'];
   sourceChannelId?: InputMaybe<Scalars['String']>;
+  sourceType: MessageSourceType;
+};
+
+
+export type MutationCreateDirectMessageArgs = {
+  content: Scalars['String'];
+  creatorId: Scalars['String'];
+  recipientId?: InputMaybe<Scalars['String']>;
   sourceType: MessageSourceType;
 };
 
@@ -121,6 +159,14 @@ export type MutationCreateUserAndAddToTeamArgs = {
   password: Scalars['String'];
   teamId: Scalars['String'];
   username: Scalars['String'];
+};
+
+
+export type MutationEditChannelArgs = {
+  channelId: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  topics?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -155,13 +201,15 @@ export type MutationRegisterAdminArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  allChannelMessages: Array<Message>;
+  allChannelMessages: Array<ChannelMessage>;
   allChannels: Array<Maybe<Channel>>;
+  allDirectMessagesByRecipientId: Array<DirectMessage>;
   allTeamMembers: Array<TeamMember>;
   allTeams: Array<TeamListResponse>;
   channel: Channel;
   getUsers: Array<Maybe<User>>;
   team: Team;
+  teamMember: TeamMember;
 };
 
 
@@ -174,6 +222,14 @@ export type QueryAllChannelMessagesArgs = {
 
 export type QueryAllChannelsArgs = {
   teamId: Scalars['String'];
+};
+
+
+export type QueryAllDirectMessagesByRecipientIdArgs = {
+  creatorId: Scalars['String'];
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Float'];
+  recipientId: Scalars['String'];
 };
 
 
@@ -196,6 +252,11 @@ export type QueryTeamArgs = {
   teamId: Scalars['String'];
 };
 
+
+export type QueryTeamMemberArgs = {
+  memberId: Scalars['String'];
+};
+
 export type RegisterAdminResponse = EntityWrapper & {
   __typename?: 'RegisterAdminResponse';
   createdAt: Scalars['DateTime'];
@@ -209,12 +270,19 @@ export type RegisterAdminResponse = EntityWrapper & {
 
 export type Subscription = {
   __typename?: 'Subscription';
-  newChannelMessage: Message;
+  newChannelMessage: ChannelMessage;
+  newDirectMessage: DirectMessage;
 };
 
 
 export type SubscriptionNewChannelMessageArgs = {
   channelId: Scalars['String'];
+};
+
+
+export type SubscriptionNewDirectMessageArgs = {
+  creatorId: Scalars['String'];
+  recipientId: Scalars['String'];
 };
 
 export type Team = EntityWrapper & {
@@ -316,7 +384,7 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', id: string } };
 
-export type CreateMessageMutationVariables = Exact<{
+export type CreateChannelMessageMutationVariables = Exact<{
   content: Scalars['String'];
   sourceType: MessageSourceType;
   creatorId: Scalars['String'];
@@ -324,7 +392,7 @@ export type CreateMessageMutationVariables = Exact<{
 }>;
 
 
-export type CreateMessageMutation = { __typename?: 'Mutation', createMessage: string };
+export type CreateChannelMessageMutation = { __typename?: 'Mutation', createChannelMessage: string };
 
 export type FetchAllChannelMessagesQueryVariables = Exact<{
   channelId: Scalars['String'];
@@ -333,7 +401,27 @@ export type FetchAllChannelMessagesQueryVariables = Exact<{
 }>;
 
 
-export type FetchAllChannelMessagesQuery = { __typename?: 'Query', allChannelMessages: Array<{ __typename?: 'Message', id: string, content: string, creatorId: string, createdAt: any }> };
+export type FetchAllChannelMessagesQuery = { __typename?: 'Query', allChannelMessages: Array<{ __typename?: 'ChannelMessage', id: string, content: string, creatorId: string, createdAt: any }> };
+
+export type CreateDirectMessageMutationVariables = Exact<{
+  content: Scalars['String'];
+  creatorId: Scalars['String'];
+  recipientId: Scalars['String'];
+  sourceType: MessageSourceType;
+}>;
+
+
+export type CreateDirectMessageMutation = { __typename?: 'Mutation', createDirectMessage: string };
+
+export type FetchAllDirectMessagesQueryVariables = Exact<{
+  creatorId: Scalars['String'];
+  recipientId: Scalars['String'];
+  limit: Scalars['Float'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type FetchAllDirectMessagesQuery = { __typename?: 'Query', allDirectMessagesByRecipientId: Array<{ __typename?: 'DirectMessage', id: string, content: string, creatorId: string, createdAt: any }> };
 
 export type CreateMemberAndAddToTeamMutationVariables = Exact<{
   username: Scalars['String'];
@@ -384,7 +472,7 @@ export type FetchChannelQueryVariables = Exact<{
 }>;
 
 
-export type FetchChannelQuery = { __typename?: 'Query', channel: { __typename?: 'Channel', name: string, description?: string | null | undefined, createdAt: any, adminId: string } };
+export type FetchChannelQuery = { __typename?: 'Query', channel: { __typename?: 'Channel', id: string, name: string, description?: string | null | undefined, topics?: string | null | undefined, createdAt: any, adminId: string } };
 
 export type FetchAllChannelsQueryVariables = Exact<{
   teamId: Scalars['String'];
@@ -403,6 +491,16 @@ export type CreateChannelMutationVariables = Exact<{
 
 export type CreateChannelMutation = { __typename?: 'Mutation', createChannel: { __typename?: 'Channel', id: string, name: string } };
 
+export type EditChannelMutationVariables = Exact<{
+  channelId: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  topics?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type EditChannelMutation = { __typename?: 'Mutation', editChannel: { __typename?: 'Channel', id: string, name: string, description?: string | null | undefined, topics?: string | null | undefined, createdAt: any, adminId: string } };
+
 export type FetchAllTeamMembersQueryVariables = Exact<{
   teamId: Scalars['String'];
 }>;
@@ -410,12 +508,27 @@ export type FetchAllTeamMembersQueryVariables = Exact<{
 
 export type FetchAllTeamMembersQuery = { __typename?: 'Query', allTeamMembers: Array<{ __typename?: 'TeamMember', id: string, user: { __typename?: 'User', id: string, email: string, username: string, profileImage?: string | null | undefined } }> };
 
+export type FetchTeamMemberQueryVariables = Exact<{
+  memberId: Scalars['String'];
+}>;
+
+
+export type FetchTeamMemberQuery = { __typename?: 'Query', teamMember: { __typename?: 'TeamMember', id: string, user: { __typename?: 'User', id: string, email: string, username: string, profileImage?: string | null | undefined } } };
+
 export type NewChannelMessageSubscriptionVariables = Exact<{
   channelId: Scalars['String'];
 }>;
 
 
-export type NewChannelMessageSubscription = { __typename?: 'Subscription', newChannelMessage: { __typename?: 'Message', id: string, content: string, creatorId: string, createdAt: any } };
+export type NewChannelMessageSubscription = { __typename?: 'Subscription', newChannelMessage: { __typename?: 'ChannelMessage', id: string, content: string, creatorId: string, createdAt: any } };
+
+export type NewDirectMessageSubscriptionVariables = Exact<{
+  creatorId: Scalars['String'];
+  recipientId: Scalars['String'];
+}>;
+
+
+export type NewDirectMessageSubscription = { __typename?: 'Subscription', newDirectMessage: { __typename?: 'DirectMessage', id: string, content: string, creatorId: string, createdAt: any } };
 
 
 export const RegisterAdminDocument = gql`
@@ -493,9 +606,9 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
-export const CreateMessageDocument = gql`
-    mutation CreateMessage($content: String!, $sourceType: MessageSourceType!, $creatorId: String!, $sourceChannelId: String!) {
-  createMessage(
+export const CreateChannelMessageDocument = gql`
+    mutation CreateChannelMessage($content: String!, $sourceType: MessageSourceType!, $creatorId: String!, $sourceChannelId: String!) {
+  createChannelMessage(
     content: $content
     sourceType: $sourceType
     creatorId: $creatorId
@@ -503,20 +616,20 @@ export const CreateMessageDocument = gql`
   )
 }
     `;
-export type CreateMessageMutationFn = Apollo.MutationFunction<CreateMessageMutation, CreateMessageMutationVariables>;
+export type CreateChannelMessageMutationFn = Apollo.MutationFunction<CreateChannelMessageMutation, CreateChannelMessageMutationVariables>;
 
 /**
- * __useCreateMessageMutation__
+ * __useCreateChannelMessageMutation__
  *
- * To run a mutation, you first call `useCreateMessageMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateMessageMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateChannelMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateChannelMessageMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createMessageMutation, { data, loading, error }] = useCreateMessageMutation({
+ * const [createChannelMessageMutation, { data, loading, error }] = useCreateChannelMessageMutation({
  *   variables: {
  *      content: // value for 'content'
  *      sourceType: // value for 'sourceType'
@@ -525,13 +638,13 @@ export type CreateMessageMutationFn = Apollo.MutationFunction<CreateMessageMutat
  *   },
  * });
  */
-export function useCreateMessageMutation(baseOptions?: Apollo.MutationHookOptions<CreateMessageMutation, CreateMessageMutationVariables>) {
+export function useCreateChannelMessageMutation(baseOptions?: Apollo.MutationHookOptions<CreateChannelMessageMutation, CreateChannelMessageMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateMessageMutation, CreateMessageMutationVariables>(CreateMessageDocument, options);
+        return Apollo.useMutation<CreateChannelMessageMutation, CreateChannelMessageMutationVariables>(CreateChannelMessageDocument, options);
       }
-export type CreateMessageMutationHookResult = ReturnType<typeof useCreateMessageMutation>;
-export type CreateMessageMutationResult = Apollo.MutationResult<CreateMessageMutation>;
-export type CreateMessageMutationOptions = Apollo.BaseMutationOptions<CreateMessageMutation, CreateMessageMutationVariables>;
+export type CreateChannelMessageMutationHookResult = ReturnType<typeof useCreateChannelMessageMutation>;
+export type CreateChannelMessageMutationResult = Apollo.MutationResult<CreateChannelMessageMutation>;
+export type CreateChannelMessageMutationOptions = Apollo.BaseMutationOptions<CreateChannelMessageMutation, CreateChannelMessageMutationVariables>;
 export const FetchAllChannelMessagesDocument = gql`
     query FetchAllChannelMessages($channelId: String!, $limit: Float!, $cursor: String) {
   allChannelMessages(channelId: $channelId, limit: $limit, cursor: $cursor) {
@@ -572,6 +685,91 @@ export function useFetchAllChannelMessagesLazyQuery(baseOptions?: Apollo.LazyQue
 export type FetchAllChannelMessagesQueryHookResult = ReturnType<typeof useFetchAllChannelMessagesQuery>;
 export type FetchAllChannelMessagesLazyQueryHookResult = ReturnType<typeof useFetchAllChannelMessagesLazyQuery>;
 export type FetchAllChannelMessagesQueryResult = Apollo.QueryResult<FetchAllChannelMessagesQuery, FetchAllChannelMessagesQueryVariables>;
+export const CreateDirectMessageDocument = gql`
+    mutation CreateDirectMessage($content: String!, $creatorId: String!, $recipientId: String!, $sourceType: MessageSourceType!) {
+  createDirectMessage(
+    content: $content
+    creatorId: $creatorId
+    recipientId: $recipientId
+    sourceType: $sourceType
+  )
+}
+    `;
+export type CreateDirectMessageMutationFn = Apollo.MutationFunction<CreateDirectMessageMutation, CreateDirectMessageMutationVariables>;
+
+/**
+ * __useCreateDirectMessageMutation__
+ *
+ * To run a mutation, you first call `useCreateDirectMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDirectMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDirectMessageMutation, { data, loading, error }] = useCreateDirectMessageMutation({
+ *   variables: {
+ *      content: // value for 'content'
+ *      creatorId: // value for 'creatorId'
+ *      recipientId: // value for 'recipientId'
+ *      sourceType: // value for 'sourceType'
+ *   },
+ * });
+ */
+export function useCreateDirectMessageMutation(baseOptions?: Apollo.MutationHookOptions<CreateDirectMessageMutation, CreateDirectMessageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateDirectMessageMutation, CreateDirectMessageMutationVariables>(CreateDirectMessageDocument, options);
+      }
+export type CreateDirectMessageMutationHookResult = ReturnType<typeof useCreateDirectMessageMutation>;
+export type CreateDirectMessageMutationResult = Apollo.MutationResult<CreateDirectMessageMutation>;
+export type CreateDirectMessageMutationOptions = Apollo.BaseMutationOptions<CreateDirectMessageMutation, CreateDirectMessageMutationVariables>;
+export const FetchAllDirectMessagesDocument = gql`
+    query FetchAllDirectMessages($creatorId: String!, $recipientId: String!, $limit: Float!, $cursor: String) {
+  allDirectMessagesByRecipientId(
+    creatorId: $creatorId
+    recipientId: $recipientId
+    limit: $limit
+    cursor: $cursor
+  ) {
+    id
+    content
+    creatorId
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useFetchAllDirectMessagesQuery__
+ *
+ * To run a query within a React component, call `useFetchAllDirectMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchAllDirectMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchAllDirectMessagesQuery({
+ *   variables: {
+ *      creatorId: // value for 'creatorId'
+ *      recipientId: // value for 'recipientId'
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useFetchAllDirectMessagesQuery(baseOptions: Apollo.QueryHookOptions<FetchAllDirectMessagesQuery, FetchAllDirectMessagesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchAllDirectMessagesQuery, FetchAllDirectMessagesQueryVariables>(FetchAllDirectMessagesDocument, options);
+      }
+export function useFetchAllDirectMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchAllDirectMessagesQuery, FetchAllDirectMessagesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchAllDirectMessagesQuery, FetchAllDirectMessagesQueryVariables>(FetchAllDirectMessagesDocument, options);
+        }
+export type FetchAllDirectMessagesQueryHookResult = ReturnType<typeof useFetchAllDirectMessagesQuery>;
+export type FetchAllDirectMessagesLazyQueryHookResult = ReturnType<typeof useFetchAllDirectMessagesLazyQuery>;
+export type FetchAllDirectMessagesQueryResult = Apollo.QueryResult<FetchAllDirectMessagesQuery, FetchAllDirectMessagesQueryVariables>;
 export const CreateMemberAndAddToTeamDocument = gql`
     mutation CreateMemberAndAddToTeam($username: String!, $password: String!, $email: String!, $teamId: String!) {
   createUserAndAddToTeam(
@@ -776,8 +974,10 @@ export type EditTeamMutationOptions = Apollo.BaseMutationOptions<EditTeamMutatio
 export const FetchChannelDocument = gql`
     query FetchChannel($channelId: String!) {
   channel(channelId: $channelId) {
+    id
     name
     description
+    topics
     createdAt
     adminId
   }
@@ -889,6 +1089,52 @@ export function useCreateChannelMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateChannelMutationHookResult = ReturnType<typeof useCreateChannelMutation>;
 export type CreateChannelMutationResult = Apollo.MutationResult<CreateChannelMutation>;
 export type CreateChannelMutationOptions = Apollo.BaseMutationOptions<CreateChannelMutation, CreateChannelMutationVariables>;
+export const EditChannelDocument = gql`
+    mutation EditChannel($channelId: String!, $name: String, $description: String, $topics: String) {
+  editChannel(
+    channelId: $channelId
+    name: $name
+    description: $description
+    topics: $topics
+  ) {
+    id
+    name
+    description
+    topics
+    createdAt
+    adminId
+  }
+}
+    `;
+export type EditChannelMutationFn = Apollo.MutationFunction<EditChannelMutation, EditChannelMutationVariables>;
+
+/**
+ * __useEditChannelMutation__
+ *
+ * To run a mutation, you first call `useEditChannelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditChannelMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editChannelMutation, { data, loading, error }] = useEditChannelMutation({
+ *   variables: {
+ *      channelId: // value for 'channelId'
+ *      name: // value for 'name'
+ *      description: // value for 'description'
+ *      topics: // value for 'topics'
+ *   },
+ * });
+ */
+export function useEditChannelMutation(baseOptions?: Apollo.MutationHookOptions<EditChannelMutation, EditChannelMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditChannelMutation, EditChannelMutationVariables>(EditChannelDocument, options);
+      }
+export type EditChannelMutationHookResult = ReturnType<typeof useEditChannelMutation>;
+export type EditChannelMutationResult = Apollo.MutationResult<EditChannelMutation>;
+export type EditChannelMutationOptions = Apollo.BaseMutationOptions<EditChannelMutation, EditChannelMutationVariables>;
 export const FetchAllTeamMembersDocument = gql`
     query FetchAllTeamMembers($teamId: String!) {
   allTeamMembers(teamId: $teamId) {
@@ -930,6 +1176,47 @@ export function useFetchAllTeamMembersLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type FetchAllTeamMembersQueryHookResult = ReturnType<typeof useFetchAllTeamMembersQuery>;
 export type FetchAllTeamMembersLazyQueryHookResult = ReturnType<typeof useFetchAllTeamMembersLazyQuery>;
 export type FetchAllTeamMembersQueryResult = Apollo.QueryResult<FetchAllTeamMembersQuery, FetchAllTeamMembersQueryVariables>;
+export const FetchTeamMemberDocument = gql`
+    query FetchTeamMember($memberId: String!) {
+  teamMember(memberId: $memberId) {
+    id
+    user {
+      id
+      email
+      username
+      profileImage
+    }
+  }
+}
+    `;
+
+/**
+ * __useFetchTeamMemberQuery__
+ *
+ * To run a query within a React component, call `useFetchTeamMemberQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchTeamMemberQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchTeamMemberQuery({
+ *   variables: {
+ *      memberId: // value for 'memberId'
+ *   },
+ * });
+ */
+export function useFetchTeamMemberQuery(baseOptions: Apollo.QueryHookOptions<FetchTeamMemberQuery, FetchTeamMemberQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FetchTeamMemberQuery, FetchTeamMemberQueryVariables>(FetchTeamMemberDocument, options);
+      }
+export function useFetchTeamMemberLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchTeamMemberQuery, FetchTeamMemberQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FetchTeamMemberQuery, FetchTeamMemberQueryVariables>(FetchTeamMemberDocument, options);
+        }
+export type FetchTeamMemberQueryHookResult = ReturnType<typeof useFetchTeamMemberQuery>;
+export type FetchTeamMemberLazyQueryHookResult = ReturnType<typeof useFetchTeamMemberLazyQuery>;
+export type FetchTeamMemberQueryResult = Apollo.QueryResult<FetchTeamMemberQuery, FetchTeamMemberQueryVariables>;
 export const NewChannelMessageDocument = gql`
     subscription NewChannelMessage($channelId: String!) {
   newChannelMessage(channelId: $channelId) {
@@ -963,3 +1250,37 @@ export function useNewChannelMessageSubscription(baseOptions: Apollo.Subscriptio
       }
 export type NewChannelMessageSubscriptionHookResult = ReturnType<typeof useNewChannelMessageSubscription>;
 export type NewChannelMessageSubscriptionResult = Apollo.SubscriptionResult<NewChannelMessageSubscription>;
+export const NewDirectMessageDocument = gql`
+    subscription NewDirectMessage($creatorId: String!, $recipientId: String!) {
+  newDirectMessage(creatorId: $creatorId, recipientId: $recipientId) {
+    id
+    content
+    creatorId
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useNewDirectMessageSubscription__
+ *
+ * To run a query within a React component, call `useNewDirectMessageSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNewDirectMessageSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNewDirectMessageSubscription({
+ *   variables: {
+ *      creatorId: // value for 'creatorId'
+ *      recipientId: // value for 'recipientId'
+ *   },
+ * });
+ */
+export function useNewDirectMessageSubscription(baseOptions: Apollo.SubscriptionHookOptions<NewDirectMessageSubscription, NewDirectMessageSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<NewDirectMessageSubscription, NewDirectMessageSubscriptionVariables>(NewDirectMessageDocument, options);
+      }
+export type NewDirectMessageSubscriptionHookResult = ReturnType<typeof useNewDirectMessageSubscription>;
+export type NewDirectMessageSubscriptionResult = Apollo.SubscriptionResult<NewDirectMessageSubscription>;
